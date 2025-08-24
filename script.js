@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let labelaryUrl;
                 
                 // Try the newer endpoint format first
-                labelaryUrl = `https://api.labelary.com/v1/graphics/4x6/203`;
+                labelaryUrl = `http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/`;
                 console.log('Trying Labelary API URL:', labelaryUrl);
                 
                 // Use POST method with ZPL data in body
