@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     headers: {
                         'Accept': 'image/png',
-                        'Content-Type': 'text/plain'  // Changed from application/x-www-form-urlencoded
+                        'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     body: zplData
                 })
