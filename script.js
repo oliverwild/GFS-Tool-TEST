@@ -43,17 +43,17 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         'label-preview': {
             title: 'Label Preview Tool',
-            description: 'Decode Base64, convert to PDF, and preview labels with Labelary API.',
+            description: 'Decode Base64 data, identify content type, and generate label previews using Labelary API.',
             howToUse: [
-                'Paste your Base64 encoded label data',
-                'Click "Process" to decode and convert',
-                'View the label preview',
+                'Paste your Base64 encoded data (PDF, text, images, etc.)',
+                'Click "Process Label" to decode and identify content type',
+                'View the generated label preview from Labelary',
                 'Download as PNG if needed'
             ],
             examples: [
-                'Input: Base64 encoded label data',
-                'Process: Decode → PDF conversion → Labelary API',
-                'Output: Visual label preview'
+                'Input: Base64 encoded data (PDF, text, images)',
+                'Process: Decode → Identify Type → Convert to ZPL → Labelary API',
+                'Output: Visual label preview based on content type'
             ]
         },
         'route-mapping': {
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateProcessStep('step-decode', 'completed');
                 const decodedData = cleanAndDecodeBase64(base64Data);
                 
-                // Step 2: Try PDF conversion
+                // Step 2: Identify data type
                 updateProcessStep('step-convert', 'completed');
                 const dataType = identifyDataType(decodedData);
                 
