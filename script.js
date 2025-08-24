@@ -406,25 +406,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Generated ZPL data:', zplData.substring(0, 200));
 
                 // Call Labelary API with ZPL data using correct endpoint format
-                // Try the correct Labelary endpoint format from their documentation
-                const labelaryUrl = `https://api.labelary.com/v1/graphics/4x6/203`;
-                console.log('Labelary API URL:', labelaryUrl);
+                // Try different Labelary endpoint formats to get PNG responses
+                let labelaryUrl;
+                
+                // Try the newer endpoint format first
+                labelaryUrl = `https://api.labelary.com/v1/graphics/4x6/203`;
+                console.log('Trying Labelary API URL:', labelaryUrl);
                 
                 // Use POST method with ZPL data in body
                 fetch(labelaryUrl, {
                     method: 'POST',
                     headers: {
                         'Accept': 'image/png',
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'text/plain'  // Changed from application/x-www-form-urlencoded
                     },
                     body: zplData
                 })
                 .then(response => {
                     console.log('Labelary API response status:', response.status, response.statusText);
+                    console.log('Labelary API response headers:', response.headers);
+                    
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
-                    return response.blob();
+                    
+                    // Check if we got an image response
+                    const contentType = response.headers.get('content-type');
+                    console.log('Response content type:', contentType);
+                    
+                    if (contentType && contentType.includes('image/')) {
+                        console.log('Successfully received image response from Labelary');
+                        return response.blob();
+                    } else {
+                        throw new Error('Response is not an image');
+                    }
                 })
                 .then(blob => {
                     console.log('Labelary API success, blob size:', blob.size);
