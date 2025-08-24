@@ -363,14 +363,20 @@ document.addEventListener('DOMContentLoaded', function() {
             // Call Labelary API to generate real label preview
             callLabelaryAPI(data, dataType).then(labelImageUrl => {
                 // Display the real label from Labelary
+                console.log('Setting image src to:', labelImageUrl);
                 previewImg.src = labelImageUrl;
                 processedStatus.textContent = 'Label generated successfully';
                 previewImg.style.display = 'block';
+                previewImg.style.visibility = 'visible';
+                console.log('Label preview displayed successfully');
             }).catch(error => {
                 console.error('Labelary API error:', error);
                 // Fallback to placeholder if API fails
                 createPlaceholderImage(previewImg, `${dataType} Label`, '#f59e0b');
                 processedStatus.textContent = 'API failed, showing placeholder';
+                previewImg.style.display = 'block';
+                previewImg.style.visibility = 'visible';
+                console.log('Fallback placeholder created');
             });
         }
 
@@ -454,6 +460,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function createLocalZPLPreview(zplData, resolve) {
+            console.log('Creating local ZPL preview for:', zplData.substring(0, 100));
+            
             // Create a local preview that simulates what the ZPL would look like
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
@@ -472,27 +480,64 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
             
             // Parse ZPL and create visual representation
-            const textMatch = zplData.match(/^FD(.+?)\^FS/);
-            if (textMatch) {
-                const labelText = textMatch[1];
-                
+            let labelText = 'ZPL Content';
+            let hasContent = false;
+            
+            // Try to extract text content from ZPL
+            // Look for ^FD (Field Data) commands
+            const fdMatches = zplData.match(/\^FD([^^]*)/g);
+            if (fdMatches && fdMatches.length > 0) {
+                // Extract text from all FD commands
+                const texts = fdMatches.map(match => match.substring(3)); // Remove ^FD
+                labelText = texts.join(' ').substring(0, 50); // Limit length
+                hasContent = true;
+            }
+            
+            // If no FD commands found, try to extract any readable text
+            if (!hasContent) {
+                const readableText = zplData.replace(/[\x00-\x1F\x7F-\xFF]/g, ' ').trim();
+                if (readableText.length > 0) {
+                    labelText = readableText.substring(0, 50);
+                    hasContent = true;
+                }
+            }
+            
+            // Always draw something, even if parsing fails
+            if (hasContent) {
                 // Text styling (simulating ZPL font)
                 ctx.fillStyle = '#000000';
-                ctx.font = 'bold 48px monospace';
+                ctx.font = 'bold 36px monospace';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 
                 // Position text in center of label
                 ctx.fillText(labelText, canvas.width / 2, canvas.height / 2);
                 
-                // Add ZPL indicator
+                // Add subtitle
                 ctx.font = '16px monospace';
                 ctx.fillStyle = '#666666';
-                ctx.fillText('ZPL Preview (Local)', canvas.width / 2, canvas.height - 50);
+                ctx.fillText('ZPL Preview (Local)', canvas.width / 2, canvas.height / 2 + 40);
+            } else {
+                // Fallback: show ZPL structure
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 24px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('ZPL Label Preview', canvas.width / 2, canvas.height / 2);
+                
+                ctx.font = '16px monospace';
+                ctx.fillStyle = '#666666';
+                ctx.fillText('Local Preview Generated', canvas.width / 2, canvas.height / 2 + 40);
             }
+            
+            // Add ZPL indicator
+            ctx.font = '14px monospace';
+            ctx.fillStyle = '#999999';
+            ctx.fillText('ZPL Data Length: ' + zplData.length + ' chars', canvas.width / 2, canvas.height - 30);
             
             // Convert to data URL
             const imageUrl = canvas.toDataURL('image/png');
+            console.log('Local ZPL preview created successfully');
             resolve(imageUrl);
         }
 
