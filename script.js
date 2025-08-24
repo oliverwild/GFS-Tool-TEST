@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         'label-preview': {
             title: 'Label Preview Tool',
-            description: 'Decode Base64 data, identify content type, and generate label previews using Labelary API.',
+            description: 'Decode Base64 and preview labels either with PDF or Labelary API.',
             howToUse: [
                 'Paste your Base64 encoded data (PDF, text, images, etc.)',
                 'Click "Process Label" to decode and identify content type',
@@ -304,10 +304,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function identifyDataType(data) {
+            console.log('Identifying data type for:', data.length, 'bytes');
+            
             // Check if it's a PDF (PDF files start with %PDF)
             if (data.length >= 4) {
                 const header = String.fromCharCode(...data.slice(0, 4));
+                console.log('Header check:', header);
                 if (header === '%PDF') {
+                    console.log('Identified as PDF');
                     return 'PDF';
                 }
             }
@@ -318,19 +322,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 const jpgHeader = [0xFF, 0xD8, 0xFF];
                 
                 if (pngHeader.every((byte, i) => data[i] === byte)) {
+                    console.log('Identified as PNG Image');
                     return 'PNG Image';
                 }
                 if (jpgHeader.every((byte, i) => data[i] === byte)) {
+                    console.log('Identified as JPEG Image');
                     return 'JPEG Image';
                 }
             }
             
-            // Check if it's text
+            // Check if it's ZPL or other text content
             const text = String.fromCharCode(...data);
-            if (text.match(/^[\x20-\x7E\t\n\r]*$/)) {
+            console.log('Text content preview:', text.substring(0, 100));
+            
+            // Check for ZPL commands (^XA, ^FO, ^FD, etc.)
+            if (text.includes('^XA') || text.includes('^FO') || text.includes('^FD') || text.includes('^FS')) {
+                console.log('Identified as ZPL Text');
+                return 'ZPL Text';
+            }
+            
+            // Check if it's readable text (including special characters)
+            if (text.match(/^[\x20-\x7E\t\n\r\x80-\xFF]*$/)) {
+                console.log('Identified as Text');
                 return 'Text';
             }
             
+            console.log('Identified as Binary Data');
             return 'Binary Data';
         }
 
@@ -359,6 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function callLabelaryAPI(data, dataType) {
             return new Promise((resolve, reject) => {
+                console.log('Calling Labelary API for data type:', dataType);
+                
                 // Convert data to ZPL (Zebra Programming Language) format
                 let zplData = '';
                 
@@ -366,6 +385,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Convert text to ZPL format
                     const text = String.fromCharCode(...data);
                     zplData = `^XA^FO50,50^A0N,50,50^FD${text}^FS^XZ`;
+                } else if (dataType === 'ZPL Text') {
+                    // Use the ZPL content directly since it's already in ZPL format
+                    zplData = String.fromCharCode(...data);
                 } else if (dataType === 'PDF') {
                     // For PDFs, we'll extract text content and convert to ZPL
                     const text = extractTextFromPDF(data);
@@ -374,6 +396,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     // For other data types, create a generic label
                     zplData = `^XA^FO50,50^A0N,50,50^FD${dataType} Data^FS^XZ`;
                 }
+                
+                console.log('Generated ZPL data:', zplData.substring(0, 200));
 
                 // Call Labelary API with ZPL data using correct endpoint format
                 // Format: /v1/printers/{dpmm}/labels/{width}x{height}/{index}
@@ -384,6 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const index = 0; // First label
                 
                 const labelaryUrl = `https://api.labelary.com/v1/printers/${dpmm}/labels/${width}x${height}/${index}`;
+                console.log('Labelary API URL:', labelaryUrl);
                 
                 // Use POST method with ZPL data in body
                 fetch(labelaryUrl, {
@@ -395,18 +420,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: zplData
                 })
                 .then(response => {
+                    console.log('Labelary API response status:', response.status, response.statusText);
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
                     return response.blob();
                 })
                 .then(blob => {
+                    console.log('Labelary API success, blob size:', blob.size);
                     const imageUrl = URL.createObjectURL(blob);
                     resolve(imageUrl);
                 })
                 .catch(error => {
                     console.error('Direct Labelary API call failed:', error);
                     // If direct call fails due to CORS, create a local ZPL preview
+                    console.log('Falling back to local ZPL preview');
                     createLocalZPLPreview(zplData, resolve);
                 });
             });
