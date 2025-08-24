@@ -28,23 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            const headerHeight = document.querySelector('.header').offsetHeight;
-            const targetPosition = target.offsetTop - headerHeight;
-            
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-        }
-    });
-});
-
 // Header background change on scroll
 window.addEventListener('scroll', function() {
     const header = document.querySelector('.header');
@@ -72,46 +55,6 @@ document.querySelectorAll('.tool-card .btn').forEach(button => {
         showNotification(`Launching ${toolName}...`, 'info');
     });
 });
-
-// Contact form handling
-const contactForm = document.querySelector('.contact-form');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form data
-        const formData = new FormData(this);
-        const name = this.querySelector('input[type="text"]').value;
-        const email = this.querySelector('input[type="email"]').value;
-        const subject = this.querySelector('input[placeholder="Subject"]').value;
-        const message = this.querySelector('textarea').value;
-        
-        // Basic validation
-        if (!name || !email || !message) {
-            showNotification('Please fill in all required fields.', 'error');
-            return;
-        }
-        
-        if (!isValidEmail(email)) {
-            showNotification('Please enter a valid email address.', 'error');
-            return;
-        }
-        
-        // Simulate form submission (replace with actual form handling)
-        showNotification('Sending message...', 'info');
-        
-        setTimeout(() => {
-            showNotification('Message sent successfully! We\'ll get back to you soon.', 'success');
-            this.reset();
-        }, 2000);
-    });
-}
-
-// Email validation helper
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
 
 // Notification system
 function showNotification(message, type = 'info') {
@@ -239,7 +182,7 @@ const observer = new IntersectionObserver((entries) => {
 
 // Observe elements for animation
 document.addEventListener('DOMContentLoaded', function() {
-    const animatedElements = document.querySelectorAll('.tool-card, .contact-form, .about-content, .contact-grid');
+    const animatedElements = document.querySelectorAll('.tool-card');
     
     animatedElements.forEach(el => {
         el.style.opacity = '0';
@@ -264,16 +207,6 @@ document.querySelectorAll('.btn').forEach(button => {
             this.disabled = false;
         }, 2000);
     });
-});
-
-// Parallax effect for hero section
-window.addEventListener('scroll', function() {
-    const scrolled = window.pageYOffset;
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        const rate = scrolled * -0.5;
-        hero.style.transform = `translateY(${rate}px)`;
-    }
 });
 
 // Add CSS for mobile navigation
