@@ -16,7 +16,6 @@
                     <i class="fas fa-tools"></i>
                     <span>GFS Tools</span>
                 </div>
-
             </div>
         </nav>
     </header>
@@ -32,61 +31,87 @@
                 <div class="tools-grid">
                     <div class="tool-card">
                         <div class="tool-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <h3>Range Jumping</h3>
+                        <p>Convert SQL inserts to update scripts with number jumping functionality.</p>
+                        <div class="tool-buttons">
+                            <button class="btn btn-outline open-tool" data-tool="range-jumping">Open</button>
+                            <button class="btn btn-secondary wiki-tool" data-tool="range-jumping">Wiki</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <h3>Range Splitting</h3>
+                        <p>Split number ranges by percentage for efficient distribution.</p>
+                        <div class="tool-buttons">
+                            <button class="btn btn-outline open-tool" data-tool="range-splitting">Open</button>
+                            <button class="btn btn-secondary wiki-tool" data-tool="range-splitting">Wiki</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <h3>Label Preview</h3>
+                        <p>Decode Base64, convert to PDF, and preview labels with Labelary API.</p>
+                        <div class="tool-buttons">
+                            <button class="btn btn-outline open-tool" data-tool="label-preview">Open</button>
+                            <button class="btn btn-secondary wiki-tool" data-tool="label-preview">Wiki</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-card">
+                        <div class="tool-icon">
                             <i class="fas fa-route"></i>
                         </div>
-                        <h3>Route Optimizer</h3>
-                        <p>Optimize delivery routes for maximum efficiency and cost savings.</p>
-                        <button class="btn btn-outline">Launch Tool</button>
-                    </div>
-
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-calculator"></i>
+                        <h3>Route Mapping</h3>
+                        <p>Generate SQL inserts for carriers, services, and route details.</p>
+                        <div class="tool-buttons">
+                            <button class="btn btn-outline open-tool" data-tool="route-mapping">Open</button>
+                            <button class="btn btn-secondary wiki-tool" data-tool="route-mapping">Wiki</button>
                         </div>
-                        <h3>Cost Calculator</h3>
-                        <p>Calculate shipping costs across multiple carriers and service levels.</p>
-                        <button class="btn btn-outline">Launch Tool</button>
-                    </div>
-
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h3>Analytics Dashboard</h3>
-                        <p>Track performance metrics and generate detailed shipping reports.</p>
-                        <button class="btn btn-outline">Launch Tool</button>
-                    </div>
-
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <h3>Database Manager</h3>
-                        <p>Manage customer data, contracts, and shipping history efficiently.</p>
-                        <button class="btn btn-outline">Launch Tool</button>
-                    </div>
-
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-file-invoice"></i>
-                        </div>
-                        <h3>Invoice Generator</h3>
-                        <p>Create professional invoices and shipping documents automatically.</p>
-                        <button class="btn btn-outline">Launch Tool</button>
-                    </div>
-
-                    <div class="tool-card">
-                        <div class="tool-icon">
-                            <i class="fas fa-bell"></i>
-                        </div>
-                        <h3>Alert System</h3>
-                        <p>Get notified about important shipping events and deadlines.</p>
-                        <button class="btn btn-outline">Launch Tool</button>
                     </div>
                 </div>
             </div>
         </section>
     </main>
+
+    <!-- Tool Modals -->
+    <div id="tool-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Tool</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="wip-notice">
+                    <i class="fas fa-tools"></i>
+                    <h3>Work In Progress</h3>
+                    <p>This tool is currently under development. Check back soon for the full functionality!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wiki Modal -->
+    <div id="wiki-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="wiki-title">Tool Wiki</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="wiki-content">
+                    <!-- Wiki content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="container">
@@ -98,10 +123,10 @@
                 <div class="footer-section">
                     <h4>Tools</h4>
                     <ul>
-                        <li><a href="#">Route Optimizer</a></li>
-                        <li><a href="#">Cost Calculator</a></li>
-                        <li><a href="#">Analytics Dashboard</a></li>
-                        <li><a href="#">Database Manager</a></li>
+                        <li><a href="#">Range Jumping</a></li>
+                        <li><a href="#">Range Splitting</a></li>
+                        <li><a href="#">Label Preview</a></li>
+                        <li><a href="#">Route Mapping</a></li>
                     </ul>
                 </div>
             </div>

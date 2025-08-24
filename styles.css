@@ -70,6 +70,7 @@ p {
 .btn-secondary:hover {
     background: #667eea;
     color: white;
+    border-color: #667eea;
     transform: translateY(-2px);
 }
 
@@ -211,6 +212,169 @@ p {
     color: #666;
 }
 
+/* Tool Buttons */
+.tool-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tool-buttons .btn {
+    min-width: 100px;
+    padding: 10px 20px;
+    font-size: 14px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e1e5e9;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 16px 16px 0 0;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.close {
+    color: #666;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #667eea;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+/* WIP Notice */
+.wip-notice {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.wip-notice i {
+    font-size: 4rem;
+    color: #667eea;
+    margin-bottom: 1rem;
+}
+
+.wip-notice h3 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.wip-notice p {
+    color: #666;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Wiki Content Styles */
+.wiki-section h3 {
+    color: #333;
+    margin: 1.5rem 0 1rem 0;
+    font-size: 1.3rem;
+    border-bottom: 2px solid #e1e5e9;
+    padding-bottom: 0.5rem;
+}
+
+.wiki-section h3:first-child {
+    margin-top: 0;
+}
+
+.wiki-section p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.wiki-section ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.wiki-section ol li {
+    color: #666;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.examples {
+    background: #f8fafc;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.example-item {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+.example-item:last-child {
+    margin-bottom: 0;
+}
+
 /* Footer */
 .footer {
     background: #1f2937;
@@ -286,6 +450,26 @@ p {
     .container {
         padding: 0 15px;
     }
+
+    .tool-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tool-buttons .btn {
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+
+    .modal-header,
+    .modal-body {
+        padding: 1rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -305,6 +489,11 @@ p {
 
     .tool-card {
         padding: 1.5rem;
+    }
+
+    .modal-content {
+        margin: 5% auto;
+        width: 98%;
     }
 }
 
