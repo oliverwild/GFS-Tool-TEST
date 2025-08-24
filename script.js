@@ -406,13 +406,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Generated ZPL data:', zplData.substring(0, 200));
 
                 // Call Labelary API with ZPL data using correct endpoint format
-                // Format: /v1/graphics/{width}x{height}/{dpi} (this is the working endpoint)
-                // 4x6 inches at 203 DPI
-                const width = 4; // 4 inches
-                const height = 6; // 6 inches
-                const dpi = 203; // 203 DPI
-                
-                const labelaryUrl = `https://api.labelary.com/v1/graphics/${width}x${height}/${dpi}`;
+                // Try the correct Labelary endpoint format from their documentation
+                const labelaryUrl = `https://api.labelary.com/v1/graphics/4x6/203`;
                 console.log('Labelary API URL:', labelaryUrl);
                 
                 // Use POST method with ZPL data in body
@@ -508,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
             
             // Parse ZPL and create visual representation
-            let labelText = 'ZPL Content';
+            let labelTexts = [];
             let hasContent = false;
             
             // Try to extract text content from ZPL
@@ -516,35 +511,42 @@ document.addEventListener('DOMContentLoaded', function() {
             const fdMatches = zplData.match(/\^FD([^^]*)/g);
             if (fdMatches && fdMatches.length > 0) {
                 // Extract text from all FD commands
-                const texts = fdMatches.map(match => match.substring(3)); // Remove ^FD
-                labelText = texts.join(' ').substring(0, 50); // Limit length
+                labelTexts = fdMatches.map(match => match.substring(3)); // Remove ^FD
                 hasContent = true;
+                console.log('Found FD texts:', labelTexts);
             }
             
             // If no FD commands found, try to extract any readable text
             if (!hasContent) {
                 const readableText = zplData.replace(/[\x00-\x1F\x7F-\xFF]/g, ' ').trim();
                 if (readableText.length > 0) {
-                    labelText = readableText.substring(0, 50);
+                    labelTexts = [readableText.substring(0, 100)];
                     hasContent = true;
                 }
             }
             
             // Always draw something, even if parsing fails
-            if (hasContent) {
+            if (hasContent && labelTexts.length > 0) {
                 // Text styling (simulating ZPL font)
                 ctx.fillStyle = '#000000';
-                ctx.font = 'bold 36px monospace';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.font = 'bold 24px monospace';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
                 
-                // Position text in center of label
-                ctx.fillText(labelText, canvas.width / 2, canvas.height / 2);
+                // Position text in multiple lines to simulate label layout
+                let yPosition = 100;
+                labelTexts.forEach((text, index) => {
+                    if (index < 8) { // Limit to 8 lines to fit on label
+                        const displayText = text.length > 40 ? text.substring(0, 40) + '...' : text;
+                        ctx.fillText(displayText, 50, yPosition);
+                        yPosition += 40;
+                    }
+                });
                 
                 // Add subtitle
                 ctx.font = '16px monospace';
                 ctx.fillStyle = '#666666';
-                ctx.fillText('ZPL Preview (Local)', canvas.width / 2, canvas.height / 2 + 40);
+                ctx.fillText('ZPL Preview (Local)', 50, yPosition + 20);
             } else {
                 // Fallback: show ZPL structure
                 ctx.fillStyle = '#000000';
@@ -561,7 +563,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add ZPL indicator
             ctx.font = '14px monospace';
             ctx.fillStyle = '#999999';
-            ctx.fillText('ZPL Data Length: ' + zplData.length + ' chars', canvas.width / 2, canvas.height - 30);
+            ctx.fillText('ZPL Data Length: ' + zplData.length + ' chars', 50, canvas.height - 30);
             
             // Convert to data URL
             const imageUrl = canvas.toDataURL('image/png');
