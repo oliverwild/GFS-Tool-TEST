@@ -406,14 +406,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Generated ZPL data:', zplData.substring(0, 200));
 
                 // Call Labelary API with ZPL data using correct endpoint format
-                // Format: /v1/printers/{dpmm}/labels/{width}x{height}/{index}
-                // 203 DPI = 8 dpmm (dots per mm), 4x6 inches = 101.6x152.4 mm
-                const dpmm = 8; // 203 DPI = 8 dots per mm
-                const width = 101.6; // 4 inches in mm
-                const height = 152.4; // 6 inches in mm
-                const index = 0; // First label
+                // Format: /v1/graphics/{width}x{height}/{dpi} (this is the working endpoint)
+                // 4x6 inches at 203 DPI
+                const width = 4; // 4 inches
+                const height = 6; // 6 inches
+                const dpi = 203; // 203 DPI
                 
-                const labelaryUrl = `https://api.labelary.com/v1/printers/${dpmm}/labels/${width}x${height}/${index}`;
+                const labelaryUrl = `https://api.labelary.com/v1/graphics/${width}x${height}/${dpi}`;
                 console.log('Labelary API URL:', labelaryUrl);
                 
                 // Use POST method with ZPL data in body
@@ -447,15 +446,44 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function extractTextFromPDF(data) {
-            // Simple text extraction from PDF data
-            // In a real implementation, you might use a PDF.js library
+            // Improved text extraction from PDF data
             try {
                 const text = String.fromCharCode(...data);
-                // Extract text content (simplified)
+                console.log('PDF text content preview:', text.substring(0, 200));
+                
+                // Try multiple text extraction methods
+                
+                // Method 1: Look for /Text objects
                 const textMatch = text.match(/\/Text\s*\[(.*?)\]/);
-                return textMatch ? textMatch[1] : 'PDF Content';
+                if (textMatch) {
+                    console.log('Found text via /Text method:', textMatch[1]);
+                    return textMatch[1];
+                }
+                
+                // Method 2: Look for (text) patterns (common in PDFs)
+                const parenTextMatch = text.match(/\(([^)]{5,})\)/g);
+                if (parenTextMatch && parenTextMatch.length > 0) {
+                    const extractedText = parenTextMatch.slice(0, 3).map(t => t.slice(1, -1)).join(' ');
+                    console.log('Found text via parentheses method:', extractedText);
+                    return extractedText.substring(0, 100);
+                }
+                
+                // Method 3: Look for readable text sequences
+                const readableText = text.replace(/[\x00-\x1F\x7F-\xFF]/g, ' ')
+                                       .replace(/\s+/g, ' ')
+                                       .trim();
+                
+                if (readableText.length > 10) {
+                    console.log('Found readable text:', readableText.substring(0, 100));
+                    return readableText.substring(0, 100);
+                }
+                
+                console.log('No readable text found, using fallback');
+                return 'PDF Content (Text extraction failed)';
+                
             } catch (error) {
-                return 'PDF Content';
+                console.error('PDF text extraction error:', error);
+                return 'PDF Content (Error during extraction)';
             }
         }
 
