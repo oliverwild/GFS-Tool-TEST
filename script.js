@@ -375,15 +375,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     zplData = `^XA^FO50,50^A0N,50,50^FD${dataType} Data^FS^XZ`;
                 }
 
-                // Call Labelary API with ZPL data
-                const labelaryUrl = `https://api.labelary.com/v1/graphics/4x6/203dpi/${encodeURIComponent(zplData)}`;
+                // Call Labelary API with ZPL data using correct endpoint format
+                // Format: /v1/printers/{dpmm}/labels/{width}x{height}/{index}
+                // 203 DPI = 8 dpmm (dots per mm), 4x6 inches = 101.6x152.4 mm
+                const dpmm = 8; // 203 DPI = 8 dots per mm
+                const width = 101.6; // 4 inches in mm
+                const height = 152.4; // 6 inches in mm
+                const index = 0; // First label
                 
-                // Try direct Labelary call first
+                const labelaryUrl = `https://api.labelary.com/v1/printers/${dpmm}/labels/${width}x${height}/${index}`;
+                
+                // Use POST method with ZPL data in body
                 fetch(labelaryUrl, {
-                    method: 'GET',
+                    method: 'POST',
                     headers: {
-                        'Accept': 'image/png'
-                    }
+                        'Accept': 'image/png',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: zplData
                 })
                 .then(response => {
                     if (!response.ok) {
