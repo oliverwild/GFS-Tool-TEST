@@ -335,28 +335,128 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function generateLabelPreview(data, dataType) {
-            // For now, we'll create a placeholder preview
-            // In a real implementation, this would call the Labelary API
-            
             const previewImg = document.getElementById('label-preview-img');
             const dataTypeSpan = document.getElementById('data-type');
             const processedStatus = document.getElementById('processed-status');
             
             // Update info
             dataTypeSpan.textContent = dataType;
-            processedStatus.textContent = 'Successfully processed';
+            processedStatus.textContent = 'Processing with Labelary...';
             
-            // Create a placeholder image (in real implementation, this would be from Labelary)
-            if (dataType === 'PDF') {
-                // For PDFs, we'd normally convert to image via Labelary
-                createPlaceholderImage(previewImg, 'PDF Label', '#667eea');
-            } else if (dataType.includes('Image')) {
-                // For images, we could display them directly
-                createPlaceholderImage(previewImg, 'Image Label', '#10b981');
-            } else {
-                // For text or binary, create a text representation
-                createPlaceholderImage(previewImg, 'Text/Binary Label', '#f59e0b');
+            // Call Labelary API to generate real label preview
+            callLabelaryAPI(data, dataType).then(labelImageUrl => {
+                // Display the real label from Labelary
+                previewImg.src = labelImageUrl;
+                processedStatus.textContent = 'Label generated successfully';
+                previewImg.style.display = 'block';
+            }).catch(error => {
+                console.error('Labelary API error:', error);
+                // Fallback to placeholder if API fails
+                createPlaceholderImage(previewImg, `${dataType} Label`, '#f59e0b');
+                processedStatus.textContent = 'API failed, showing placeholder';
+            });
+        }
+
+        function callLabelaryAPI(data, dataType) {
+            return new Promise((resolve, reject) => {
+                // Convert data to ZPL (Zebra Programming Language) format
+                let zplData = '';
+                
+                if (dataType === 'Text') {
+                    // Convert text to ZPL format
+                    const text = String.fromCharCode(...data);
+                    zplData = `^XA^FO50,50^A0N,50,50^FD${text}^FS^XZ`;
+                } else if (dataType === 'PDF') {
+                    // For PDFs, we'll extract text content and convert to ZPL
+                    const text = extractTextFromPDF(data);
+                    zplData = `^XA^FO50,50^A0N,50,50^FD${text}^FS^XZ`;
+                } else {
+                    // For other data types, create a generic label
+                    zplData = `^XA^FO50,50^A0N,50,50^FD${dataType} Data^FS^XZ`;
+                }
+
+                // Call Labelary API with ZPL data
+                const labelaryUrl = `https://api.labelary.com/v1/graphics/4x6/203dpi/${encodeURIComponent(zplData)}`;
+                
+                // Try direct Labelary call first
+                fetch(labelaryUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'image/png'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const imageUrl = URL.createObjectURL(blob);
+                    resolve(imageUrl);
+                })
+                .catch(error => {
+                    console.error('Direct Labelary API call failed:', error);
+                    // If direct call fails due to CORS, create a local ZPL preview
+                    createLocalZPLPreview(zplData, resolve);
+                });
+            });
+        }
+
+        function extractTextFromPDF(data) {
+            // Simple text extraction from PDF data
+            // In a real implementation, you might use a PDF.js library
+            try {
+                const text = String.fromCharCode(...data);
+                // Extract text content (simplified)
+                const textMatch = text.match(/\/Text\s*\[(.*?)\]/);
+                return textMatch ? textMatch[1] : 'PDF Content';
+            } catch (error) {
+                return 'PDF Content';
             }
+        }
+
+        function createLocalZPLPreview(zplData, resolve) {
+            // Create a local preview that simulates what the ZPL would look like
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size to 4x6 label proportions (203 DPI)
+            canvas.width = 812; // 4 inches * 203 DPI
+            canvas.height = 1218; // 6 inches * 203 DPI
+            
+            // Background (white label)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Border (black label border)
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+            
+            // Parse ZPL and create visual representation
+            const textMatch = zplData.match(/^FD(.+?)\^FS/);
+            if (textMatch) {
+                const labelText = textMatch[1];
+                
+                // Text styling (simulating ZPL font)
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 48px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // Position text in center of label
+                ctx.fillText(labelText, canvas.width / 2, canvas.height / 2);
+                
+                // Add ZPL indicator
+                ctx.font = '16px monospace';
+                ctx.fillStyle = '#666666';
+                ctx.fillText('ZPL Preview (Local)', canvas.width / 2, canvas.height - 50);
+            }
+            
+            // Convert to data URL
+            const imageUrl = canvas.toDataURL('image/png');
+            resolve(imageUrl);
         }
 
         function createPlaceholderImage(imgElement, text, color) {
