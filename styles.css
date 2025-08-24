@@ -125,36 +125,9 @@ p {
     font-size: 2rem;
 }
 
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-}
+/* Navigation menu removed for simplified team interface */
 
-.nav-menu a {
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: color 0.3s ease;
-}
-
-.nav-menu a:hover {
-    color: #667eea;
-}
-
-.hamburger {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-}
-
-.hamburger span {
-    width: 25px;
-    height: 3px;
-    background: #333;
-    margin: 3px 0;
-    transition: 0.3s;
-}
+/* Hamburger menu removed for simplified team interface */
 
 /* Tools Section (Now Main Landing) */
 .tools-section {
@@ -165,13 +138,13 @@ p {
     align-items: center;
 }
 
-.hero-content {
+.tools-header {
     text-align: center;
     margin-bottom: 4rem;
 }
 
-.hero-title {
-    font-size: 3.5rem;
+.tools-header h1 {
+    font-size: 3rem;
     font-weight: 700;
     color: #333;
     margin-bottom: 1rem;
@@ -181,21 +154,11 @@ p {
     background-clip: text;
 }
 
-.hero-subtitle {
-    font-size: 1.5rem;
+.tools-header p {
+    font-size: 1.2rem;
     color: #667eea;
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 1rem;
-}
-
-.hero-description {
-    font-size: 1.1rem;
-    color: #666;
-    margin-bottom: 2rem;
-    line-height: 1.8;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 /* Tools Grid */
@@ -291,28 +254,7 @@ p {
     color: #667eea;
 }
 
-.social-links {
-    display: flex;
-    gap: 1rem;
-}
-
-.social-links a {
-    width: 40px;
-    height: 40px;
-    background: #374151;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.social-links a:hover {
-    background: #667eea;
-    transform: translateY(-2px);
-}
+/* Social links removed for simplified team interface */
 
 .footer-bottom {
     text-align: center;
@@ -323,19 +265,13 @@ p {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .hamburger {
-        display: flex;
-    }
+    /* Mobile navigation simplified for team interface */
 
-    .nav-menu {
-        display: none;
-    }
-
-    .hero-title {
+    .tools-header h1 {
         font-size: 2.5rem;
     }
 
-    .hero-subtitle {
+    .tools-header p {
         font-size: 1.2rem;
     }
 
@@ -353,11 +289,11 @@ p {
 }
 
 @media (max-width: 480px) {
-    .hero-title {
+    .tools-header h1 {
         font-size: 2rem;
     }
 
-    .hero-subtitle {
+    .tools-header p {
         font-size: 1.1rem;
     }
 
