@@ -135,6 +135,66 @@
                     </div>
                 </div>
 
+                <!-- Label Preview Tool Content -->
+                <div id="label-preview-content" class="tool-content" style="display: none;">
+                    <div class="input-section">
+                        <h3>Base64 Label Data</h3>
+                        <div class="base64-input-group">
+                            <label for="base64-input">Paste your Base64 encoded label data:</label>
+                            <textarea id="base64-input" placeholder="Paste Base64 string here..." rows="8"></textarea>
+                            <div class="input-info">
+                                <p><strong>Data Length:</strong> <span id="data-length">0 characters</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="process-section">
+                        <h3>Process Label</h3>
+                        <div class="process-controls">
+                            <button class="btn btn-primary" id="process-label">Process Label</button>
+                            <button class="btn btn-outline" id="clear-label">Clear</button>
+                        </div>
+                        <div class="process-status" id="process-status" style="display: none;">
+                            <div class="status-step" id="step-decode">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Decoding Base64...</span>
+                            </div>
+                            <div class="status-step" id="step-convert">
+                                <i class="fas fa-circle"></i>
+                                <span>Converting to PDF...</span>
+                            </div>
+                            <div class="status-step" id="step-preview">
+                                <i class="fas fa-circle"></i>
+                                <span>Generating Preview...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="results-section" id="label-results" style="display: none;">
+                        <h3>Label Preview</h3>
+                        <div class="preview-container">
+                            <div class="preview-image">
+                                <img id="label-preview-img" src="" alt="Label Preview">
+                            </div>
+                            <div class="preview-info">
+                                <p><strong>Data Type:</strong> <span id="data-type">-</span></p>
+                                <p><strong>Processed:</strong> <span id="processed-status">-</span></p>
+                            </div>
+                        </div>
+                        <div class="preview-actions">
+                            <button class="btn btn-secondary" id="download-png">Download PNG</button>
+                        </div>
+                    </div>
+
+                    <div class="error-section" id="label-error" style="display: none;">
+                        <h3>Processing Error</h3>
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p id="error-text">An error occurred during processing.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Default WIP Notice for other tools -->
                 <div class="wip-notice" id="default-wip">
                     <i class="fas fa-tools"></i>
