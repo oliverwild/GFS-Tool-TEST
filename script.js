@@ -82,6 +82,9 @@ document.addEventListener('DOMContentLoaded', function() {
             modalTitle.textContent = toolName;
             toolModal.style.display = 'block';
             
+            // Show appropriate tool content
+            showToolContent(toolType);
+            
             // Add click animation
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
@@ -89,6 +92,130 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 150);
         });
     });
+
+    // Show tool content based on tool type
+    function showToolContent(toolType) {
+        // Hide all tool content and show default WIP
+        document.querySelectorAll('.tool-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        document.getElementById('default-wip').style.display = 'block';
+
+        // Show specific tool content if available
+        if (toolType === 'range-splitting') {
+            document.getElementById('default-wip').style.display = 'none';
+            document.getElementById('range-splitting-content').style.display = 'block';
+            initializeRangeSplitter();
+        }
+    }
+
+    // Initialize Range Splitter functionality
+    function initializeRangeSplitter() {
+        const startInput = document.getElementById('start-range');
+        const endInput = document.getElementById('end-range');
+        const percentageSlider = document.getElementById('split-percentage');
+        const percentageDisplay = document.getElementById('percentage-display');
+        const calculateBtn = document.getElementById('calculate-split');
+        const copyBtn = document.getElementById('copy-results');
+        const clearBtn = document.getElementById('clear-inputs');
+
+        // Update percentage display when slider changes
+        percentageSlider.addEventListener('input', function() {
+            percentageDisplay.textContent = this.value + '%';
+            if (startInput.value && endInput.value) {
+                calculateSplit();
+            }
+        });
+
+        // Calculate split when inputs change
+        startInput.addEventListener('input', calculateSplit);
+        endInput.addEventListener('input', calculateSplit);
+
+        // Calculate button click
+        calculateBtn.addEventListener('click', calculateSplit);
+
+        // Copy results button
+        copyBtn.addEventListener('click', copyResults);
+
+        // Clear inputs button
+        clearBtn.addEventListener('click', clearInputs);
+
+        function calculateSplit() {
+            const start = parseInt(startInput.value) || 0;
+            const end = parseInt(endInput.value) || 0;
+            const percentage = parseInt(percentageSlider.value) || 50;
+
+            if (start >= end) {
+                updateRangeInfo('Invalid range', 'Start must be less than end');
+                clearResults();
+                return;
+            }
+
+            const totalRange = end - start + 1;
+            const firstRangeCount = Math.floor(totalRange * (percentage / 100));
+            const secondRangeCount = totalRange - firstRangeCount;
+
+            const firstRangeEnd = start + firstRangeCount - 1;
+            const secondRangeStart = firstRangeEnd + 1;
+
+            // Update range info
+            updateRangeInfo(`${start} to ${end}`, totalRange);
+
+            // Update results
+            updateResults(
+                `${start} to ${firstRangeEnd}`,
+                firstRangeCount,
+                `${secondRangeStart} to ${end}`,
+                secondRangeCount
+            );
+        }
+
+        function updateRangeInfo(range, count) {
+            document.getElementById('total-range').textContent = range;
+            document.getElementById('available-numbers').textContent = count;
+        }
+
+        function updateResults(firstRange, firstCount, secondRange, secondCount) {
+            document.getElementById('first-range').textContent = firstRange;
+            document.getElementById('first-count').textContent = `${firstCount} numbers`;
+            document.getElementById('second-range').textContent = secondRange;
+            document.getElementById('second-count').textContent = `${secondCount} numbers`;
+        }
+
+        function clearResults() {
+            document.getElementById('first-range').textContent = '-';
+            document.getElementById('first-count').textContent = '-';
+            document.getElementById('second-range').textContent = '-';
+            document.getElementById('second-count').textContent = '-';
+        }
+
+        function copyResults() {
+            const firstRange = document.getElementById('first-range').textContent;
+            const secondRange = document.getElementById('second-range').textContent;
+            
+            if (firstRange !== '-' && secondRange !== '-') {
+                const results = `Range Split Results:\nFirst Range: ${firstRange}\nSecond Range: ${secondRange}`;
+                navigator.clipboard.writeText(results).then(() => {
+                    // Show success feedback
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy Results';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            }
+        }
+
+        function clearInputs() {
+            startInput.value = '';
+            endInput.value = '';
+            percentageSlider.value = 50;
+            percentageDisplay.textContent = '50%';
+            updateRangeInfo('-', '-');
+            clearResults();
+        }
+    }
 
     // Open wiki modal
     document.querySelectorAll('.wiki-tool').forEach(button => {

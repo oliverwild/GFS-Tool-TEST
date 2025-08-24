@@ -84,7 +84,59 @@
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="wip-notice">
+                <!-- Range Splitting Tool Content -->
+                <div id="range-splitting-content" class="tool-content" style="display: none;">
+                    <div class="input-section">
+                        <h3>Range Input</h3>
+                        <div class="range-inputs">
+                            <div class="input-group">
+                                <label for="start-range">Start Range:</label>
+                                <input type="number" id="start-range" placeholder="e.g., 1000" min="0">
+                            </div>
+                            <div class="input-group">
+                                <label for="end-range">End Range:</label>
+                                <input type="number" id="end-range" placeholder="e.g., 4000" min="0">
+                            </div>
+                        </div>
+                        <div class="range-info">
+                            <p><strong>Total Range:</strong> <span id="total-range">-</span></p>
+                            <p><strong>Available Numbers:</strong> <span id="available-numbers">-</span></p>
+                        </div>
+                    </div>
+
+                    <div class="split-section">
+                        <h3>Split Percentage</h3>
+                        <div class="percentage-control">
+                            <label for="split-percentage">Split at: <span id="percentage-display">50%</span></label>
+                            <input type="range" id="split-percentage" min="1" max="99" value="50">
+                        </div>
+                    </div>
+
+                    <div class="results-section">
+                        <h3>Split Results</h3>
+                        <div class="split-results">
+                            <div class="result-card">
+                                <h4>First Range</h4>
+                                <p class="range-display" id="first-range">-</p>
+                                <p class="range-count" id="first-count">-</p>
+                            </div>
+                            <div class="result-card">
+                                <h4>Second Range</h4>
+                                <p class="range-display" id="second-range">-</p>
+                                <p class="range-count" id="second-count">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-primary" id="calculate-split">Calculate Split</button>
+                        <button class="btn btn-secondary" id="copy-results">Copy Results</button>
+                        <button class="btn btn-outline" id="clear-inputs">Clear</button>
+                    </div>
+                </div>
+
+                <!-- Default WIP Notice for other tools -->
+                <div class="wip-notice" id="default-wip">
                     <i class="fas fa-tools"></i>
                     <h3>Work In Progress</h3>
                     <p>This tool is currently under development. Check back soon for the full functionality!</p>
