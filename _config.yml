@@ -1,0 +1,92 @@
+# GFS Tools GitHub Pages Configuration
+
+# Site settings
+title: GFS Tools
+description: Professional Shipping & Logistics Solutions
+author: GFS Tools Team
+email: support@gfstools.com
+
+# URL and baseurl
+url: "https://yourusername.github.io"
+baseurl: ""
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+# Collections
+collections:
+  tools:
+    output: true
+    permalink: /tools/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "tools"
+    values:
+      layout: "tool"
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Exclude from processing
+exclude:
+  - README.md
+  - _config.yml
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+
+# Include files
+include:
+  - _assets
+  - _data
+
+# Pagination
+paginate: 10
+paginate_path: "/tools/page:num/"
+
+# Social media
+social:
+  name: GFS Tools
+  links:
+    - https://github.com/yourusername
+    - https://linkedin.com/company/gfstools
+    - https://twitter.com/gfstools
+
+# Analytics (optional)
+google_analytics: # UA-XXXXXXXXX
+google_tag_manager: # GTM-XXXXXXX
+
+# Comments (optional)
+disqus:
+  shortname: # your-disqus-shortname
+
+# Search
+search: true
+search_full_content: true
+
+# Sitemap
+sitemap:
+  exclude:
+    - /404.html
+    - /robots.txt
+    - /sitemap.xml
+
+# Robots
+robots:
+  user_agent: "*"
+  disallow:
+    - /admin/
+    - /private/
+    - /temp/
+
+# Security headers
+security_headers:
+  content_security_policy: "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:;"
