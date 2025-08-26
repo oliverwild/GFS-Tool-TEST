@@ -426,6 +426,37 @@ document.addEventListener('DOMContentLoaded', function() {
             dataTypeSpan.textContent = dataType;
             processedStatus.textContent = 'Processing with Labelary...';
             
+            // Special handling for PDFs - convert Base64 to actual PDF
+            if (dataType === 'PDF') {
+                // Convert the decoded data back to Base64 for PDF creation
+                const pdfBase64 = btoa(String.fromCharCode(...data));
+                const pdfDataUrl = `data:application/pdf;base64,${pdfBase64}`;
+                
+                // Create a download link for the PDF
+                const downloadLink = document.createElement('a');
+                downloadLink.href = pdfDataUrl;
+                downloadLink.download = 'decoded_document.pdf';
+                downloadLink.textContent = 'Download PDF';
+                downloadLink.className = 'pdf-download-btn';
+                downloadLink.style.cssText = 'display: inline-block; padding: 10px 20px; background: #3b82f6; color: white; text-decoration: none; border-radius: 5px; margin: 10px;';
+                
+                // Clear the preview area and show PDF info
+                previewImg.style.display = 'none';
+                const previewContainer = previewImg.parentElement;
+                previewContainer.innerHTML = '';
+                previewContainer.appendChild(downloadLink);
+                
+                // Add PDF preview info
+                const pdfInfo = document.createElement('div');
+                pdfInfo.innerHTML = '<h3>PDF Document Detected</h3><p>Your Base64 data has been successfully decoded as a PDF document.</p><p>Click the button above to download the PDF file.</p>';
+                pdfInfo.style.cssText = 'text-align: center; margin: 20px; color: #374151;';
+                previewContainer.appendChild(pdfInfo);
+                
+                processedStatus.textContent = 'PDF created successfully - ready for download';
+                console.log('PDF detected - created download link');
+                return;
+            }
+            
             // Call Labelary API to generate real label preview
             callLabelaryAPI(data, dataType).then(labelImageUrl => {
                 // Display the real label from Labelary
@@ -468,10 +499,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (dataType === 'ZPL Text') {
                     // Use the ZPL content directly since it's already in ZPL format
                     zplData = String.fromCharCode(...data);
-                } else if (dataType === 'PDF') {
-                    // For PDFs, we'll extract text content and convert to ZPL
-                    const text = extractTextFromPDF(data);
-                    zplData = `^XA^FO50,50^A0N,50,50^FD${text}^FS^XZ`;
                 } else if (dataType === 'Binary Data') {
                     // For binary data, create a generic label indicating the data type
                     zplData = `^XA^FO50,50^A0N,50,50^FDBinary Data^FS^XZ`;
