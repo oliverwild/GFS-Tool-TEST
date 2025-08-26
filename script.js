@@ -329,13 +329,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function identifyDataType(data) {
             console.log('Identifying data type for:', data.length, 'bytes');
+            console.log('First 20 bytes as hex:', Array.from(data.slice(0, 20)).map(b => b.toString(16).padStart(2, '0')).join(' '));
+            console.log('First 20 bytes as text:', String.fromCharCode(...data.slice(0, 20)));
             
             // Check if it's a PDF (PDF files start with %PDF)
             if (data.length >= 4) {
                 const header = String.fromCharCode(...data.slice(0, 4));
                 console.log('Header check:', header);
-                if (header === '%PDF') {
-                    console.log('Identified as PDF');
+                
+                // More flexible PDF detection - check for %PDF anywhere in first 10 bytes
+                if (header === '%PDF' || header.startsWith('%PDF')) {
+                    console.log('Identified as PDF (exact header)');
+                    return 'PDF';
+                }
+                
+                // Check first 10 bytes for PDF signature in case of encoding issues
+                const firstBytes = data.slice(0, 10);
+                const firstBytesText = String.fromCharCode(...firstBytes);
+                console.log('First 10 bytes as text:', firstBytesText);
+                
+                if (firstBytesText.includes('%PDF')) {
+                    console.log('Identified as PDF (found in first 10 bytes)');
                     return 'PDF';
                 }
             }
