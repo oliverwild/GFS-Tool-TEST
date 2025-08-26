@@ -84,14 +84,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show appropriate tool content
             showToolContent(toolType);
-            
-            // Add click animation
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
-        });
+        
+        // Add click animation
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            this.style.transform = 'scale(1)';
+        }, 150);
     });
+});
 
     // Show tool content based on tool type
     function showToolContent(toolType) {
@@ -285,8 +285,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function cleanAndDecodeBase64(base64String) {
             try {
-                // Clean the Base64 string (remove whitespace, newlines, etc.)
-                const cleaned = base64String.replace(/\s/g, '');
+                // More comprehensive Base64 cleaning
+                let cleaned = base64String;
+                
+                // Remove all whitespace, newlines, carriage returns
+                cleaned = cleaned.replace(/[\s\r\n\t]/g, '');
+                
+                // Remove any non-Base64 characters (keep only A-Z, a-z, 0-9, +, /, =)
+                cleaned = cleaned.replace(/[^A-Za-z0-9+/=]/g, '');
+                
+                // Fix URL-safe Base64 if present
+                cleaned = cleaned.replace(/-/g, '+').replace(/_/g, '/');
+                
+                // Ensure proper padding
+                while (cleaned.length % 4 !== 0) {
+                    cleaned += '=';
+                }
+                
+                // Remove excessive padding
+                cleaned = cleaned.replace(/=+$/, '');
+                while (cleaned.length % 4 !== 0) {
+                    cleaned += '=';
+                }
+                
+                console.log('Cleaned Base64 length:', cleaned.length);
+                console.log('Cleaned Base64 preview:', cleaned.substring(0, 50) + '...');
                 
                 // Try to decode
                 const decoded = atob(cleaned);
@@ -299,7 +322,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 return bytes;
             } catch (error) {
-                throw new Error('Invalid Base64 data. Please check your input.');
+                console.error('Base64 cleaning/decoding error:', error);
+                throw new Error(`Base64 processing failed: ${error.message}. Please check your input format.`);
             }
         }
 
@@ -451,8 +475,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     // If direct call fails due to CORS, create a local ZPL preview
                     console.log('Falling back to local ZPL preview');
                     createLocalZPLPreview(zplData, resolve);
-                });
-            });
+    });
+});
         }
 
         function extractTextFromPDF(data) {
