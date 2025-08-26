@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const totalRange = end - start + 1;
+            const totalRange = end - start;
             const firstRangeCount = Math.floor(totalRange * (percentage / 100));
             const secondRangeCount = totalRange - firstRangeCount;
 
