@@ -230,8 +230,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const processStatus = document.getElementById('process-status');
         const labelResults = document.getElementById('label-results');
         const labelError = document.getElementById('label-error');
-        const downloadBtn = document.getElementById('download-png');
-
         // Update data length as user types
         base64Input.addEventListener('input', function() {
             const length = this.value.length;
@@ -243,9 +241,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Clear button click
         clearBtn.addEventListener('click', clearLabelInputs);
-
-        // Download button click
-        downloadBtn.addEventListener('click', downloadLabel);
 
         function processLabel() {
             const base64Data = base64Input.value.trim();
@@ -454,13 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add PDF preview
                 previewContainer.appendChild(pdfEmbed);
                 
-                // Add adaptive download button (can download PDF or PNG depending on content)
-                const downloadLink = document.createElement('a');
-                downloadLink.href = pdfDataUrl;
-                downloadLink.download = 'decoded_document.pdf';
-                downloadLink.textContent = 'Download Preview';
-                downloadLink.style.cssText = 'display: inline-block; padding: 12px 24px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; margin: 15px; font-weight: bold;';
-                previewContainer.appendChild(downloadLink);
+                // No download button needed - users can right-click to save
                 
                 processedStatus.textContent = 'PDF preview created successfully';
                 console.log('PDF preview created and displayed');
@@ -778,33 +767,7 @@ document.addEventListener('DOMContentLoaded', function() {
             imgElement.src = canvas.toDataURL('image/png');
         }
 
-        function downloadLabel() {
-            const imgElement = document.getElementById('label-preview-img');
-            const previewContainer = imgElement.parentElement;
-            
-            // Check if we're showing a PDF (look for embed element)
-            const pdfEmbed = previewContainer.querySelector('embed[type="application/pdf"]');
-            if (pdfEmbed) {
-                // Download PDF
-                const link = document.createElement('a');
-                link.download = 'decoded_document.pdf';
-                link.href = pdfEmbed.src;
-                link.click();
-                return;
-            }
-            
-            // Check if we have an image to download
-            if (imgElement.src && imgElement.style.display !== 'none') {
-                const link = document.createElement('a');
-                link.download = 'label-preview.png';
-                link.href = imgElement.src;
-                link.click();
-                return;
-            }
-            
-            // If nothing to download, show message
-            console.log('No content available for download');
-        }
+
 
         function clearLabelInputs() {
             base64Input.value = '';
