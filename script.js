@@ -365,18 +365,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 return 'ZPL Text';
             }
             
-            // More strict text detection - only allow printable ASCII and basic punctuation
+            // Ultra-strict text detection - only allow printable ASCII and basic punctuation
+            // Exclude extended ASCII characters that often indicate binary data
             if (text.match(/^[\x20-\x7E\t\n\r]*$/)) {
                 // Additional check: ensure it's mostly readable text, not binary
                 const readableChars = text.replace(/[\x00-\x1F\x7F]/g, '').length;
                 const totalChars = text.length;
                 const readabilityRatio = readableChars / totalChars;
                 
-                if (readabilityRatio > 0.8) { // 80% must be readable
-                    console.log('Identified as Text (readability ratio:', readabilityRatio.toFixed(2) + ')');
+                // Also check for common binary patterns
+                const binaryPatterns = /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F\xA0-\xFF]/g;
+                const binaryCharCount = (text.match(binaryPatterns) || []).length;
+                const binaryRatio = binaryCharCount / totalChars;
+                
+                console.log('Text analysis:', { 
+                    readableChars, 
+                    totalChars, 
+                    readabilityRatio: readabilityRatio.toFixed(3),
+                    binaryCharCount,
+                    binaryRatio: binaryRatio.toFixed(3)
+                });
+                
+                // Must be 90% readable AND have less than 5% binary characters
+                if (readabilityRatio > 0.9 && binaryRatio < 0.05) {
+                    console.log('Identified as Text (high quality)');
+                    return 'Text';
+                } else if (readabilityRatio > 0.8 && binaryRatio < 0.1) {
+                    console.log('Identified as Text (acceptable quality)');
                     return 'Text';
                 } else {
-                    console.log('Rejected as text - too many non-readable characters (ratio:', readabilityRatio.toFixed(2) + ')');
+                    console.log('Rejected as text - poor quality (readable:', readabilityRatio.toFixed(3) + ', binary:', binaryRatio.toFixed(3) + ')');
                     return 'Binary Data';
                 }
             }
@@ -405,9 +423,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Label preview displayed successfully');
             }).catch(error => {
                 console.error('Labelary API error:', error);
-                // Fallback to placeholder if API fails
-                createPlaceholderImage(previewImg, `${dataType} Label`, '#f59e0b');
-                processedStatus.textContent = 'API failed, showing placeholder';
+                
+                // Special handling for binary data
+                if (dataType === 'Binary Data') {
+                    createPlaceholderImage(previewImg, 'Binary Data - Cannot Preview', '#dc2626');
+                    processedStatus.textContent = 'Binary data cannot be converted to label preview';
+                } else {
+                    // Fallback to placeholder if API fails
+                    createPlaceholderImage(previewImg, `${dataType} Label`, '#f59e0b');
+                    processedStatus.textContent = 'API failed, showing placeholder';
+                }
+                
                 previewImg.style.display = 'block';
                 previewImg.style.visibility = 'visible';
                 console.log('Fallback placeholder created');
@@ -432,6 +458,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // For PDFs, we'll extract text content and convert to ZPL
                     const text = extractTextFromPDF(data);
                     zplData = `^XA^FO50,50^A0N,50,50^FD${text}^FS^XZ`;
+                } else if (dataType === 'Binary Data') {
+                    // For binary data, create a generic label indicating the data type
+                    zplData = `^XA^FO50,50^A0N,50,50^FDBinary Data^FS^XZ`;
                 } else {
                     // For other data types, create a generic label
                     zplData = `^XA^FO50,50^A0N,50,50^FD${dataType} Data^FS^XZ`;
