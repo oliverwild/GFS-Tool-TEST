@@ -365,10 +365,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 return 'ZPL Text';
             }
             
-            // Check if it's readable text (including special characters)
-            if (text.match(/^[\x20-\x7E\t\n\r\x80-\xFF]*$/)) {
-                console.log('Identified as Text');
-                return 'Text';
+            // More strict text detection - only allow printable ASCII and basic punctuation
+            if (text.match(/^[\x20-\x7E\t\n\r]*$/)) {
+                // Additional check: ensure it's mostly readable text, not binary
+                const readableChars = text.replace(/[\x00-\x1F\x7F]/g, '').length;
+                const totalChars = text.length;
+                const readabilityRatio = readableChars / totalChars;
+                
+                if (readabilityRatio > 0.8) { // 80% must be readable
+                    console.log('Identified as Text (readability ratio:', readabilityRatio.toFixed(2) + ')');
+                    return 'Text';
+                } else {
+                    console.log('Rejected as text - too many non-readable characters (ratio:', readabilityRatio.toFixed(2) + ')');
+                    return 'Binary Data';
+                }
             }
             
             console.log('Identified as Binary Data');
