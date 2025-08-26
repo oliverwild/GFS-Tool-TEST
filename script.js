@@ -426,11 +426,19 @@ document.addEventListener('DOMContentLoaded', function() {
             dataTypeSpan.textContent = dataType;
             processedStatus.textContent = 'Processing with Labelary...';
             
-            // Special handling for PDFs - convert Base64 to actual PDF
+            // Special handling for PDFs - convert Base64 to actual PDF and show preview
             if (dataType === 'PDF') {
                 // Convert the decoded data back to Base64 for PDF creation
                 const pdfBase64 = btoa(String.fromCharCode(...data));
                 const pdfDataUrl = `data:application/pdf;base64,${pdfBase64}`;
+                
+                // Create an embedded PDF viewer
+                const pdfEmbed = document.createElement('embed');
+                pdfEmbed.src = pdfDataUrl;
+                pdfEmbed.type = 'application/pdf';
+                pdfEmbed.width = '100%';
+                pdfEmbed.height = '500';
+                pdfEmbed.style.cssText = 'border: 2px solid #e5e7eb; border-radius: 8px; margin: 10px 0;';
                 
                 // Create a download link for the PDF
                 const downloadLink = document.createElement('a');
@@ -440,20 +448,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 downloadLink.className = 'pdf-download-btn';
                 downloadLink.style.cssText = 'display: inline-block; padding: 10px 20px; background: #3b82f6; color: white; text-decoration: none; border-radius: 5px; margin: 10px;';
                 
-                // Clear the preview area and show PDF info
+                // Clear the preview area and show PDF preview
                 previewImg.style.display = 'none';
                 const previewContainer = previewImg.parentElement;
                 previewContainer.innerHTML = '';
-                previewContainer.appendChild(downloadLink);
                 
                 // Add PDF preview info
                 const pdfInfo = document.createElement('div');
-                pdfInfo.innerHTML = '<h3>PDF Document Detected</h3><p>Your Base64 data has been successfully decoded as a PDF document.</p><p>Click the button above to download the PDF file.</p>';
-                pdfInfo.style.cssText = 'text-align: center; margin: 20px; color: #374151;';
+                pdfInfo.innerHTML = '<h3>PDF Document Preview</h3><p>Your Base64 data has been successfully decoded as a PDF document.</p>';
+                pdfInfo.style.cssText = 'text-align: center; margin: 20px 0; color: #374151;';
                 previewContainer.appendChild(pdfInfo);
                 
-                processedStatus.textContent = 'PDF created successfully - ready for download';
-                console.log('PDF detected - created download link');
+                // Add the PDF embed
+                previewContainer.appendChild(pdfEmbed);
+                
+                // Add download button below the preview
+                previewContainer.appendChild(downloadLink);
+                
+                processedStatus.textContent = 'PDF created successfully - preview and download available';
+                console.log('PDF detected - created embedded preview and download link');
                 return;
             }
             
