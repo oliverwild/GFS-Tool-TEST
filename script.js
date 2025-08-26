@@ -424,72 +424,119 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update info
             dataTypeSpan.textContent = dataType;
-            processedStatus.textContent = 'Processing with Labelary...';
             
-            // Special handling for PDFs - convert Base64 to actual PDF and show preview
+            console.log('Processing data type:', dataType);
+            
+            // Handle PDFs - show embedded preview
             if (dataType === 'PDF') {
+                console.log('Processing as PDF');
+                processedStatus.textContent = 'Creating PDF preview...';
+                
                 // Convert the decoded data back to Base64 for PDF creation
                 const pdfBase64 = btoa(String.fromCharCode(...data));
                 const pdfDataUrl = `data:application/pdf;base64,${pdfBase64}`;
                 
-                // Create an embedded PDF viewer
+                // Clear the preview area
+                previewImg.style.display = 'none';
+                const previewContainer = previewImg.parentElement;
+                previewContainer.innerHTML = '';
+                
+                // Create PDF preview info
+                const pdfInfo = document.createElement('div');
+                pdfInfo.innerHTML = '<h3>PDF Document Preview</h3><p>Your Base64 data has been successfully decoded as a PDF document.</p>';
+                pdfInfo.style.cssText = 'text-align: center; margin: 20px 0; color: #374151; font-size: 16px;';
+                previewContainer.appendChild(pdfInfo);
+                
+                // Create embedded PDF viewer
                 const pdfEmbed = document.createElement('embed');
                 pdfEmbed.src = pdfDataUrl;
                 pdfEmbed.type = 'application/pdf';
                 pdfEmbed.width = '100%';
                 pdfEmbed.height = '500';
-                pdfEmbed.style.cssText = 'border: 2px solid #e5e7eb; border-radius: 8px; margin: 10px 0;';
+                pdfEmbed.style.cssText = 'border: 2px solid #e5e7eb; border-radius: 8px; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
                 
-                // Create a download link for the PDF
+                // Add PDF preview
+                previewContainer.appendChild(pdfEmbed);
+                
+                // Add download button
                 const downloadLink = document.createElement('a');
                 downloadLink.href = pdfDataUrl;
                 downloadLink.download = 'decoded_document.pdf';
                 downloadLink.textContent = 'Download PDF';
-                downloadLink.className = 'pdf-download-btn';
-                downloadLink.style.cssText = 'display: inline-block; padding: 10px 20px; background: #3b82f6; color: white; text-decoration: none; border-radius: 5px; margin: 10px;';
-                
-                // Clear the preview area and show PDF preview
-                previewImg.style.display = 'none';
-                const previewContainer = previewImg.parentElement;
-                previewContainer.innerHTML = '';
-                
-                // Add PDF preview info
-                const pdfInfo = document.createElement('div');
-                pdfInfo.innerHTML = '<h3>PDF Document Preview</h3><p>Your Base64 data has been successfully decoded as a PDF document.</p>';
-                pdfInfo.style.cssText = 'text-align: center; margin: 20px 0; color: #374151;';
-                previewContainer.appendChild(pdfInfo);
-                
-                // Add the PDF embed
-                previewContainer.appendChild(pdfEmbed);
-                
-                // Add download button below the preview
+                downloadLink.style.cssText = 'display: inline-block; padding: 12px 24px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; margin: 15px; font-weight: bold;';
                 previewContainer.appendChild(downloadLink);
                 
-                processedStatus.textContent = 'PDF created successfully - preview and download available';
-                console.log('PDF detected - created embedded preview and download link');
+                processedStatus.textContent = 'PDF preview created successfully';
+                console.log('PDF preview created and displayed');
                 return;
             }
             
-            // Call Labelary API to generate real label preview
+            // Handle ZPL Text - use Labelary API
+            if (dataType === 'ZPL Text') {
+                console.log('Processing as ZPL Text');
+                processedStatus.textContent = 'Processing ZPL with Labelary API...';
+                
+                // Call Labelary API for ZPL preview
+                callLabelaryAPI(data, dataType).then(labelImageUrl => {
+                    console.log('Setting ZPL preview image:', labelImageUrl);
+                    previewImg.src = labelImageUrl;
+                    processedStatus.textContent = 'ZPL label preview generated successfully';
+                    previewImg.style.display = 'block';
+                    previewImg.style.visibility = 'visible';
+                    console.log('ZPL preview displayed successfully');
+                }).catch(error => {
+                    console.error('Labelary API error for ZPL:', error);
+                    createPlaceholderImage(previewImg, 'ZPL Text - API Failed', '#f59e0b');
+                    processedStatus.textContent = 'ZPL processing failed, showing placeholder';
+                    previewImg.style.display = 'block';
+                    previewImg.style.visibility = 'visible';
+                });
+                return;
+            }
+            
+            // Handle regular Text - use Labelary API
+            if (dataType === 'Text') {
+                console.log('Processing as Text');
+                processedStatus.textContent = 'Converting text to label with Labelary API...';
+                
+                // Call Labelary API for text label
+                callLabelaryAPI(data, dataType).then(labelImageUrl => {
+                    console.log('Setting text label image:', labelImageUrl);
+                    previewImg.src = labelImageUrl;
+                    processedStatus.textContent = 'Text label generated successfully';
+                    previewImg.style.display = 'block';
+                    previewImg.style.visibility = 'visible';
+                    console.log('Text label displayed successfully');
+                }).catch(error => {
+                    console.error('Labelary API error for text:', error);
+                    createPlaceholderImage(previewImg, 'Text Label - API Failed', '#f59e0b');
+                    processedStatus.textContent = 'Text processing failed, showing placeholder';
+                    previewImg.style.display = 'block';
+                    previewImg.style.visibility = 'visible';
+                });
+                return;
+            }
+            
+            // Handle other data types with fallback
+            console.log('Processing as other data type:', dataType);
+            processedStatus.textContent = 'Processing with Labelary API...';
+            
             callLabelaryAPI(data, dataType).then(labelImageUrl => {
-                // Display the real label from Labelary
-                console.log('Setting image src to:', labelImageUrl);
+                console.log('Setting fallback image:', labelImageUrl);
                 previewImg.src = labelImageUrl;
                 processedStatus.textContent = 'Label generated successfully';
                 previewImg.style.display = 'block';
                 previewImg.style.visibility = 'visible';
-                console.log('Label preview displayed successfully');
+                console.log('Fallback label displayed successfully');
             }).catch(error => {
                 console.error('Labelary API error:', error);
                 
-                // Special handling for binary data
                 if (dataType === 'Binary Data') {
                     createPlaceholderImage(previewImg, 'Binary Data - Cannot Preview', '#dc2626');
                     processedStatus.textContent = 'Binary data cannot be converted to label preview';
                 } else {
-                    // Fallback to placeholder if API fails
-                    createPlaceholderImage(previewImg, `${dataType} Label`, '#f59e0b');
-                    processedStatus.textContent = 'API failed, showing placeholder';
+                    createPlaceholderImage(previewImg, `${dataType} Data`, '#f59e0b');
+                    processedStatus.textContent = 'Processing failed, showing placeholder';
                 }
                 
                 previewImg.style.display = 'block';
