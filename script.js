@@ -441,11 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const previewContainer = previewImg.parentElement;
                 previewContainer.innerHTML = '';
                 
-                // Create PDF preview info
-                const pdfInfo = document.createElement('div');
-                pdfInfo.innerHTML = '<h3>PDF Document Preview</h3><p>Your Base64 data has been successfully decoded as a PDF document.</p>';
-                pdfInfo.style.cssText = 'text-align: center; margin: 20px 0; color: #374151; font-size: 16px;';
-                previewContainer.appendChild(pdfInfo);
+                // No header text needed - just show the PDF directly
                 
                 // Create embedded PDF viewer
                 const pdfEmbed = document.createElement('embed');
@@ -458,11 +454,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add PDF preview
                 previewContainer.appendChild(pdfEmbed);
                 
-                // Add download button
+                // Add adaptive download button (can download PDF or PNG depending on content)
                 const downloadLink = document.createElement('a');
                 downloadLink.href = pdfDataUrl;
                 downloadLink.download = 'decoded_document.pdf';
-                downloadLink.textContent = 'Download PDF';
+                downloadLink.textContent = 'Download Preview';
                 downloadLink.style.cssText = 'display: inline-block; padding: 12px 24px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; margin: 15px; font-weight: bold;';
                 previewContainer.appendChild(downloadLink);
                 
@@ -784,12 +780,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function downloadLabel() {
             const imgElement = document.getElementById('label-preview-img');
-            if (imgElement.src) {
+            const previewContainer = imgElement.parentElement;
+            
+            // Check if we're showing a PDF (look for embed element)
+            const pdfEmbed = previewContainer.querySelector('embed[type="application/pdf"]');
+            if (pdfEmbed) {
+                // Download PDF
+                const link = document.createElement('a');
+                link.download = 'decoded_document.pdf';
+                link.href = pdfEmbed.src;
+                link.click();
+                return;
+            }
+            
+            // Check if we have an image to download
+            if (imgElement.src && imgElement.style.display !== 'none') {
                 const link = document.createElement('a');
                 link.download = 'label-preview.png';
                 link.href = imgElement.src;
                 link.click();
+                return;
             }
+            
+            // If nothing to download, show message
+            console.log('No content available for download');
         }
 
         function clearLabelInputs() {
