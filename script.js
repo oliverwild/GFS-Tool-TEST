@@ -286,6 +286,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Remove all whitespace, newlines, carriage returns
                 cleaned = cleaned.replace(/[\s\r\n\t]/g, '');
                 
+                // Remove specific corruption patterns like </Image/
+                cleaned = cleaned.replace(/<\/?Image\/?/g, '');
+                
                 // Remove any non-Base64 characters (keep only A-Z, a-z, 0-9, +, /, =)
                 cleaned = cleaned.replace(/[^A-Za-z0-9+/=]/g, '');
                 
@@ -305,6 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 console.log('Cleaned Base64 length:', cleaned.length);
                 console.log('Cleaned Base64 preview:', cleaned.substring(0, 50) + '...');
+                console.log('Final Base64 ends with:', cleaned.substring(Math.max(0, cleaned.length - 20)));
                 
                 // Try to decode
                 const decoded = atob(cleaned);
@@ -365,13 +369,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Check if it's ZPL or other text content
+            // Only convert to text if we haven't already identified it as PDF or image
             const text = String.fromCharCode(...data);
-            console.log('Text content preview:', text.substring(0, 100));
             
             // Check for ZPL commands (^XA, ^FO, ^FD, etc.)
             if (text.includes('^XA') || text.includes('^FO') || text.includes('^FD') || text.includes('^FS')) {
                 console.log('Identified as ZPL Text');
                 return 'ZPL Text';
+            }
+            
+            // Only log text preview for non-binary data to avoid PDF content in console
+            if (text.match(/^[\x20-\x7E\t\n\r]*$/)) {
+                console.log('Text content preview:', text.substring(0, 100));
             }
             
             // Ultra-strict text detection - only allow printable ASCII and basic punctuation
@@ -604,47 +613,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
         }
 
-        function extractTextFromPDF(data) {
-            // Improved text extraction from PDF data
-            try {
-                const text = String.fromCharCode(...data);
-                console.log('PDF text content preview:', text.substring(0, 200));
-                
-                // Try multiple text extraction methods
-                
-                // Method 1: Look for /Text objects
-                const textMatch = text.match(/\/Text\s*\[(.*?)\]/);
-                if (textMatch) {
-                    console.log('Found text via /Text method:', textMatch[1]);
-                    return textMatch[1];
-                }
-                
-                // Method 2: Look for (text) patterns (common in PDFs)
-                const parenTextMatch = text.match(/\(([^)]{5,})\)/g);
-                if (parenTextMatch && parenTextMatch.length > 0) {
-                    const extractedText = parenTextMatch.slice(0, 3).map(t => t.slice(1, -1)).join(' ');
-                    console.log('Found text via parentheses method:', extractedText);
-                    return extractedText.substring(0, 100);
-                }
-                
-                // Method 3: Look for readable text sequences
-                const readableText = text.replace(/[\x00-\x1F\x7F-\xFF]/g, ' ')
-                                       .replace(/\s+/g, ' ')
-                                       .trim();
-                
-                if (readableText.length > 10) {
-                    console.log('Found readable text:', readableText.substring(0, 100));
-                    return readableText.substring(0, 100);
-                }
-                
-                console.log('No readable text found, using fallback');
-                return 'PDF Content (Text extraction failed)';
-                
-            } catch (error) {
-                console.error('PDF text extraction error:', error);
-                return 'PDF Content (Error during extraction)';
-            }
-        }
+
 
         function createLocalZPLPreview(zplData, resolve) {
             console.log('Creating local ZPL preview for:', zplData.substring(0, 100));
