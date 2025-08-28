@@ -180,9 +180,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function updateResults(firstRange, firstCount, secondRange, secondCount) {
-            document.getElementById('first-range').textContent = firstRange;
+            // Create clickable copy boxes for first range
+            const firstRangeElement = document.getElementById('first-range');
+            firstRangeElement.innerHTML = `
+                <div class="range-copy-box">
+                    <span class="range-text">${firstRange}</span>
+                    <button class="copy-btn" onclick="copyToClipboard('${firstRange}')" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            `;
             document.getElementById('first-count').textContent = `${firstCount} numbers`;
-            document.getElementById('second-range').textContent = secondRange;
+            
+            // Create clickable copy boxes for second range
+            const secondRangeElement = document.getElementById('second-range');
+            secondRangeElement.innerHTML = `
+                <div class="range-copy-box">
+                    <span class="range-text">${secondRange}</span>
+                    <button class="copy-btn" onclick="copyToClipboard('${secondRange}')" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            `;
             document.getElementById('second-count').textContent = `${secondCount} numbers`;
         }
 
@@ -210,6 +229,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         }
+
+        // Global function for copying to clipboard
+        window.copyToClipboard = function(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show success feedback
+                const copyBtn = event.target;
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                copyBtn.style.background = '#10b981';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = '';
+                }, 1000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Show feedback
+                const copyBtn = event.target;
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                copyBtn.style.background = '#10b981';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = '';
+                }, 1000);
+            });
+        };
 
         function clearInputs() {
             startInput.value = '';
