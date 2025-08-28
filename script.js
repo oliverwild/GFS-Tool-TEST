@@ -180,26 +180,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function updateResults(firstRange, firstCount, secondRange, secondCount) {
-            // Create clickable copy boxes for first range
+            // Parse the ranges to get start and end numbers
+            const firstParts = firstRange.split(' to ');
+            const secondParts = secondRange.split(' to ');
+            
+            // Create clickable copy boxes for first range with individual number copying
             const firstRangeElement = document.getElementById('first-range');
             firstRangeElement.innerHTML = `
                 <div class="range-copy-box">
-                    <span class="range-text">${firstRange}</span>
-                    <button class="copy-btn" onclick="copyToClipboard('${firstRange}')" title="Copy to clipboard">
-                        <i class="fas fa-copy"></i>
-                    </button>
+                    <span class="range-text">
+                        <span class="clickable-number" onclick="copyToClipboard('${firstParts[0]}')" title="Click to copy ${firstParts[0]}">${firstParts[0]}</span>
+                        <span class="range-separator"> to </span>
+                        <span class="clickable-number" onclick="copyToClipboard('${firstParts[1]}')" title="Click to copy ${firstParts[1]}">${firstParts[1]}</span>
+                    </span>
                 </div>
             `;
             document.getElementById('first-count').textContent = `${firstCount} numbers`;
             
-            // Create clickable copy boxes for second range
+            // Create clickable copy boxes for second range with individual number copying
             const secondRangeElement = document.getElementById('second-range');
             secondRangeElement.innerHTML = `
                 <div class="range-copy-box">
-                    <span class="range-text">${secondRange}</span>
-                    <button class="copy-btn" onclick="copyToClipboard('${secondRange}')" title="Copy to clipboard">
-                        <i class="fas fa-copy"></i>
-                    </button>
+                    <span class="range-text">
+                        <span class="clickable-number" onclick="copyToClipboard('${secondParts[0]}')" title="Click to copy ${secondParts[0]}">${secondParts[0]}</span>
+                        <span class="range-separator"> to </span>
+                        <span class="clickable-number" onclick="copyToClipboard('${secondParts[1]}')" title="Click to copy ${secondParts[1]}">${secondParts[1]}</span>
+                    </span>
                 </div>
             `;
             document.getElementById('second-count').textContent = `${secondCount} numbers`;

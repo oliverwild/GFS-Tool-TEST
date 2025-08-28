@@ -879,3 +879,32 @@ p {
 .copy-btn:active {
     transform: scale(0.95);
 }
+
+/* Clickable Number Styles */
+.clickable-number {
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #e0e7ff;
+    color: #3730a3;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    display: inline-block;
+    margin: 0 2px;
+}
+
+.clickable-number:hover {
+    background: #c7d2fe;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+}
+
+.clickable-number:active {
+    transform: scale(0.95);
+}
+
+.range-separator {
+    color: #6b7280;
+    font-weight: 400;
+    margin: 0 4px;
+}
