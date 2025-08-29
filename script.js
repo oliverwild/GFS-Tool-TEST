@@ -236,59 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Global function for copying to clipboard
-        window.copyToClipboard = function(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                // Show success feedback
-                const copyBtn = event.target;
-                const originalText = copyBtn.innerHTML;
-                const originalBackground = copyBtn.style.background;
-                const originalColor = copyBtn.style.color;
-                
-                // Show "Copied!" message with green background
-                copyBtn.innerHTML = 'Copied!';
-                copyBtn.style.background = '#10b981';
-                copyBtn.style.color = 'white';
-                copyBtn.style.fontWeight = 'bold';
-                
-                // Reset after 1.5 seconds
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.style.background = originalBackground;
-                    copyBtn.style.color = originalColor;
-                    copyBtn.style.fontWeight = '';
-                }, 1500);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                
-                // Show feedback
-                const copyBtn = event.target;
-                const originalText = copyBtn.innerHTML;
-                const originalBackground = copyBtn.style.background;
-                const originalColor = copyBtn.style.color;
-                
-                // Show "Copied!" message with green background
-                copyBtn.innerHTML = 'Copied!';
-                copyBtn.style.background = '#10b981';
-                copyBtn.style.color = 'white';
-                copyBtn.style.fontWeight = 'bold';
-                
-                // Reset after 1.5 seconds
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.style.background = originalBackground;
-                    copyBtn.style.color = originalColor;
-                    copyBtn.style.fontWeight = '';
-                }, 1500);
-            });
-        };
+
 
         function clearInputs() {
             startInput.value = '';
@@ -948,4 +896,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Global function for copying to clipboard
+window.copyToClipboard = function(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // Show success feedback
+        const copyBtn = event.target;
+        const originalText = copyBtn.innerHTML;
+        const originalBackground = copyBtn.style.background;
+        const originalColor = copyBtn.style.color;
+        
+        // Show "Copied!" message with green background
+        copyBtn.innerHTML = 'Copied!';
+        copyBtn.style.background = '#10b981';
+        copyBtn.style.color = 'white';
+        copyBtn.style.fontWeight = 'bold';
+        
+        // Reset after 1.5 seconds
+        setTimeout(() => {
+            copyBtn.innerHTML = originalText;
+            copyBtn.style.background = originalBackground;
+            copyBtn.style.color = originalColor;
+            copyBtn.style.fontWeight = '';
+        }, 1500);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        // Show feedback
+        const copyBtn = event.target;
+        const originalText = copyBtn.innerHTML;
+        const originalBackground = copyBtn.style.background;
+        const originalColor = copyBtn.style.color;
+        
+        // Show "Copied!" message with green background
+        copyBtn.innerHTML = 'Copied!';
+        copyBtn.style.background = '#10b981';
+        copyBtn.style.color = 'white';
+        copyBtn.style.fontWeight = 'bold';
+        
+        // Reset after 1.5 seconds
+        setTimeout(() => {
+            copyBtn.innerHTML = originalText;
+            copyBtn.style.background = originalBackground;
+            copyBtn.style.color = originalColor;
+            copyBtn.style.fontWeight = '';
+        }, 1500);
+    });
+};
 
