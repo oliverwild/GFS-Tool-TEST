@@ -242,12 +242,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show success feedback
                 const copyBtn = event.target;
                 const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                const originalBackground = copyBtn.style.background;
+                const originalColor = copyBtn.style.color;
+                
+                // Show "Copied!" message with green background
+                copyBtn.innerHTML = 'Copied!';
                 copyBtn.style.background = '#10b981';
+                copyBtn.style.color = 'white';
+                copyBtn.style.fontWeight = 'bold';
+                
+                // Reset after 1.5 seconds
                 setTimeout(() => {
                     copyBtn.innerHTML = originalText;
-                    copyBtn.style.background = '';
-                }, 1000);
+                    copyBtn.style.background = originalBackground;
+                    copyBtn.style.color = originalColor;
+                    copyBtn.style.fontWeight = '';
+                }, 1500);
             }).catch(err => {
                 console.error('Failed to copy: ', err);
                 // Fallback for older browsers
@@ -261,12 +271,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show feedback
                 const copyBtn = event.target;
                 const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                const originalBackground = copyBtn.style.background;
+                const originalColor = copyBtn.style.color;
+                
+                // Show "Copied!" message with green background
+                copyBtn.innerHTML = 'Copied!';
                 copyBtn.style.background = '#10b981';
+                copyBtn.style.color = 'white';
+                copyBtn.style.fontWeight = 'bold';
+                
+                // Reset after 1.5 seconds
                 setTimeout(() => {
                     copyBtn.innerHTML = originalText;
-                    copyBtn.style.background = '';
-                }, 1000);
+                    copyBtn.style.background = originalBackground;
+                    copyBtn.style.color = originalColor;
+                    copyBtn.style.fontWeight = '';
+                }, 1500);
             });
         };
 
