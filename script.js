@@ -900,25 +900,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // Global function for copying to clipboard
 window.copyToClipboard = function(text) {
     navigator.clipboard.writeText(text).then(() => {
-        // Show success feedback
-        const copyBtn = event.target;
-        const originalText = copyBtn.innerHTML;
-        const originalBackground = copyBtn.style.background;
-        const originalColor = copyBtn.style.color;
-        
-        // Show "Copied!" message with green background
-        copyBtn.innerHTML = 'Copied!';
-        copyBtn.style.background = '#10b981';
-        copyBtn.style.color = 'white';
-        copyBtn.style.fontWeight = 'bold';
-        
-        // Reset after 1.5 seconds
-        setTimeout(() => {
-            copyBtn.innerHTML = originalText;
-            copyBtn.style.background = originalBackground;
-            copyBtn.style.color = originalColor;
-            copyBtn.style.fontWeight = '';
-        }, 1500);
+        // Show success notification
+        showCopyNotification('Copied to clipboard!', 'success');
     }).catch(err => {
         console.error('Failed to copy: ', err);
         // Fallback for older browsers
@@ -929,25 +912,45 @@ window.copyToClipboard = function(text) {
         document.execCommand('copy');
         document.body.removeChild(textArea);
         
-        // Show feedback
-        const copyBtn = event.target;
-        const originalText = copyBtn.innerHTML;
-        const originalBackground = copyBtn.style.background;
-        const originalColor = copyBtn.style.color;
-        
-        // Show "Copied!" message with green background
-        copyBtn.innerHTML = 'Copied!';
-        copyBtn.style.background = '#10b981';
-        copyBtn.style.color = 'white';
-        copyBtn.style.fontWeight = 'bold';
-        
-        // Reset after 1.5 seconds
-        setTimeout(() => {
-            copyBtn.innerHTML = originalText;
-            copyBtn.style.background = originalBackground;
-            copyBtn.style.color = originalColor;
-            copyBtn.style.fontWeight = '';
-        }, 1500);
+        // Show success notification even for fallback
+        showCopyNotification('Copied to clipboard!', 'success');
     });
 };
+
+// Function to show copy notification
+function showCopyNotification(message, type = 'success') {
+    // Remove any existing notifications
+    const existingNotification = document.querySelector('.copy-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `copy-notification copy-notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Show notification with animation
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    // Hide and remove after 2 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 2000);
+}
 
