@@ -492,6 +492,62 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // Handle PNG Images - show directly
+            if (dataType === 'PNG Image') {
+                console.log('Processing as PNG Image');
+                processedStatus.textContent = 'Creating PNG preview...';
+                
+                // Convert the decoded data back to Base64 for PNG creation
+                const pngBase64 = btoa(String.fromCharCode(...data));
+                const pngDataUrl = `data:image/png;base64,${pngBase64}`;
+                
+                // Clear the preview area
+                previewImg.style.display = 'none';
+                const previewContainer = previewImg.parentElement;
+                previewContainer.innerHTML = '';
+                
+                // Create image element for PNG preview
+                const pngImg = document.createElement('img');
+                pngImg.src = pngDataUrl;
+                pngImg.alt = 'PNG Preview';
+                pngImg.style.cssText = 'max-width: 100%; height: auto; border: 2px solid #e5e7eb; border-radius: 8px; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+                
+                // Add PNG preview
+                previewContainer.appendChild(pngImg);
+                
+                processedStatus.textContent = 'PNG preview created successfully';
+                console.log('PNG preview created and displayed');
+                return;
+            }
+            
+            // Handle JPEG Images - show directly
+            if (dataType === 'JPEG Image') {
+                console.log('Processing as JPEG Image');
+                processedStatus.textContent = 'Creating JPEG preview...';
+                
+                // Convert the decoded data back to Base64 for JPEG creation
+                const jpegBase64 = btoa(String.fromCharCode(...data));
+                const jpegDataUrl = `data:image/jpeg;base64,${jpegBase64}`;
+                
+                // Clear the preview area
+                previewImg.style.display = 'none';
+                const previewContainer = previewImg.parentElement;
+                previewContainer.innerHTML = '';
+                
+                // Create image element for JPEG preview
+                const jpegImg = document.createElement('img');
+                jpegImg.src = jpegDataUrl;
+                jpegImg.alt = 'JPEG Preview';
+                jpegImg.style.cssText = 'max-width: 100%; height: auto; border: 2px solid #e5e7eb; border-radius: 8px; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+                
+                // Add JPEG preview
+                previewContainer.appendChild(jpegImg);
+                
+                processedStatus.textContent = 'JPEG preview created successfully';
+                console.log('JPEG preview created and displayed');
+                return;
+            }
+            
             // Handle ZPL Text - use Labelary API
             if (dataType === 'ZPL Text') {
                 console.log('Processing as ZPL Text');
@@ -771,6 +827,30 @@ document.addEventListener('DOMContentLoaded', function() {
             hideResults();
             hideError();
             hideProcessStatus();
+            
+            // Clear the preview area completely
+            const previewImg = document.getElementById('label-preview-img');
+            const dataTypeSpan = document.getElementById('data-type');
+            const processedStatus = document.getElementById('processed-status');
+            
+            // Reset data type display
+            if (dataTypeSpan) dataTypeSpan.textContent = '-';
+            if (processedStatus) processedStatus.textContent = '';
+            
+            // Clear preview image
+            if (previewImg) {
+                previewImg.style.display = 'none';
+                previewImg.style.visibility = 'hidden';
+                previewImg.src = '';
+                
+                // Clear any embedded content (PDFs, etc.)
+                const previewContainer = previewImg.parentElement;
+                if (previewContainer) {
+                    previewContainer.innerHTML = '';
+                    // Re-add the preview image element
+                    previewContainer.appendChild(previewImg);
+                }
+            }
         }
 
         function showProcessStatus() {
