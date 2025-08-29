@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function generateLabelPreview(data, dataType) {
-            const previewImg = document.getElementById('label-preview-img');
+            const previewContainer = document.getElementById('preview-container');
             const dataTypeSpan = document.getElementById('data-type');
             const processedStatus = document.getElementById('processed-status');
             
@@ -467,12 +467,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const pdfBase64 = btoa(String.fromCharCode(...data));
                 const pdfDataUrl = `data:application/pdf;base64,${pdfBase64}`;
                 
-                // Clear the preview area
-                previewImg.style.display = 'none';
-                const previewContainer = previewImg.parentElement;
+                // Clear the preview area and keep only preview-info
+                const previewInfo = previewContainer.querySelector('.preview-info');
                 previewContainer.innerHTML = '';
-                
-                // No header text needed - just show the PDF directly
+                if (previewInfo) {
+                    previewContainer.appendChild(previewInfo);
+                }
                 
                 // Create embedded PDF viewer
                 const pdfEmbed = document.createElement('embed');
@@ -484,8 +484,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Add PDF preview
                 previewContainer.appendChild(pdfEmbed);
-                
-                // No download button needed - users can right-click to save
                 
                 processedStatus.textContent = 'PDF preview created successfully';
                 console.log('PDF preview created and displayed');
@@ -501,10 +499,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const pngBase64 = btoa(String.fromCharCode(...data));
                 const pngDataUrl = `data:image/png;base64,${pngBase64}`;
                 
-                // Clear the preview area
-                previewImg.style.display = 'none';
-                const previewContainer = previewImg.parentElement;
+                // Clear the preview area and keep only preview-info
+                const previewInfo = previewContainer.querySelector('.preview-info');
                 previewContainer.innerHTML = '';
+                if (previewInfo) {
+                    previewContainer.appendChild(previewInfo);
+                }
                 
                 // Create image element for PNG preview
                 const pngImg = document.createElement('img');
@@ -529,10 +529,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const jpegBase64 = btoa(String.fromCharCode(...data));
                 const jpegDataUrl = `data:image/jpeg;base64,${jpegBase64}`;
                 
-                // Clear the preview area
-                previewImg.style.display = 'none';
-                const previewContainer = previewImg.parentElement;
+                // Clear the preview area and keep only preview-info
+                const previewInfo = previewContainer.querySelector('.preview-info');
                 previewContainer.innerHTML = '';
+                if (previewInfo) {
+                    previewContainer.appendChild(previewInfo);
+                }
                 
                 // Create image element for JPEG preview
                 const jpegImg = document.createElement('img');
@@ -552,6 +554,20 @@ document.addEventListener('DOMContentLoaded', function() {
             if (dataType === 'ZPL Text') {
                 console.log('Processing as ZPL Text');
                 processedStatus.textContent = 'Processing ZPL with Labelary API...';
+                
+                // Clear the preview area and keep only preview-info
+                const previewInfo = previewContainer.querySelector('.preview-info');
+                previewContainer.innerHTML = '';
+                if (previewInfo) {
+                    previewContainer.appendChild(previewInfo);
+                }
+                
+                // Create a new img element for the preview
+                const previewImg = document.createElement('img');
+                previewImg.id = 'label-preview-img';
+                previewImg.alt = 'Label Preview';
+                previewImg.style.cssText = 'max-width: 100%; height: auto; border: 2px solid #e5e7eb; border-radius: 8px; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+                previewContainer.appendChild(previewImg);
                 
                 // Call Labelary API for ZPL preview
                 callLabelaryAPI(data, dataType).then(labelImageUrl => {
@@ -576,6 +592,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Processing as Text');
                 processedStatus.textContent = 'Converting text to label with Labelary API...';
                 
+                // Clear the preview area and keep only preview-info
+                const previewInfo = previewContainer.querySelector('.preview-info');
+                previewContainer.innerHTML = '';
+                if (previewInfo) {
+                    previewContainer.appendChild(previewInfo);
+                }
+                
+                // Create a new img element for the preview
+                const previewImg = document.createElement('img');
+                previewImg.id = 'label-preview-img';
+                previewImg.alt = 'Label Preview';
+                previewImg.style.cssText = 'max-width: 100%; height: auto; border: 2px solid #e5e7eb; border-radius: 8px; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+                previewContainer.appendChild(previewImg);
+                
                 // Call Labelary API for text label
                 callLabelaryAPI(data, dataType).then(labelImageUrl => {
                     console.log('Setting text label image:', labelImageUrl);
@@ -597,6 +627,20 @@ document.addEventListener('DOMContentLoaded', function() {
             // Handle other data types with fallback
             console.log('Processing as other data type:', dataType);
             processedStatus.textContent = 'Processing with Labelary API...';
+            
+            // Clear the preview area and keep only preview-info
+            const previewInfo = previewContainer.querySelector('.preview-info');
+            previewContainer.innerHTML = '';
+            if (previewInfo) {
+                previewContainer.appendChild(previewInfo);
+            }
+            
+            // Create a new img element for the preview
+            const previewImg = document.createElement('img');
+            previewImg.id = 'label-preview-img';
+            previewImg.alt = 'Label Preview';
+            previewImg.style.cssText = 'max-width: 100%; height: auto; border: 2px solid #e5e7eb; border-radius: 8px; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+            previewContainer.appendChild(previewImg);
             
             callLabelaryAPI(data, dataType).then(labelImageUrl => {
                 console.log('Setting fallback image:', labelImageUrl);
@@ -829,7 +873,7 @@ document.addEventListener('DOMContentLoaded', function() {
             hideProcessStatus();
             
             // Clear the preview area completely
-            const previewImg = document.getElementById('label-preview-img');
+            const previewContainer = document.getElementById('preview-container');
             const dataTypeSpan = document.getElementById('data-type');
             const processedStatus = document.getElementById('processed-status');
             
@@ -837,18 +881,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (dataTypeSpan) dataTypeSpan.textContent = '-';
             if (processedStatus) processedStatus.textContent = '';
             
-            // Clear preview image
-            if (previewImg) {
-                previewImg.style.display = 'none';
-                previewImg.style.visibility = 'hidden';
-                previewImg.src = '';
-                
-                // Clear any embedded content (PDFs, etc.)
-                const previewContainer = previewImg.parentElement;
-                if (previewContainer) {
-                    previewContainer.innerHTML = '';
-                    // Re-add the preview image element
-                    previewContainer.appendChild(previewImg);
+            // Clear preview container completely
+            if (previewContainer) {
+                // Keep only the preview-info div
+                const previewInfo = previewContainer.querySelector('.preview-info');
+                previewContainer.innerHTML = '';
+                if (previewInfo) {
+                    previewContainer.appendChild(previewInfo);
                 }
             }
         }
