@@ -977,3 +977,118 @@ p {
         opacity: 0;
     }
 }
+
+/* Route Mapping Tool Styles */
+.route-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-select, .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background-color: white;
+}
+
+.form-select:focus, .form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-select:disabled {
+    background-color: #f8fafc;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.additional-fields {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.additional-fields h4 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #e1e5e9;
+    padding-bottom: 0.5rem;
+}
+
+.field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.field-grid .input-group:nth-child(3),
+.field-grid .input-group:nth-child(4) {
+    grid-column: span 2;
+}
+
+.sql-output {
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.sql-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.sql-label {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.sql-code {
+    background: #1f2937;
+    color: #f9fafb;
+    padding: 1.5rem;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Responsive adjustments for Route Mapping */
+@media (max-width: 768px) {
+    .route-inputs {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .field-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .field-grid .input-group:nth-child(3),
+    .field-grid .input-group:nth-child(4) {
+        grid-column: span 1;
+    }
+    
+    .sql-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+}

@@ -1073,3 +1073,143 @@ function showCopyNotification(message, type = 'success') {
     }, 2000);
 }
 
+// Route Mapping Tool Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Carrier and service data
+    const carrierServices = {
+        'DPD': [
+            { name: 'Next Day Delivery', code: '12' },
+            { name: 'Standard Delivery', code: '10' },
+            { name: 'Saturday Delivery', code: '15' }
+        ],
+        'DPD Local': [
+            { name: 'Same Day Local', code: 'L01' },
+            { name: 'Next Day Local', code: 'L02' }
+        ],
+        'DHL eCom': [
+            { name: 'Standard eCom', code: 'EC01' },
+            { name: 'Express eCom', code: 'EC02' },
+            { name: 'Premium eCom', code: 'EC03' }
+        ],
+        'Evri': [
+            { name: 'EVRI NEXT DAY IOD', code: 'Nday' },
+            { name: 'EVRI STANDARD', code: 'Std' },
+            { name: 'EVRI EXPRESS', code: 'Exp' }
+        ],
+        'UPS': [
+            { name: 'UPS Standard', code: 'UPS01' },
+            { name: 'UPS Express', code: 'UPS02' },
+            { name: 'UPS Next Day Air', code: 'UPS03' }
+        ],
+        'GFSI': [
+            { name: 'GFSI Standard', code: 'GFS01' },
+            { name: 'GFSI Express', code: 'GFS02' },
+            { name: 'GFSI Premium', code: 'GFS03' }
+        ]
+    };
+
+    // Get DOM elements
+    const carrierSelect = document.getElementById('carrier-select');
+    const serviceSelect = document.getElementById('service-select');
+    const serviceCodeInput = document.getElementById('service-code');
+    const generateSqlBtn = document.getElementById('generate-sql');
+    const clearRouteBtn = document.getElementById('clear-route');
+    const routeResults = document.getElementById('route-results');
+    const sqlScript = document.getElementById('sql-script');
+    const copySqlBtn = document.getElementById('copy-sql');
+
+    // Populate services when carrier is selected
+    carrierSelect.addEventListener('change', function() {
+        const selectedCarrier = this.value;
+        serviceSelect.innerHTML = '<option value="">Select a service...</option>';
+        serviceCodeInput.value = '';
+        
+        if (selectedCarrier && carrierServices[selectedCarrier]) {
+            serviceSelect.disabled = false;
+            carrierServices[selectedCarrier].forEach(service => {
+                const option = document.createElement('option');
+                option.value = service.name;
+                option.textContent = service.name;
+                option.dataset.code = service.code;
+                serviceSelect.appendChild(option);
+            });
+        } else {
+            serviceSelect.disabled = true;
+        }
+    });
+
+    // Update service code when service is selected
+    serviceSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption.dataset.code) {
+            serviceCodeInput.value = selectedOption.dataset.code;
+        } else {
+            serviceCodeInput.value = '';
+        }
+    });
+
+    // Generate SQL button
+    generateSqlBtn.addEventListener('click', function() {
+        const carrier = carrierSelect.value;
+        const service = serviceSelect.value;
+        const serviceCode = serviceCodeInput.value;
+        const origin = document.getElementById('origin').value;
+        const destination = document.getElementById('destination').value;
+        const priority = document.getElementById('priority').value;
+        const notes = document.getElementById('notes').value;
+
+        if (!carrier || !service || !serviceCode) {
+            alert('Please select a carrier and service first.');
+            return;
+        }
+
+        // Generate SQL INSERT statement
+        const sql = `INSERT INTO route_mapping (
+    carrier_name,
+    service_name,
+    service_code,
+    origin,
+    destination,
+    priority,
+    notes,
+    created_date
+) VALUES (
+    '${carrier}',
+    '${service}',
+    '${serviceCode}',
+    '${origin || 'NULL'}',
+    '${destination || 'NULL'}',
+    '${priority}',
+    '${notes || 'NULL'}',
+    GETDATE()
+);`;
+
+        sqlScript.textContent = sql;
+        routeResults.style.display = 'block';
+        
+        // Scroll to results
+        routeResults.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Clear button
+    clearRouteBtn.addEventListener('click', function() {
+        carrierSelect.value = '';
+        serviceSelect.innerHTML = '<option value="">Select a carrier first...</option>';
+        serviceSelect.disabled = true;
+        serviceCodeInput.value = '';
+        document.getElementById('origin').value = '';
+        document.getElementById('destination').value = '';
+        document.getElementById('priority').value = 'Standard';
+        document.getElementById('notes').value = '';
+        routeResults.style.display = 'none';
+    });
+
+    // Copy SQL button
+    copySqlBtn.addEventListener('click', function() {
+        const sqlText = sqlScript.textContent;
+        if (sqlText) {
+            window.copyToClipboard(sqlText);
+        }
+    });
+});
+

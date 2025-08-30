@@ -190,6 +190,84 @@
                     </div>
                 </div>
 
+                <!-- Route Mapping Tool Content -->
+                <div id="route-mapping-content" class="tool-content" style="display: none;">
+                    <div class="input-section">
+                        <h3>Route Configuration</h3>
+                        <div class="route-inputs">
+                            <div class="input-group">
+                                <label for="carrier-select">Carrier:</label>
+                                <select id="carrier-select" class="form-select">
+                                    <option value="">Select a carrier...</option>
+                                    <option value="DPD">DPD</option>
+                                    <option value="DPD Local">DPD Local</option>
+                                    <option value="DHL eCom">DHL eCom</option>
+                                    <option value="Evri">Evri</option>
+                                    <option value="UPS">UPS</option>
+                                    <option value="GFSI">GFSI</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="service-select">Service:</label>
+                                <select id="service-select" class="form-select" disabled>
+                                    <option value="">Select a carrier first...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="service-code">Service Code:</label>
+                                <input type="text" id="service-code" class="form-input" readonly placeholder="Service code will appear here">
+                            </div>
+                        </div>
+                        
+                        <div class="additional-fields">
+                            <h4>Additional Details</h4>
+                            <div class="field-grid">
+                                <div class="input-group">
+                                    <label for="origin">Origin:</label>
+                                    <input type="text" id="origin" class="form-input" placeholder="e.g., London">
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="destination">Destination:</label>
+                                    <input type="text" id="destination" class="form-input" placeholder="e.g., Manchester">
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="priority">Priority:</label>
+                                    <select id="priority" class="form-select">
+                                        <option value="Standard">Standard</option>
+                                        <option value="Express">Express</option>
+                                        <option value="Premium">Premium</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="notes">Notes:</label>
+                                    <textarea id="notes" class="form-input" rows="3" placeholder="Additional notes..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-primary" id="generate-sql">Generate SQL</button>
+                        <button class="btn btn-outline" id="clear-route">Clear</button>
+                    </div>
+
+                    <div class="results-section" id="route-results" style="display: none;">
+                        <h3>Generated SQL Script</h3>
+                        <div class="sql-output">
+                            <div class="sql-header">
+                                <span class="sql-label">INSERT Statement:</span>
+                                <button class="btn btn-secondary" id="copy-sql">Copy SQL</button>
+                            </div>
+                            <pre id="sql-script" class="sql-code"></pre>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Default WIP Notice for other tools -->
                 <div class="wip-notice" id="default-wip">
                     <i class="fas fa-tools"></i>
