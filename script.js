@@ -110,6 +110,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('default-wip').style.display = 'none';
             document.getElementById('label-preview-content').style.display = 'block';
             initializeLabelPreview();
+        } else if (toolType === 'route-mapping') {
+            document.getElementById('default-wip').style.display = 'none';
+            document.getElementById('route-mapping-content').style.display = 'block';
+            // Route Mapping is initialized via DOMContentLoaded event listener
         }
     }
 
