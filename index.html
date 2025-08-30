@@ -221,6 +221,50 @@
                             </div>
                         </div>
                         
+                        <!-- Evri-specific fields (hidden by default) -->
+                        <div id="evri-fields" class="evri-specific-fields" style="display: none;">
+                            <h4>Evri Configuration</h4>
+                            <div class="evri-grid">
+                                <div class="input-group">
+                                    <label for="evri-account">Account Number (0-9):</label>
+                                    <input type="number" id="evri-account" class="form-input" min="0" max="9" placeholder="0-9">
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label>Delivery Type:</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="evri-iod" value="IOD">
+                                            <span>IOD</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="evri-pod" value="POD">
+                                            <span>POD</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label>Services:</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="evri-next-day" value="ND">
+                                            <span>Next Day</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="evri-2-day" value="2D">
+                                            <span>2 Day</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label for="evri-route-desc">Route Description:</label>
+                                    <input type="text" id="evri-route-desc" class="form-input" placeholder="e.g., Evri IOD">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="additional-fields">
                             <h4>Additional Details</h4>
                             <div class="field-grid">

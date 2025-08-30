@@ -1128,17 +1128,26 @@ document.addEventListener('DOMContentLoaded', function() {
         serviceSelect.innerHTML = '<option value="">Select a service...</option>';
         serviceCodeInput.value = '';
         
-        if (selectedCarrier && carrierServices[selectedCarrier]) {
-            serviceSelect.disabled = false;
-            carrierServices[selectedCarrier].forEach(service => {
-                const option = document.createElement('option');
-                option.value = service.name;
-                option.textContent = service.name;
-                option.dataset.code = service.code;
-                serviceSelect.appendChild(option);
-            });
-        } else {
+        // Show/hide Evri-specific fields
+        const evriFields = document.getElementById('evri-fields');
+        if (selectedCarrier === 'Evri') {
+            evriFields.style.display = 'block';
+            // Disable regular service selection for Evri
             serviceSelect.disabled = true;
+            serviceSelect.innerHTML = '<option value="">Evri uses custom service selection below</option>';
+        } else {
+            evriFields.style.display = 'none';
+            serviceSelect.disabled = false;
+            
+            if (selectedCarrier && carrierServices[selectedCarrier]) {
+                carrierServices[selectedCarrier].forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service.name;
+                    option.textContent = service.name;
+                    option.dataset.code = service.code;
+                    serviceSelect.appendChild(option);
+                });
+            }
         }
     });
 
@@ -1155,20 +1164,32 @@ document.addEventListener('DOMContentLoaded', function() {
     // Generate SQL button
     generateSqlBtn.addEventListener('click', function() {
         const carrier = carrierSelect.value;
-        const service = serviceSelect.value;
-        const serviceCode = serviceCodeInput.value;
-        const origin = document.getElementById('origin').value;
-        const destination = document.getElementById('destination').value;
-        const priority = document.getElementById('priority').value;
-        const notes = document.getElementById('notes').value;
-
-        if (!carrier || !service || !serviceCode) {
-            alert('Please select a carrier and service first.');
+        
+        if (!carrier) {
+            alert('Please select a carrier first.');
             return;
         }
 
-        // Generate SQL INSERT statement
-        const sql = `INSERT INTO route_mapping (
+        let sql = '';
+        
+        if (carrier === 'Evri') {
+            // Handle Evri-specific SQL generation
+            sql = generateEvriSQL();
+        } else {
+            // Handle other carriers with original logic
+            const service = serviceSelect.value;
+            const serviceCode = serviceCodeInput.value;
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+            const priority = document.getElementById('priority').value;
+            const notes = document.getElementById('notes').value;
+
+            if (!service || !serviceCode) {
+                alert('Please select a service first.');
+                return;
+            }
+
+            sql = `INSERT INTO route_mapping (
     carrier_name,
     service_name,
     service_code,
@@ -1187,13 +1208,73 @@ document.addEventListener('DOMContentLoaded', function() {
     '${notes || 'NULL'}',
     GETDATE()
 );`;
+        }
 
-        sqlScript.textContent = sql;
-        routeResults.style.display = 'block';
-        
-        // Scroll to results
-        routeResults.scrollIntoView({ behavior: 'smooth' });
+        if (sql) {
+            sqlScript.textContent = sql;
+            routeResults.style.display = 'block';
+            
+            // Scroll to results
+            routeResults.scrollIntoView({ behavior: 'smooth' });
+        }
     });
+
+    // Function to generate Evri SQL
+    function generateEvriSQL() {
+        const accountNumber = document.getElementById('evri-account').value;
+        const isIOD = document.getElementById('evri-iod').checked;
+        const isPOD = document.getElementById('evri-pod').checked;
+        const isNextDay = document.getElementById('evri-next-day').checked;
+        const is2Day = document.getElementById('evri-2-day').checked;
+        const routeDesc = document.getElementById('evri-route-desc').value || 'Evri';
+
+        // Validation
+        if (!accountNumber || accountNumber < 0 || accountNumber > 9) {
+            alert('Please enter a valid account number (0-9).');
+            return '';
+        }
+
+        if (!isIOD && !isPOD) {
+            alert('Please select at least one delivery type (IOD or POD).');
+            return '';
+        }
+
+        if (!isNextDay && !is2Day) {
+            alert('Please select at least one service (Next Day or 2 Day).');
+            return '';
+        }
+
+        let sqlStatements = [];
+
+        // Generate SQL for each combination
+        if (isNextDay) {
+            if (isIOD) {
+                const routeCode = `ND${accountNumber}IOD`;
+                const contractNo = `7RY07${accountNumber}`;
+                sqlStatements.push(`insert into cust_routes (ROUTE_CODE,Carrier,CONTRACT_NO,SERVICE_CODE,ROUTE_DESC,PACKAGE_CODE,SATURDAY_DELIV) values ('${routeCode}','HERMES','${contractNo}','NDAY','${routeDesc} IOD',null,null);`);
+            }
+            if (isPOD) {
+                const routeCode = `ND${accountNumber}POD`;
+                const contractNo = `1RY01${accountNumber}`;
+                sqlStatements.push(`insert into cust_routes (ROUTE_CODE,Carrier,CONTRACT_NO,SERVICE_CODE,ROUTE_DESC,PACKAGE_CODE,SATURDAY_DELIV) values ('${routeCode}','HERMES','${contractNo}','NDAY','${routeDesc} POD',null,null);`);
+            }
+        }
+
+        if (is2Day) {
+            if (isIOD) {
+                const routeCode = `2D${accountNumber}IOD`;
+                const contractNo = `7RY07${accountNumber}`;
+                sqlStatements.push(`insert into cust_routes (ROUTE_CODE,Carrier,CONTRACT_NO,SERVICE_CODE,ROUTE_DESC,PACKAGE_CODE,SATURDAY_DELIV) values ('${routeCode}','HERMES','${contractNo}','2DAY','${routeDesc} IOD',null,null);`);
+            }
+            if (isPOD) {
+                const routeCode = `2D${accountNumber}POD`;
+                const contractNo = `1RY01${accountNumber}`;
+                sqlStatements.push(`insert into cust_routes (ROUTE_CODE,Carrier,CONTRACT_NO,SERVICE_CODE,ROUTE_DESC,PACKAGE_CODE,SATURDAY_DELIV) values ('${routeCode}','HERMES','${contractNo}','2DAY','${routeDesc} POD',null,null);`);
+            }
+        }
+
+        return sqlStatements.join('\n\n');
+    }
 
     // Clear button
     clearRouteBtn.addEventListener('click', function() {
@@ -1205,6 +1286,16 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('destination').value = '';
         document.getElementById('priority').value = 'Standard';
         document.getElementById('notes').value = '';
+        
+        // Clear Evri-specific fields
+        document.getElementById('evri-fields').style.display = 'none';
+        document.getElementById('evri-account').value = '';
+        document.getElementById('evri-iod').checked = false;
+        document.getElementById('evri-pod').checked = false;
+        document.getElementById('evri-next-day').checked = false;
+        document.getElementById('evri-2-day').checked = false;
+        document.getElementById('evri-route-desc').value = '';
+        
         routeResults.style.display = 'none';
     });
 
