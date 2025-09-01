@@ -1114,6 +1114,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Get DOM elements
     const carrierSelect = document.getElementById('carrier-select');
+    // Service dropdown and code are removed from UI; keep variables undefined-safe
     const serviceSelect = document.getElementById('service-select');
     const serviceCodeInput = document.getElementById('service-code');
     const generateSqlBtn = document.getElementById('generate-sql');
@@ -1125,41 +1126,38 @@ document.addEventListener('DOMContentLoaded', function() {
     // Populate services when carrier is selected
     carrierSelect.addEventListener('change', function() {
         const selectedCarrier = this.value;
-        serviceSelect.innerHTML = '<option value="">Select a service...</option>';
-        serviceCodeInput.value = '';
+        if (serviceSelect) serviceSelect.innerHTML = '';
+        if (serviceCodeInput) serviceCodeInput.value = '';
         
         // Show/hide Evri-specific fields
         const evriFields = document.getElementById('evri-fields');
         if (selectedCarrier === 'Evri') {
             evriFields.style.display = 'block';
-            // Disable regular service selection for Evri
-            serviceSelect.disabled = true;
-            serviceSelect.innerHTML = '<option value="">Evri uses custom service selection below</option>';
+            // No standard service select for Evri
+            if (serviceSelect) {
+                serviceSelect.disabled = true;
+                serviceSelect.innerHTML = '<option value="">Evri uses custom service selection below</option>';
+            }
         } else {
             evriFields.style.display = 'none';
-            serviceSelect.disabled = false;
-            
-            if (selectedCarrier && carrierServices[selectedCarrier]) {
-                carrierServices[selectedCarrier].forEach(service => {
-                    const option = document.createElement('option');
-                    option.value = service.name;
-                    option.textContent = service.name;
-                    option.dataset.code = service.code;
-                    serviceSelect.appendChild(option);
-                });
+            if (serviceSelect) {
+                serviceSelect.disabled = true; // hide/disable since removed
+                serviceSelect.innerHTML = '<option value="">No services required</option>';
             }
         }
     });
 
     // Update service code when service is selected
-    serviceSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        if (selectedOption.dataset.code) {
-            serviceCodeInput.value = selectedOption.dataset.code;
-        } else {
-            serviceCodeInput.value = '';
-        }
-    });
+    if (serviceSelect) {
+        serviceSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption && selectedOption.dataset.code && serviceCodeInput) {
+                serviceCodeInput.value = selectedOption.dataset.code;
+            } else if (serviceCodeInput) {
+                serviceCodeInput.value = '';
+            }
+        });
+    }
 
     // Generate SQL button
     generateSqlBtn.addEventListener('click', function() {
@@ -1176,38 +1174,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Handle Evri-specific SQL generation
             sql = generateEvriSQL();
         } else {
-            // Handle other carriers with original logic
-            const service = serviceSelect.value;
-            const serviceCode = serviceCodeInput.value;
-            const origin = document.getElementById('origin').value;
-            const destination = document.getElementById('destination').value;
-            const priority = document.getElementById('priority').value;
-            const notes = document.getElementById('notes').value;
-
-            if (!service || !serviceCode) {
-                alert('Please select a service first.');
-                return;
-            }
-
-            sql = `INSERT INTO route_mapping (
-    carrier_name,
-    service_name,
-    service_code,
-    origin,
-    destination,
-    priority,
-    notes,
-    created_date
-) VALUES (
-    '${carrier}',
-    '${service}',
-    '${serviceCode}',
-    '${origin || 'NULL'}',
-    '${destination || 'NULL'}',
-    '${priority}',
-    '${notes || 'NULL'}',
-    GETDATE()
-);`;
+            alert('Only Evri is supported right now.');
+            return;
         }
 
         if (sql) {
@@ -1279,13 +1247,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Clear button
     clearRouteBtn.addEventListener('click', function() {
         carrierSelect.value = '';
-        serviceSelect.innerHTML = '<option value="">Select a carrier first...</option>';
-        serviceSelect.disabled = true;
-        serviceCodeInput.value = '';
-        document.getElementById('origin').value = '';
-        document.getElementById('destination').value = '';
-        document.getElementById('priority').value = 'Standard';
-        document.getElementById('notes').value = '';
+        if (serviceSelect) {
+            serviceSelect.innerHTML = '';
+            serviceSelect.disabled = true;
+        }
+        if (serviceCodeInput) serviceCodeInput.value = '';
         
         // Clear Evri-specific fields
         document.getElementById('evri-fields').style.display = 'none';
