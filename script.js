@@ -1008,8 +1008,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
-                // First, try to copy the preview image to clipboard
-                const previewImage = document.querySelector('#preview-container img, #preview-container embed');
+                // Look for the actual preview image in the preview container
+                const previewContainer = document.getElementById('preview-container');
+                const previewImage = previewContainer.querySelector('img, embed');
                 
                 if (previewImage && previewImage.tagName === 'IMG') {
                     // For images, copy the image to clipboard
@@ -1093,33 +1094,98 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const filename = filenameInput.value.trim() || 'label';
                 let blob;
-                let mimeType;
                 let extension;
 
-                if (currentDataType === 'PDF') {
-                    // For PDF, create blob from Base64
-                    const base64Data = document.getElementById('base64-input').value.trim();
-                    const binaryString = atob(base64Data);
-                    const bytes = new Uint8Array(binaryString.length);
-                    for (let i = 0; i < binaryString.length; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    blob = new Blob([bytes], { type: 'application/pdf' });
-                    extension = 'pdf';
-                } else if (currentDataType === 'ZPL Text' || currentDataType === 'Text') {
+                // Look for the actual preview image in the preview container
+                const previewContainer = document.getElementById('preview-container');
+                const previewImage = previewContainer.querySelector('img, embed');
+
+                if (previewImage && previewImage.tagName === 'IMG') {
+                    // For images, download the actual preview image
+                    downloadImageFromElement(previewImage, filename);
+                    return;
+                } else if (previewImage && previewImage.tagName === 'EMBED') {
+                    // For PDF embeds, download the original PDF
+                    downloadPDFFromBase64(filename);
+                    return;
+                } else {
+                    // Fallback to downloading data based on type
+                    downloadDataBasedOnType(filename);
+                }
+            } catch (error) {
+                console.error('Download failed:', error);
+                showCopyNotification('Failed to download file', 'error');
+            }
+        }
+
+        function downloadImageFromElement(imgElement, filename) {
+            try {
+                // Create a canvas to capture the image
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas size to match image
+                canvas.width = imgElement.naturalWidth || imgElement.width;
+                canvas.height = imgElement.naturalHeight || imgElement.height;
+                
+                // Draw image to canvas
+                ctx.drawImage(imgElement, 0, 0);
+                
+                // Convert canvas to blob and download
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showCopyNotification('Preview image downloaded successfully!', 'success');
+                }, 'image/png');
+            } catch (error) {
+                console.error('Failed to download image:', error);
+                // Fallback to data download
+                downloadDataBasedOnType(filename);
+            }
+        }
+
+        function downloadPDFFromBase64(filename) {
+            try {
+                const base64Data = document.getElementById('base64-input').value.trim();
+                const binaryString = atob(base64Data);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], { type: 'application/pdf' });
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showCopyNotification('PDF downloaded successfully!', 'success');
+            } catch (error) {
+                console.error('Failed to download PDF:', error);
+                showCopyNotification('Failed to download PDF', 'error');
+            }
+        }
+
+        function downloadDataBasedOnType(filename) {
+            try {
+                let blob;
+                let extension;
+
+                if (currentDataType === 'ZPL Text' || currentDataType === 'Text') {
                     // For text data, create text blob
                     blob = new Blob([currentLabelData], { type: 'text/plain' });
                     extension = 'txt';
-                } else if (currentDataType === 'PNG' || currentDataType === 'JPEG') {
-                    // For images, create blob from Base64
-                    const base64Data = document.getElementById('base64-input').value.trim();
-                    const binaryString = atob(base64Data);
-                    const bytes = new Uint8Array(binaryString.length);
-                    for (let i = 0; i < binaryString.length; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    blob = new Blob([bytes], { type: `image/${currentDataType.toLowerCase()}` });
-                    extension = currentDataType.toLowerCase();
                 } else {
                     // For other formats, save as text file
                     blob = new Blob([currentLabelData], { type: 'text/plain' });
@@ -1138,7 +1204,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 showCopyNotification('File downloaded successfully!', 'success');
             } catch (error) {
-                console.error('Download failed:', error);
+                console.error('Data download failed:', error);
                 showCopyNotification('Failed to download file', 'error');
             }
         }

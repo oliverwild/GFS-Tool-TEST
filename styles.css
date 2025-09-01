@@ -121,7 +121,7 @@ p {
 .btn-outline {
     background: transparent;
     color: #667eea;
-    border-color: var(--border-color);
+    border-color: #667eea;
 }
 
 .btn-outline:hover {
@@ -208,10 +208,6 @@ p {
     margin-right: 0.5rem;
     font-size: 2rem;
 }
-
-/* Navigation menu removed for simplified team interface */
-
-/* Hamburger menu removed for simplified team interface */
 
 /* Tools Section (Now Main Landing) */
 .tools-section {
