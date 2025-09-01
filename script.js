@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (toolType === 'route-mapping') {
             document.getElementById('default-wip').style.display = 'none';
             document.getElementById('route-mapping-content').style.display = 'block';
-            // Route Mapping is initialized via DOMContentLoaded event listener
+            initializeRouteMapping();
         }
     }
 
@@ -1077,51 +1077,51 @@ function showCopyNotification(message, type = 'success') {
     }, 2000);
 }
 
-// Route Mapping Tool Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Carrier and service data
-    const carrierServices = {
-        'DPD': [
-            { name: 'Next Day Delivery', code: '12' },
-            { name: 'Standard Delivery', code: '10' },
-            { name: 'Saturday Delivery', code: '15' }
-        ],
-        'DPD Local': [
-            { name: 'Same Day Local', code: 'L01' },
-            { name: 'Next Day Local', code: 'L02' }
-        ],
-        'DHL eCom': [
-            { name: 'Standard eCom', code: 'EC01' },
-            { name: 'Express eCom', code: 'EC02' },
-            { name: 'Premium eCom', code: 'EC03' }
-        ],
-        'Evri': [
-            { name: 'EVRI NEXT DAY IOD', code: 'Nday' },
-            { name: 'EVRI STANDARD', code: 'Std' },
-            { name: 'EVRI EXPRESS', code: 'Exp' }
-        ],
-        'UPS': [
-            { name: 'UPS Standard', code: 'UPS01' },
-            { name: 'UPS Express', code: 'UPS02' },
-            { name: 'UPS Next Day Air', code: 'UPS03' }
-        ],
-        'GFSI': [
-            { name: 'GFSI Standard', code: 'GFS01' },
-            { name: 'GFSI Express', code: 'GFS02' },
-            { name: 'GFSI Premium', code: 'GFS03' }
-        ]
-    };
+    // Initialize Route Mapping functionality
+    function initializeRouteMapping() {
+        // Carrier and service data
+        const carrierServices = {
+            'DPD': [
+                { name: 'Next Day Delivery', code: '12' },
+                { name: 'Standard Delivery', code: '10' },
+                { name: 'Saturday Delivery', code: '15' }
+            ],
+            'DPD Local': [
+                { name: 'Same Day Local', code: 'L01' },
+                { name: 'Next Day Local', code: 'L02' }
+            ],
+            'DHL eCom': [
+                { name: 'Standard eCom', code: 'EC01' },
+                { name: 'Express eCom', code: 'EC02' },
+                { name: 'Premium eCom', code: 'EC03' }
+            ],
+            'Evri': [
+                { name: 'EVRI NEXT DAY IOD', code: 'Nday' },
+                { name: 'EVRI STANDARD', code: 'Std' },
+                { name: 'EVRI EXPRESS', code: 'Exp' }
+            ],
+            'UPS': [
+                { name: 'UPS Standard', code: 'UPS01' },
+                { name: 'UPS Express', code: 'UPS02' },
+                { name: 'UPS Next Day Air', code: 'UPS03' }
+            ],
+            'GFSI': [
+                { name: 'GFSI Standard', code: 'GFS01' },
+                { name: 'GFSI Express', code: 'GFS02' },
+                { name: 'GFSI Premium', code: 'GFS03' }
+            ]
+        };
 
-    // Get DOM elements
-    const carrierSelect = document.getElementById('carrier-select');
-    // Service dropdown and code are removed from UI; keep variables undefined-safe
-    const serviceSelect = document.getElementById('service-select');
-    const serviceCodeInput = document.getElementById('service-code');
-    const generateSqlBtn = document.getElementById('generate-sql');
-    const clearRouteBtn = document.getElementById('clear-route');
-    const routeResults = document.getElementById('route-results');
-    const sqlScript = document.getElementById('sql-script');
-    const copySqlBtn = document.getElementById('copy-sql');
+        // Get DOM elements
+        const carrierSelect = document.getElementById('carrier-select');
+        // Service dropdown and code are removed from UI; keep variables undefined-safe
+        const serviceSelect = document.getElementById('service-select');
+        const serviceCodeInput = document.getElementById('service-code');
+        const generateSqlBtn = document.getElementById('generate-sql');
+        const clearRouteBtn = document.getElementById('clear-route');
+        const routeResults = document.getElementById('route-results');
+        const sqlScript = document.getElementById('sql-script');
+        const copySqlBtn = document.getElementById('copy-sql');
 
     // Populate services when carrier is selected
     carrierSelect.addEventListener('change', function() {
@@ -1265,12 +1265,12 @@ document.addEventListener('DOMContentLoaded', function() {
         routeResults.style.display = 'none';
     });
 
-    // Copy SQL button
-    copySqlBtn.addEventListener('click', function() {
-        const sqlText = sqlScript.textContent;
-        if (sqlText) {
-            window.copyToClipboard(sqlText);
-        }
-    });
-});
+        // Copy SQL button
+        copySqlBtn.addEventListener('click', function() {
+            const sqlText = sqlScript.textContent;
+            if (sqlText) {
+                window.copyToClipboard(sqlText);
+            }
+        });
+    }
 
