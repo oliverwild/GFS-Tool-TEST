@@ -1068,22 +1068,58 @@ document.addEventListener('DOMContentLoaded', function() {
             const lines = insertScript.split('\n').filter(line => line.trim());
             const updateScripts = [];
 
-            for (const line of lines) {
-                if (line.trim().toUpperCase().startsWith('INSERT INTO')) {
+            // Process the script line by line to find VALUES lines
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Look for VALUES lines that contain the actual data
+                if (line.toUpperCase().startsWith('VALUES')) {
                     try {
-                        // Extract values from INSERT statement
+                        // Extract values from VALUES line
                         const valuesMatch = line.match(/VALUES\s*\(([^)]+)\)/i);
                         if (valuesMatch) {
-                            const values = valuesMatch[1].split(',').map(v => v.trim().replace(/['"]/g, ''));
+                            const valuesString = valuesMatch[1];
+                            // Split by comma, but be careful with quoted strings
+                            const values = [];
+                            let currentValue = '';
+                            let inQuotes = false;
+                            let quoteChar = '';
+                            
+                            for (let j = 0; j < valuesString.length; j++) {
+                                const char = valuesString[j];
+                                
+                                if ((char === "'" || char === '"') && !inQuotes) {
+                                    inQuotes = true;
+                                    quoteChar = char;
+                                    currentValue += char;
+                                } else if (char === quoteChar && inQuotes) {
+                                    inQuotes = false;
+                                    quoteChar = '';
+                                    currentValue += char;
+                                } else if (char === ',' && !inQuotes) {
+                                    values.push(currentValue.trim());
+                                    currentValue = '';
+                                } else {
+                                    currentValue += char;
+                                }
+                            }
+                            
+                            // Add the last value
+                            if (currentValue.trim()) {
+                                values.push(currentValue.trim());
+                            }
+                            
+                            // Clean up values (remove quotes)
+                            const cleanValues = values.map(v => v.replace(/^['"]|['"]$/g, ''));
                             
                             // Extract the relevant values (assuming the order from the SQL query)
-                            // contract_no, RANGE_ID, cons_start_no, cons_end_no, cons_cur_no, ITEM_RANGE_ID, START_NO, END_NO, CUR_NO
-                            if (values.length >= 9) {
-                                const contractNo = values[0];
-                                const rangeId = values[1];
-                                const consCurNo = values[4];
-                                const itemRangeId = values[5];
-                                const curNo = values[8];
+                            // CONTRACT_NO, RANGE_ID, CONS_START_NO, CONS_END_NO, CONS_CUR_NO, ITEM_RANGE_ID, START_NO, END_NO, CUR_NO
+                            if (cleanValues.length >= 9) {
+                                const contractNo = cleanValues[0];
+                                const rangeId = cleanValues[1];
+                                const consCurNo = cleanValues[4];
+                                const itemRangeId = cleanValues[5];
+                                const curNo = cleanValues[8];
 
                                 // Generate UPDATE statements
                                 if (rangeId && consCurNo) {
@@ -1098,7 +1134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
                     } catch (error) {
-                        console.error('Error parsing line:', line, error);
+                        console.error('Error parsing VALUES line:', line, error);
                     }
                 }
             }
