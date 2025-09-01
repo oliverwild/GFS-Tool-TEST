@@ -8,13 +8,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body data-theme="dark">
     <header class="header">
         <nav class="navbar">
             <div class="nav-container">
                 <div class="nav-logo">
                     <i class="fas fa-tools"></i>
                     <span>GFS Tools</span>
+                </div>
+                <div class="nav-controls">
+                    <button id="dark-mode-toggle" class="dark-mode-toggle" title="Switch to Light Mode">
+                        <i class="fas fa-sun"></i>
+                    </button>
                 </div>
             </div>
         </nav>
@@ -269,6 +274,81 @@
                                 <button class="btn btn-secondary" id="copy-sql">Copy SQL</button>
                             </div>
                             <pre id="sql-script" class="sql-code"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Range Jumping Tool Content -->
+                <div id="range-jumping-content" class="tool-content" style="display: none;">
+                    <div class="range-jump-options">
+                        <h3>Range Jump Tool</h3>
+                        <div class="option-tabs">
+                            <button class="option-tab active" data-option="local-ranges">Local Ranges</button>
+                            <button class="option-tab" data-option="coming-soon">Coming Soon</button>
+                        </div>
+                    </div>
+
+                    <!-- Local Ranges Option -->
+                    <div id="local-ranges-content" class="option-content active">
+                        <div class="query-section">
+                            <h4>SQL Query</h4>
+                            <p>Use this query to get your range data:</p>
+                            <div class="query-display">
+                                <pre id="range-query">SELECT 
+    csc.contract_no,
+    csc.RANGE_ID,
+    sr.cons_start_no,
+    sr.cons_end_no,
+    sr.cons_cur_no,
+    csc.ITEM_RANGE_ID,
+    ir.START_NO,
+    ir.END_NO,
+    ir.CUR_NO
+FROM cust_site_contracts csc
+INNER JOIN SHIP_RANGES sr ON csc.RANGE_ID = sr.ID
+INNER JOIN ITEM_RANGES ir ON csc.ITEM_RANGE_ID = ir.ID
+WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);</pre>
+                                <button class="btn btn-secondary" id="copy-query">Copy Query</button>
+                            </div>
+                        </div>
+
+                        <div class="input-section">
+                            <h4>Paste INSERT Script Results</h4>
+                            <p>Paste the results from your SQL query here:</p>
+                            <textarea id="insert-script-input" placeholder="Paste your INSERT script results here..." rows="8"></textarea>
+                        </div>
+
+                        <div class="jump-section">
+                            <h4>Jump Amount</h4>
+                            <div class="jump-input-group">
+                                <label for="jump-amount">Enter the amount to jump by:</label>
+                                <input type="number" id="jump-amount" placeholder="e.g., 100" min="1">
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button class="btn btn-primary" id="generate-update">Generate Update Script</button>
+                            <button class="btn btn-outline" id="clear-range-jump">Clear</button>
+                        </div>
+
+                        <div class="results-section" id="range-jump-results" style="display: none;">
+                            <h4>Generated Update Script</h4>
+                            <div class="update-script-output">
+                                <div class="script-header">
+                                    <span class="script-label">UPDATE Statements:</span>
+                                    <button class="btn btn-secondary" id="copy-update-script">Copy Script</button>
+                                </div>
+                                <pre id="update-script" class="script-code"></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coming Soon Option -->
+                    <div id="coming-soon-content" class="option-content">
+                        <div class="wip-notice">
+                            <i class="fas fa-tools"></i>
+                            <h3>Coming Soon</h3>
+                            <p>Additional range jumping functionality will be available soon!</p>
                         </div>
                     </div>
                 </div>

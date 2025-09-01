@@ -1,5 +1,43 @@
+// Dark Mode Functionality
+function initializeDarkMode() {
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const body = document.body;
+    
+    // Check for saved theme preference or default to dark mode
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Set initial theme - default to dark mode
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'dark');
+    setTheme(initialTheme);
+    
+    // Add event listener for toggle button
+    darkModeToggle.addEventListener('click', function() {
+        const currentTheme = body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+    });
+    
+    function setTheme(theme) {
+        body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        
+        // Update toggle button icon
+        const icon = darkModeToggle.querySelector('i');
+        if (theme === 'dark') {
+            icon.className = 'fas fa-sun';
+            darkModeToggle.title = 'Switch to Light Mode';
+        } else {
+            icon.className = 'fas fa-moon';
+            darkModeToggle.title = 'Switch to Dark Mode';
+        }
+    }
+}
+
 // Modal functionality for GFS Tools
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dark mode first
+    initializeDarkMode();
     // Get modal elements
     const toolModal = document.getElementById('tool-modal');
     const wikiModal = document.getElementById('wiki-modal');
@@ -14,17 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const toolWikiData = {
         'range-jumping': {
             title: 'Range Jumping Tool',
-            description: 'Convert SQL inserts to update scripts with number jumping functionality.',
+            description: 'Generate UPDATE scripts to jump range numbers in SHIP_RANGES and ITEM_RANGES tables.',
             howToUse: [
-                'Paste your SQL INSERT statements into the input area',
-                'Enter the jump number you want to apply',
-                'Click "Convert" to generate the UPDATE script',
+                'Copy the provided SQL query to get your range data',
+                'Paste the INSERT script results from your query',
+                'Enter the jump amount you want to apply',
+                'Click "Generate Update Script" to create UPDATE statements',
                 'Copy the generated script for use in your database'
             ],
             examples: [
-                'Input: INSERT INTO table (id, name) VALUES (1, "Item 1")',
-                'Jump Number: 100',
-                'Output: UPDATE table SET id = id + 100 WHERE id = 1'
+                'Query: SELECT contract_no, RANGE_ID, cons_cur_no, ITEM_RANGE_ID, cur_no FROM tables',
+                'Jump Amount: 100',
+                'Output: UPDATE SHIP_RANGES SET cons_cur_no = cons_cur_no + 100 WHERE ID = range_id; UPDATE ITEM_RANGES SET cur_no = cur_no + 100 WHERE ID = item_range_id;'
             ]
         },
         'range-splitting': {
@@ -60,15 +99,16 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Route Mapping Tool',
             description: 'Generate SQL inserts for carriers, services, and route details.',
             howToUse: [
-                'Select carrier from the dropdown menu',
-                'Choose applicable services',
-                'Fill in additional route details',
-                'Generate SQL inserts for database use'
+                'Select carrier from the dropdown menu (DPD, DPD Local, DHL eCom, Evri, UPS, GFSI)',
+                'Configure carrier-specific settings and services',
+                'Fill in route details and parameters',
+                'Generate SQL INSERT statements for database use'
             ],
             examples: [
-                'Carrier: FedEx, Services: Ground, Express',
-                'Details: Origin, Destination, Transit Time',
-                'Output: SQL INSERT statements for each route'
+                'Carrier: Evri, Account: 5, Services: Next Day, 2 Day',
+                'Output: SQL INSERT statements with ROUTE_CODE, CONTRACT_NO, SERVICE_CODE',
+                'Multiple statements generated for different service combinations',
+                'Ready to copy and use in your database'
             ]
         }
     };
@@ -110,6 +150,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('default-wip').style.display = 'none';
             document.getElementById('label-preview-content').style.display = 'block';
             initializeLabelPreview();
+        } else if (toolType === 'range-jumping') {
+            document.getElementById('default-wip').style.display = 'none';
+            document.getElementById('range-jumping-content').style.display = 'block';
+            initializeRangeJumping();
         } else if (toolType === 'route-mapping') {
             document.getElementById('default-wip').style.display = 'none';
             document.getElementById('route-mapping-content').style.display = 'block';
@@ -938,6 +982,132 @@ document.addEventListener('DOMContentLoaded', function() {
                     step.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>' + step.querySelector('span').textContent + '</span>';
                 }
             }
+        }
+    }
+
+    // Initialize Range Jumping functionality
+    function initializeRangeJumping() {
+        const copyQueryBtn = document.getElementById('copy-query');
+        const insertScriptInput = document.getElementById('insert-script-input');
+        const jumpAmountInput = document.getElementById('jump-amount');
+        const generateUpdateBtn = document.getElementById('generate-update');
+        const clearRangeJumpBtn = document.getElementById('clear-range-jump');
+        const rangeJumpResults = document.getElementById('range-jump-results');
+        const updateScript = document.getElementById('update-script');
+        const copyUpdateScriptBtn = document.getElementById('copy-update-script');
+        const optionTabs = document.querySelectorAll('.option-tab');
+        const optionContents = document.querySelectorAll('.option-content');
+
+        // Option tab switching
+        optionTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const option = this.getAttribute('data-option');
+                
+                // Update active tab
+                optionTabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update active content
+                optionContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === option + '-content') {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        // Copy query button
+        copyQueryBtn.addEventListener('click', function() {
+            const queryText = document.getElementById('range-query').textContent;
+            window.copyToClipboard(queryText);
+        });
+
+        // Generate update script button
+        generateUpdateBtn.addEventListener('click', function() {
+            const insertScript = insertScriptInput.value.trim();
+            const jumpAmount = parseInt(jumpAmountInput.value) || 0;
+
+            if (!insertScript) {
+                alert('Please paste your INSERT script results first.');
+                return;
+            }
+
+            if (jumpAmount <= 0) {
+                alert('Please enter a valid jump amount (greater than 0).');
+                return;
+            }
+
+            try {
+                const updateScripts = generateUpdateScripts(insertScript, jumpAmount);
+                updateScript.textContent = updateScripts;
+                rangeJumpResults.style.display = 'block';
+                rangeJumpResults.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                alert('Error generating update script: ' + error.message);
+            }
+        });
+
+        // Clear button
+        clearRangeJumpBtn.addEventListener('click', function() {
+            insertScriptInput.value = '';
+            jumpAmountInput.value = '';
+            rangeJumpResults.style.display = 'none';
+        });
+
+        // Copy update script button
+        copyUpdateScriptBtn.addEventListener('click', function() {
+            const scriptText = updateScript.textContent;
+            if (scriptText) {
+                window.copyToClipboard(scriptText);
+            }
+        });
+
+        function generateUpdateScripts(insertScript, jumpAmount) {
+            // Parse the INSERT script to extract the values
+            const lines = insertScript.split('\n').filter(line => line.trim());
+            const updateScripts = [];
+
+            for (const line of lines) {
+                if (line.trim().toUpperCase().startsWith('INSERT INTO')) {
+                    try {
+                        // Extract values from INSERT statement
+                        const valuesMatch = line.match(/VALUES\s*\(([^)]+)\)/i);
+                        if (valuesMatch) {
+                            const values = valuesMatch[1].split(',').map(v => v.trim().replace(/['"]/g, ''));
+                            
+                            // Extract the relevant values (assuming the order from the SQL query)
+                            // contract_no, RANGE_ID, cons_start_no, cons_end_no, cons_cur_no, ITEM_RANGE_ID, START_NO, END_NO, CUR_NO
+                            if (values.length >= 9) {
+                                const contractNo = values[0];
+                                const rangeId = values[1];
+                                const consCurNo = values[4];
+                                const itemRangeId = values[5];
+                                const curNo = values[8];
+
+                                // Generate UPDATE statements
+                                if (rangeId && consCurNo) {
+                                    const newConsCurNo = parseInt(consCurNo) + jumpAmount;
+                                    updateScripts.push(`UPDATE SHIP_RANGES SET cons_cur_no = ${newConsCurNo} WHERE ID = ${rangeId};`);
+                                }
+
+                                if (itemRangeId && curNo) {
+                                    const newCurNo = parseInt(curNo) + jumpAmount;
+                                    updateScripts.push(`UPDATE ITEM_RANGES SET cur_no = ${newCurNo} WHERE ID = ${itemRangeId};`);
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error parsing line:', line, error);
+                    }
+                }
+            }
+
+            if (updateScripts.length === 0) {
+                throw new Error('No valid INSERT statements found. Please check your input format.');
+            }
+
+            return updateScripts.join('\n\n');
         }
     }
 
