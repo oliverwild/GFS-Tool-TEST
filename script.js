@@ -1008,6 +1008,64 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             try {
+                // First, try to copy the preview image to clipboard
+                const previewImage = document.querySelector('#preview-container img, #preview-container embed');
+                
+                if (previewImage && previewImage.tagName === 'IMG') {
+                    // For images, copy the image to clipboard
+                    copyImageToClipboard(previewImage);
+                } else if (previewImage && previewImage.tagName === 'EMBED') {
+                    // For PDF embeds, try to capture as image
+                    copyPDFAsImage(previewImage);
+                } else {
+                    // Fallback to copying data based on type
+                    copyDataBasedOnType();
+                }
+            } catch (error) {
+                console.error('Copy failed:', error);
+                // Fallback to original data copy
+                copyDataBasedOnType();
+            }
+        }
+
+        function copyImageToClipboard(imgElement) {
+            // Create a canvas to capture the image
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size to match image
+            canvas.width = imgElement.naturalWidth || imgElement.width;
+            canvas.height = imgElement.naturalHeight || imgElement.height;
+            
+            // Draw image to canvas
+            ctx.drawImage(imgElement, 0, 0);
+            
+            // Convert canvas to blob
+            canvas.toBlob(async (blob) => {
+                try {
+                    // Copy blob to clipboard
+                    await navigator.clipboard.write([
+                        new ClipboardItem({
+                            'image/png': blob
+                        })
+                    ]);
+                    showCopyNotification('Preview image copied to clipboard!', 'success');
+                } catch (error) {
+                    console.error('Failed to copy image to clipboard:', error);
+                    // Fallback to data copy
+                    copyDataBasedOnType();
+                }
+            }, 'image/png');
+        }
+
+        function copyPDFAsImage(embedElement) {
+            // For PDF embeds, we can't directly capture them as images
+            // So we'll fall back to copying the original Base64 data
+            copyDataBasedOnType();
+        }
+
+        function copyDataBasedOnType() {
+            try {
                 if (currentDataType === 'PDF') {
                     // For PDF, copy the original Base64 data
                     const base64Data = document.getElementById('base64-input').value.trim();
@@ -1021,7 +1079,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.copyToClipboard(base64Data);
                 }
             } catch (error) {
-                console.error('Copy failed:', error);
+                console.error('Data copy failed:', error);
                 showCopyNotification('Failed to copy data', 'error');
             }
         }
