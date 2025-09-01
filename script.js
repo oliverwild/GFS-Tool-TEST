@@ -1064,6 +1064,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         function generateUpdateScripts(insertScript, jumpAmount) {
+            console.log('Input script:', insertScript);
+            
             // Parse the INSERT script to extract the values
             const lines = insertScript.split('\n').filter(line => line.trim());
             const updateScripts = [];
@@ -1071,14 +1073,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // Process the script line by line to find VALUES lines
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
+                console.log('Processing line:', line);
                 
                 // Look for VALUES lines that contain the actual data
                 if (line.toUpperCase().startsWith('VALUES')) {
+                    console.log('Found VALUES line:', line);
                     try {
-                        // Extract values from VALUES line
+                        // Extract values from VALUES line - handle multi-line format
                         const valuesMatch = line.match(/VALUES\s*\(([^)]+)\)/i);
                         if (valuesMatch) {
+                            console.log('Values match found:', valuesMatch[1]);
                             const valuesString = valuesMatch[1];
+                            
                             // Split by comma, but be careful with quoted strings
                             const values = [];
                             let currentValue = '';
@@ -1109,8 +1115,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 values.push(currentValue.trim());
                             }
                             
+                            console.log('Parsed values:', values);
+                            
                             // Clean up values (remove quotes)
                             const cleanValues = values.map(v => v.replace(/^['"]|['"]$/g, ''));
+                            console.log('Clean values:', cleanValues);
                             
                             // Extract the relevant values (assuming the order from the SQL query)
                             // CONTRACT_NO, RANGE_ID, CONS_START_NO, CONS_END_NO, CONS_CUR_NO, ITEM_RANGE_ID, START_NO, END_NO, CUR_NO
@@ -1120,6 +1129,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const consCurNo = cleanValues[4];
                                 const itemRangeId = cleanValues[5];
                                 const curNo = cleanValues[8];
+
+                                console.log('Extracted values:', { contractNo, rangeId, consCurNo, itemRangeId, curNo });
 
                                 // Generate UPDATE statements
                                 if (rangeId && consCurNo) {
@@ -1131,13 +1142,96 @@ document.addEventListener('DOMContentLoaded', function() {
                                     const newCurNo = parseInt(curNo) + jumpAmount;
                                     updateScripts.push(`UPDATE ITEM_RANGES SET cur_no = ${newCurNo} WHERE ID = ${itemRangeId};`);
                                 }
+                            } else {
+                                console.log('Not enough values found:', cleanValues.length);
                             }
+                        } else {
+                            console.log('No VALUES match found in line:', line);
                         }
                     } catch (error) {
                         console.error('Error parsing VALUES line:', line, error);
                     }
                 }
+                
+                // Also check if this line contains VALUES data but doesn't start with VALUES
+                // This handles the case where VALUES is on one line and data is on the next
+                if (line.includes('(') && line.includes(')') && line.includes(',')) {
+                    console.log('Found potential VALUES data line:', line);
+                    try {
+                        // Try to extract values from this line
+                        const valuesMatch = line.match(/\(([^)]+)\)/);
+                        if (valuesMatch) {
+                            console.log('Values match found in data line:', valuesMatch[1]);
+                            const valuesString = valuesMatch[1];
+                            
+                            // Split by comma, but be careful with quoted strings
+                            const values = [];
+                            let currentValue = '';
+                            let inQuotes = false;
+                            let quoteChar = '';
+                            
+                            for (let j = 0; j < valuesString.length; j++) {
+                                const char = valuesString[j];
+                                
+                                if ((char === "'" || char === '"') && !inQuotes) {
+                                    inQuotes = true;
+                                    quoteChar = char;
+                                    currentValue += char;
+                                } else if (char === quoteChar && inQuotes) {
+                                    inQuotes = false;
+                                    quoteChar = '';
+                                    currentValue += char;
+                                } else if (char === ',' && !inQuotes) {
+                                    values.push(currentValue.trim());
+                                    currentValue = '';
+                                } else {
+                                    currentValue += char;
+                                }
+                            }
+                            
+                            // Add the last value
+                            if (currentValue.trim()) {
+                                values.push(currentValue.trim());
+                            }
+                            
+                            console.log('Parsed values from data line:', values);
+                            
+                            // Clean up values (remove quotes)
+                            const cleanValues = values.map(v => v.replace(/^['"]|['"]$/g, ''));
+                            console.log('Clean values from data line:', cleanValues);
+                            
+                            // Extract the relevant values (assuming the order from the SQL query)
+                            // CONTRACT_NO, RANGE_ID, CONS_START_NO, CONS_END_NO, CONS_CUR_NO, ITEM_RANGE_ID, START_NO, END_NO, CUR_NO
+                            if (cleanValues.length >= 9) {
+                                const contractNo = cleanValues[0];
+                                const rangeId = cleanValues[1];
+                                const consCurNo = cleanValues[4];
+                                const itemRangeId = cleanValues[5];
+                                const curNo = cleanValues[8];
+
+                                console.log('Extracted values from data line:', { contractNo, rangeId, consCurNo, itemRangeId, curNo });
+
+                                // Generate UPDATE statements
+                                if (rangeId && consCurNo) {
+                                    const newConsCurNo = parseInt(consCurNo) + jumpAmount;
+                                    updateScripts.push(`UPDATE SHIP_RANGES SET cons_cur_no = ${newConsCurNo} WHERE ID = ${rangeId};`);
+                                }
+
+                                if (itemRangeId && curNo) {
+                                    const newCurNo = parseInt(curNo) + jumpAmount;
+                                    updateScripts.push(`UPDATE ITEM_RANGES SET cur_no = ${newCurNo} WHERE ID = ${itemRangeId};`);
+                                }
+                            } else {
+                                console.log('Not enough values found in data line:', cleanValues.length);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error parsing data line:', line, error);
+                    }
+                }
             }
+
+            console.log('Generated update scripts:', updateScripts);
 
             if (updateScripts.length === 0) {
                 throw new Error('No valid INSERT statements found. Please check your input format.');
