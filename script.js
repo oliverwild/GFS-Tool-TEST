@@ -1002,11 +1002,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let currentDataType = null;
 
         function copyLabelData() {
-            if (!currentLabelData) {
-                showCopyNotification('No label data to copy', 'error');
-                return;
-            }
-
             try {
                 // Look for the actual preview image in the preview container
                 const previewContainer = document.getElementById('preview-container');
@@ -1067,18 +1062,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function copyDataBasedOnType() {
             try {
-                if (currentDataType === 'PDF') {
-                    // For PDF, copy the original Base64 data
-                    const base64Data = document.getElementById('base64-input').value.trim();
-                    window.copyToClipboard(base64Data);
-                } else if (currentDataType === 'ZPL Text' || currentDataType === 'Text') {
-                    // For text data, copy the decoded text
-                    window.copyToClipboard(currentLabelData);
-                } else {
-                    // For other formats, copy the original Base64
-                    const base64Data = document.getElementById('base64-input').value.trim();
-                    window.copyToClipboard(base64Data);
+                // Try to get the original Base64 input first
+                const base64Input = document.getElementById('base64-input');
+                if (base64Input && base64Input.value.trim()) {
+                    window.copyToClipboard(base64Input.value.trim());
+                    showCopyNotification('Base64 data copied to clipboard!', 'success');
+                    return;
                 }
+                
+                // If no Base64 input, try to copy current label data
+                if (currentLabelData) {
+                    window.copyToClipboard(currentLabelData);
+                    showCopyNotification('Label data copied to clipboard!', 'success');
+                    return;
+                }
+                
+                showCopyNotification('No data available to copy', 'error');
             } catch (error) {
                 console.error('Data copy failed:', error);
                 showCopyNotification('Failed to copy data', 'error');
@@ -1086,11 +1085,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function downloadLabelData() {
-            if (!currentLabelData) {
-                showCopyNotification('No label data to download', 'error');
-                return;
-            }
-
             try {
                 const filename = filenameInput.value.trim() || 'label';
                 let blob;
@@ -1179,30 +1173,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function downloadDataBasedOnType(filename) {
             try {
-                let blob;
-                let extension;
-
-                if (currentDataType === 'ZPL Text' || currentDataType === 'Text') {
-                    // For text data, create text blob
-                    blob = new Blob([currentLabelData], { type: 'text/plain' });
-                    extension = 'txt';
-                } else {
-                    // For other formats, save as text file
-                    blob = new Blob([currentLabelData], { type: 'text/plain' });
-                    extension = 'txt';
+                // Try to get the original Base64 input first
+                const base64Input = document.getElementById('base64-input');
+                if (base64Input && base64Input.value.trim()) {
+                    // Download the Base64 data as a text file
+                    const blob = new Blob([base64Input.value.trim()], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showCopyNotification('Base64 data downloaded successfully!', 'success');
+                    return;
                 }
-
-                // Create download link
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${filename}.${extension}`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-                showCopyNotification('File downloaded successfully!', 'success');
+                
+                // If no Base64 input, try to download current label data
+                if (currentLabelData) {
+                    const blob = new Blob([currentLabelData], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showCopyNotification('Label data downloaded successfully!', 'success');
+                    return;
+                }
+                
+                showCopyNotification('No data available to download', 'error');
             } catch (error) {
                 console.error('Data download failed:', error);
                 showCopyNotification('Failed to download file', 'error');
