@@ -1069,18 +1069,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Parse the INSERT script to extract the values
             const lines = insertScript.split('\n').filter(line => line.trim());
             const updateScripts = [];
-            const processedLines = new Set(); // Track processed lines to avoid duplicates
 
             // Process the script line by line to find VALUES lines
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
                 console.log('Processing line:', line);
-                
-                // Skip if we've already processed this line
-                if (processedLines.has(i)) {
-                    console.log('Skipping already processed line:', i);
-                    continue;
-                }
                 
                 // Look for VALUES lines that contain the actual data
                 if (line.toUpperCase().startsWith('VALUES')) {
@@ -1098,9 +1091,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                             // Generate UPDATE statements
                             generateUpdateStatements(cleanValues, jumpAmount, updateScripts);
-                            
-                            // Mark this line as processed
-                            processedLines.add(i);
                         } else {
                             console.log('No VALUES match found in line:', line);
                         }
@@ -1111,7 +1101,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Also check if this line contains VALUES data but doesn't start with VALUES
                 // This handles the case where VALUES is on one line and data is on the next
-                if (line.includes('(') && line.includes(')') && line.includes(',') && !line.toUpperCase().startsWith('VALUES')) {
+                // But only if it looks like actual data (contains numbers and quotes)
+                if (line.includes('(') && line.includes(')') && line.includes(',') && 
+                    !line.toUpperCase().startsWith('VALUES') && 
+                    !line.toUpperCase().includes('CONTRACT_NO') && 
+                    !line.toUpperCase().includes('RANGE_ID') &&
+                    (line.includes("'") || line.match(/\d+/))) {
                     console.log('Found potential VALUES data line:', line);
                     try {
                         // Try to extract values from this line
@@ -1126,9 +1121,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                             // Generate UPDATE statements
                             generateUpdateStatements(cleanValues, jumpAmount, updateScripts);
-                            
-                            // Mark this line as processed
-                            processedLines.add(i);
                         }
                     } catch (error) {
                         console.error('Error parsing data line:', line, error);
