@@ -75,7 +75,7 @@ h1, h2, h3, h4, h5, h6 {
 
 p {
     margin-bottom: 1rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 /* Buttons */
@@ -338,19 +338,19 @@ p {
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 2rem;
-    border-bottom: 1px solid #e1e5e9;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
     border-radius: 16px 16px 0 0;
 }
 
 .modal-header h2 {
     margin: 0;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.5rem;
 }
 
 .close {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
@@ -379,13 +379,13 @@ p {
 }
 
 .wip-notice h3 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 1rem;
     font-size: 1.8rem;
 }
 
 .wip-notice p {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 1.1rem;
     line-height: 1.6;
     max-width: 500px;
@@ -399,10 +399,10 @@ p {
 }
 
 .tool-content h3 {
-    color: #333;
+    color: var(--text-primary);
     margin: 2rem 0 1rem 0;
     font-size: 1.4rem;
-    border-bottom: 2px solid #e1e5e9;
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 0.5rem;
 }
 
@@ -412,8 +412,8 @@ p {
 
 /* Range Input Section */
 .input-section {
-    background: #f8fafc;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -433,45 +433,47 @@ p {
 
 .input-group label {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
 }
 
 .input-group input {
     padding: 0.75rem;
-    border: 2px solid #e1e5e9;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 .input-group input:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .range-info {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1rem;
 }
 
 .range-info p {
     margin: 0.5rem 0;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .range-info strong {
-    color: #333;
+    color: var(--text-primary);
 }
 
 /* Split Section */
 .split-section {
-    background: #f8fafc;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -485,7 +487,7 @@ p {
 
 .percentage-control label {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1rem;
 }
 
@@ -521,8 +523,8 @@ p {
 
 /* Results Section */
 .results-section {
-    background: #f8fafc;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -535,15 +537,15 @@ p {
 }
 
 .result-card {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
     text-align: center;
 }
 
 .result-card h4 {
-    color: #667eea;
+    color: var(--accent-primary);
     margin-bottom: 1rem;
     font-size: 1.1rem;
 }
@@ -551,13 +553,13 @@ p {
 .range-display {
     font-family: 'Courier New', monospace;
     font-size: 1.1rem;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 0.5rem;
     font-weight: 600;
 }
 
 .range-count {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
@@ -582,14 +584,14 @@ p {
 
 .base64-input-group label {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     font-size: 0.9rem;
 }
 
 .base64-input-group textarea {
     width: 100%;
     padding: 1rem;
-    border: 2px solid #e1e5e9;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     font-family: 'Courier New', monospace;
     font-size: 0.8rem;
@@ -597,31 +599,33 @@ p {
     resize: vertical;
     min-height: 120px;
     transition: border-color 0.3s ease;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
 }
 
 .base64-input-group textarea:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .input-info {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 0.75rem;
 }
 
 .input-info p {
     margin: 0;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
 /* Process Section */
 .process-section {
-    background: #f8fafc;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -634,8 +638,8 @@ p {
 }
 
 .process-status {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1rem;
 }
@@ -645,7 +649,7 @@ p {
     align-items: center;
     gap: 0.75rem;
     padding: 0.5rem 0;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
@@ -679,8 +683,8 @@ p {
 }
 
 .preview-image {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1rem;
     text-align: center;
@@ -689,13 +693,13 @@ p {
 .preview-image img {
     max-width: 100%;
     height: auto;
-    border: 1px solid #e1e5e9;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
 }
 
 .preview-info {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1rem;
     display: flex;
@@ -705,17 +709,70 @@ p {
 
 .preview-info p {
     margin: 0.5rem 0;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
 .preview-info strong {
-    color: #333;
+    color: var(--text-primary);
 }
 
 .preview-actions {
     margin-top: 1.5rem;
     text-align: center;
+}
+
+.action-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filename-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filename-group label {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.filename-input {
+    padding: 0.5rem 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-width: 200px;
+    text-align: center;
+    transition: border-color 0.3s ease;
+}
+
+.filename-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-buttons .btn {
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 /* Error Section */
@@ -746,10 +803,10 @@ p {
 
 /* Wiki Content Styles */
 .wiki-section h3 {
-    color: #333;
+    color: var(--text-primary);
     margin: 1.5rem 0 1rem 0;
     font-size: 1.3rem;
-    border-bottom: 2px solid #e1e5e9;
+    border-bottom: 2px solid var(--border-color);
     padding-bottom: 0.5rem;
 }
 
@@ -758,7 +815,7 @@ p {
 }
 
 .wiki-section p {
-    color: #666;
+    color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 1rem;
 }
@@ -769,28 +826,28 @@ p {
 }
 
 .wiki-section ol li {
-    color: #666;
+    color: var(--text-secondary);
     margin-bottom: 0.5rem;
     line-height: 1.5;
 }
 
 .examples {
-    background: #f8fafc;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
     margin-top: 1rem;
 }
 
 .example-item {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 1rem;
     margin-bottom: 1rem;
     font-family: 'Courier New', monospace;
     font-size: 0.9rem;
-    color: #333;
+    color: var(--text-primary);
     line-height: 1.4;
 }
 
@@ -921,8 +978,8 @@ p {
 
 /* Range Splitter Copy Box Styles */
 .range-copy-box {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     padding: 12px 16px;
     margin: 8px 0;
@@ -931,7 +988,7 @@ p {
 }
 
 .range-copy-box:hover {
-    border-color: #3b82f6;
+    border-color: var(--accent-primary);
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
 }
 
@@ -939,12 +996,12 @@ p {
     font-family: 'Courier New', monospace;
     font-size: 16px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-primary);
     display: inline-block;
 }
 
 .copy-btn {
-    background: #3b82f6;
+    background: var(--accent-primary);
     color: white;
     border: none;
     border-radius: 6px;
@@ -958,7 +1015,7 @@ p {
 }
 
 .copy-btn:hover {
-    background: #2563eb;
+    background: var(--accent-hover);
     transform: scale(1.05);
 }
 
@@ -971,8 +1028,8 @@ p {
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
-    background: #e0e7ff;
-    color: #3730a3;
+    background: var(--bg-tertiary);
+    color: var(--accent-primary);
     font-weight: 700;
     transition: all 0.2s ease;
     display: inline-block;
@@ -980,9 +1037,9 @@ p {
 }
 
 .clickable-number:hover {
-    background: #c7d2fe;
+    background: var(--border-color);
     transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
 .clickable-number:active {
@@ -990,7 +1047,7 @@ p {
 }
 
 .range-separator {
-    color: #6b7280;
+    color: var(--text-muted);
     font-weight: 400;
     margin: 0 4px;
 }
@@ -1218,18 +1275,18 @@ p {
 }
 
 .additional-fields {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 2rem;
 }
 
 .additional-fields h4 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 1rem;
     font-size: 1.1rem;
-    border-bottom: 1px solid #e1e5e9;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 0.5rem;
 }
 
@@ -1245,8 +1302,8 @@ p {
 }
 
 .sql-output {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
 }
@@ -1257,12 +1314,12 @@ p {
     align-items: center;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #e1e5e9;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .sql-label {
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.1rem;
 }
 
@@ -1281,18 +1338,18 @@ p {
 
 /* Evri-specific field styles */
 .evri-specific-fields {
-    background: white;
-    border: 1px solid #e1e5e9;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 2rem;
 }
 
 .evri-specific-fields h4 {
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 1rem;
     font-size: 1.1rem;
-    border-bottom: 1px solid #e1e5e9;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 0.5rem;
 }
 
@@ -1319,7 +1376,7 @@ p {
     gap: 0.5rem;
     cursor: pointer;
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -1328,7 +1385,7 @@ p {
 }
 
 .checkbox-label span {
-    color: #333;
+    color: var(--text-primary);
 }
 
 /* Responsive adjustments for Route Mapping */

@@ -983,6 +983,115 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
+
+        // Add event listeners for copy and download buttons
+        const copyBtn = document.getElementById('copy-label-btn');
+        const downloadBtn = document.getElementById('download-label-btn');
+        const filenameInput = document.getElementById('filename-input');
+
+        if (copyBtn) {
+            copyBtn.addEventListener('click', copyLabelData);
+        }
+
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', downloadLabelData);
+        }
+
+        // Store the current label data for copy/download
+        let currentLabelData = null;
+        let currentDataType = null;
+
+        function copyLabelData() {
+            if (!currentLabelData) {
+                showCopyNotification('No label data to copy', 'error');
+                return;
+            }
+
+            try {
+                if (currentDataType === 'PDF') {
+                    // For PDF, copy the original Base64 data
+                    const base64Data = document.getElementById('base64-input').value.trim();
+                    window.copyToClipboard(base64Data);
+                } else if (currentDataType === 'ZPL Text' || currentDataType === 'Text') {
+                    // For text data, copy the decoded text
+                    window.copyToClipboard(currentLabelData);
+                } else {
+                    // For other formats, copy the original Base64
+                    const base64Data = document.getElementById('base64-input').value.trim();
+                    window.copyToClipboard(base64Data);
+                }
+            } catch (error) {
+                console.error('Copy failed:', error);
+                showCopyNotification('Failed to copy data', 'error');
+            }
+        }
+
+        function downloadLabelData() {
+            if (!currentLabelData) {
+                showCopyNotification('No label data to download', 'error');
+                return;
+            }
+
+            try {
+                const filename = filenameInput.value.trim() || 'label';
+                let blob;
+                let mimeType;
+                let extension;
+
+                if (currentDataType === 'PDF') {
+                    // For PDF, create blob from Base64
+                    const base64Data = document.getElementById('base64-input').value.trim();
+                    const binaryString = atob(base64Data);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    blob = new Blob([bytes], { type: 'application/pdf' });
+                    extension = 'pdf';
+                } else if (currentDataType === 'ZPL Text' || currentDataType === 'Text') {
+                    // For text data, create text blob
+                    blob = new Blob([currentLabelData], { type: 'text/plain' });
+                    extension = 'txt';
+                } else if (currentDataType === 'PNG' || currentDataType === 'JPEG') {
+                    // For images, create blob from Base64
+                    const base64Data = document.getElementById('base64-input').value.trim();
+                    const binaryString = atob(base64Data);
+                    const bytes = new Uint8Array(binaryString.length);
+                    for (let i = 0; i < binaryString.length; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    blob = new Blob([bytes], { type: `image/${currentDataType.toLowerCase()}` });
+                    extension = currentDataType.toLowerCase();
+                } else {
+                    // For other formats, save as text file
+                    blob = new Blob([currentLabelData], { type: 'text/plain' });
+                    extension = 'txt';
+                }
+
+                // Create download link
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}.${extension}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showCopyNotification('File downloaded successfully!', 'success');
+            } catch (error) {
+                console.error('Download failed:', error);
+                showCopyNotification('Failed to download file', 'error');
+            }
+        }
+
+        // Update the generateLabelPreview function to store data
+        const originalGenerateLabelPreview = window.generateLabelPreview;
+        window.generateLabelPreview = function(data, dataType) {
+            currentLabelData = data;
+            currentDataType = dataType;
+            return originalGenerateLabelPreview(data, dataType);
+        };
     }
 
     // Initialize Range Jumping functionality
