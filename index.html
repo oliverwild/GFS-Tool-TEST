@@ -313,13 +313,15 @@
                             <h4>Paste INSERT Script Results</h4>
                             <div class="textarea-container">
                                 <textarea id="insert-script-input" placeholder="Paste your INSERT script results here..." rows="8"></textarea>
-                                <button class="btn btn-secondary copy-query-btn" id="copy-query">Copy Query</button>
                             </div>
                             
                             <div class="jump-section">
                                 <h4>Jump Amount</h4>
                                 <div class="jump-input-group">
-                                    <label for="jump-amount">Enter the amount to jump by:</label>
+                                    <div class="jump-input-row">
+                                        <label for="jump-amount">Enter the amount to jump by:</label>
+                                        <button class="btn btn-secondary copy-query-btn" id="copy-query">Query to get current ranges</button>
+                                    </div>
                                     <input type="number" id="jump-amount" placeholder="e.g., 100" min="1" value="100">
                                 </div>
                             </div>
