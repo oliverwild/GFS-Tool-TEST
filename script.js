@@ -1798,72 +1798,23 @@ function showCopyNotification(message, type = 'success') {
         `;
     }
 
-    // Wiki modal
-    function initializeWikiButtons() {
-        console.log('=== INITIALIZING WIKI BUTTONS ===');
-        const wikiButtons = document.querySelectorAll('.wiki-tool');
-        console.log('Found wiki buttons:', wikiButtons.length);
-        
-        if (wikiButtons.length === 0) {
-            console.error('NO WIKI BUTTONS FOUND!');
-            return;
-        }
-        
-        // Check if modal elements exist
-        console.log('wikiTitle:', wikiTitle);
-        console.log('wikiContent:', wikiContent);
-        console.log('wikiModal:', wikiModal);
-        
-        if (!wikiTitle || !wikiContent || !wikiModal) {
-            console.error('MISSING MODAL ELEMENTS!', { wikiTitle, wikiContent, wikiModal });
-            return;
-        }
-        
-        wikiButtons.forEach((button, index) => {
-            console.log(`Setting up wiki button ${index}:`, button);
-            console.log(`Button classes:`, button.className);
-            console.log(`Button data-tool:`, button.getAttribute('data-tool'));
+    // Open wiki modal
+    document.querySelectorAll('.wiki-tool').forEach(button => {
+        button.addEventListener('click', function() {
+            const toolType = this.getAttribute('data-tool');
+            const toolData = toolWikiData[toolType];
             
-            button.addEventListener('click', function(e) {
-                console.log('=== WIKI BUTTON CLICKED ===', this);
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Test if this is actually being called
-                alert('Wiki button clicked!');
-                
-                const toolType = this.getAttribute('data-tool');
-                console.log('Tool type:', toolType);
-                const toolData = toolWikiData[toolType];
-                console.log('Tool data:', toolData);
-                
-                if (toolData) {
-                    console.log('Setting wiki content...');
-                    wikiTitle.textContent = `${toolData.title} - Wiki`;
-                    wikiContent.innerHTML = generateWikiContent(toolData);
-                    wikiModal.style.display = 'block';
-                    wikiModal.style.visibility = 'visible';
-                    wikiModal.style.opacity = '1';
-                    console.log('Wiki modal should be visible now');
-                    console.log('wikiModal.style.display:', wikiModal.style.display);
-                    console.log('wikiModal computed style:', window.getComputedStyle(wikiModal).display);
-                    console.log('wikiModal element:', wikiModal);
-                    console.log('wikiModal z-index:', window.getComputedStyle(wikiModal).zIndex);
-                } else {
-                    console.log('No tool data found for:', toolType);
-                }
-                
-                // Add click animation
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-            });
+            if (toolData) {
+                wikiTitle.textContent = `${toolData.title} - Wiki`;
+                wikiContent.innerHTML = generateWikiContent(toolData);
+                wikiModal.style.display = 'block';
+            }
+            
+            // Add click animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
         });
-    }
-
-    // Initialize wiki buttons
-    console.log('About to call initializeWikiButtons...');
-    initializeWikiButtons();
-    console.log('initializeWikiButtons called successfully');
+    });
 });
