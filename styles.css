@@ -383,6 +383,8 @@ p {
     animation: modalSlideIn 0.3s ease-out;
     border: 1px solid var(--border-color);
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes modalSlideIn {
@@ -436,11 +438,11 @@ p {
     transform: scale(1.05);
 }
 
-/* Close button positioned outside modal */
+/* Close button positioned outside modal-content */
 .close-modal-btn {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: -20px;
+    right: -20px;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
     border-radius: 50%;
@@ -471,9 +473,10 @@ p {
 .modal-body {
     padding: 2rem;
     color: var(--text-primary);
-    max-height: calc(80vh - 120px);
+    flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
+    border-radius: 0 0 16px 16px;
 }
 
 /* WIP Notice */
@@ -988,8 +991,8 @@ p {
 
     /* Adjust close button position for mobile */
     .close-modal-btn {
-        top: 10px;
-        right: 10px;
+        top: -15px;
+        right: -15px;
         width: 35px;
         height: 35px;
     }
