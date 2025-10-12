@@ -438,8 +438,8 @@ p {
 /* Close button anchored to top-right of modal */
 .close-modal-btn {
     position: absolute;
-    top: -15px;
-    right: -15px;
+    top: 10px;
+    right: 10px;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
     border-radius: 50%;
@@ -982,8 +982,8 @@ p {
 
     /* Adjust close button position for mobile */
     .close-modal-btn {
-        top: -10px;
-        right: -10px;
+        top: 5px;
+        right: 5px;
         width: 35px;
         height: 35px;
     }
