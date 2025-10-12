@@ -378,10 +378,11 @@ p {
     width: 90%;
     max-width: 800px;
     max-height: 80vh;
-    overflow-y: auto;
+    overflow: hidden;
     box-shadow: 0 20px 60px var(--shadow-hover);
     animation: modalSlideIn 0.3s ease-out;
     border: 1px solid var(--border-color);
+    position: relative;
 }
 
 @keyframes modalSlideIn {
@@ -435,11 +436,11 @@ p {
     transform: scale(1.05);
 }
 
-/* Close button anchored to top-right of modal */
+/* Close button positioned outside modal */
 .close-modal-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 15px;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
     border-radius: 50%;
@@ -470,6 +471,9 @@ p {
 .modal-body {
     padding: 2rem;
     color: var(--text-primary);
+    max-height: calc(80vh - 120px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* WIP Notice */
@@ -705,9 +709,11 @@ p {
     line-height: 1.4;
     resize: vertical;
     min-height: 120px;
+    max-height: 200px;
     transition: border-color 0.3s ease;
     background-color: var(--bg-primary);
     color: var(--text-primary);
+    overflow-y: auto;
 }
 
 .base64-input-group textarea:focus {
@@ -982,8 +988,8 @@ p {
 
     /* Adjust close button position for mobile */
     .close-modal-btn {
-        top: 5px;
-        right: 5px;
+        top: 10px;
+        right: 10px;
         width: 35px;
         height: 35px;
     }
@@ -1350,9 +1356,11 @@ p {
     line-height: 1.4;
     resize: vertical;
     min-height: 120px;
+    max-height: 200px;
     transition: border-color 0.3s ease;
     background-color: var(--bg-primary);
     color: var(--text-primary);
+    overflow-y: auto;
 }
 
 #insert-script-input:focus {
