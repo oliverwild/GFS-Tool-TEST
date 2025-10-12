@@ -1800,14 +1800,29 @@ function showCopyNotification(message, type = 'success') {
 
     // Wiki modal
     function initializeWikiButtons() {
-        console.log('Initializing wiki buttons...');
+        console.log('=== INITIALIZING WIKI BUTTONS ===');
         const wikiButtons = document.querySelectorAll('.wiki-tool');
         console.log('Found wiki buttons:', wikiButtons.length);
+        
+        if (wikiButtons.length === 0) {
+            console.error('NO WIKI BUTTONS FOUND!');
+            return;
+        }
+        
+        // Check if modal elements exist
+        console.log('wikiTitle:', wikiTitle);
+        console.log('wikiContent:', wikiContent);
+        console.log('wikiModal:', wikiModal);
+        
+        if (!wikiTitle || !wikiContent || !wikiModal) {
+            console.error('MISSING MODAL ELEMENTS!', { wikiTitle, wikiContent, wikiModal });
+            return;
+        }
         
         wikiButtons.forEach((button, index) => {
             console.log(`Setting up wiki button ${index}:`, button);
             button.addEventListener('click', function(e) {
-                console.log('Wiki button clicked!', this);
+                console.log('=== WIKI BUTTON CLICKED ===', this);
                 e.preventDefault();
                 e.stopPropagation();
                 
@@ -1836,5 +1851,7 @@ function showCopyNotification(message, type = 'success') {
     }
 
     // Initialize wiki buttons
+    console.log('About to call initializeWikiButtons...');
     initializeWikiButtons();
+    console.log('initializeWikiButtons called successfully');
 });
