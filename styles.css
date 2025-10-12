@@ -25,8 +25,8 @@
 /* Dark mode colors */
 [data-theme="dark"] {
     --bg-primary: #000000; /* Full black background */
-    --bg-secondary: #1a1a1a; /* Lighter black cards */
-    --bg-tertiary: #2a2a2a; /* Even lighter black for tertiary elements */
+    --bg-secondary: #2a2a2a; /* Lighter black cards */
+    --bg-tertiary: #3a3a3a; /* Even lighter black for tertiary elements */
     --text-primary: #ffffff; /* White text */
     --text-secondary: #ffffff; /* White text */
     --text-muted: #ffffff; /* White text */
@@ -34,14 +34,14 @@
     --border-hover: #9ca3af; /* Lighter grey for hover */
     --shadow: rgba(0, 0, 0, 0.5);
     --shadow-hover: rgba(0, 0, 0, 0.6);
-    --accent-primary: #1a1a1a; /* Lighter black for buttons */
+    --accent-primary: #2a2a2a; /* Lighter black for buttons */
     --accent-hover: #000000; /* Black hover */
-    --accent-secondary: #1a1a1a; /* Lighter black */
+    --accent-secondary: #2a2a2a; /* Lighter black */
     --success: #34d399;
     --warning: #fbbf24;
     --error: #f87171;
     --modal-overlay: rgba(0, 0, 0, 0.8);
-    --header-bg: #1a1a1a; /* Lighter black header */
+    --header-bg: #2a2a2a; /* Lighter black header */
     --icon-color: #6b7280; /* Grey icons */
 }
 
@@ -206,7 +206,7 @@ p {
     align-items: center;
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--accent-primary);
+    color: var(--text-primary);
 }
 
 .nav-logo i {
