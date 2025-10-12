@@ -25,24 +25,24 @@
 /* Dark mode colors */
 [data-theme="dark"] {
     --bg-primary: #000000; /* Full black background */
-    --bg-secondary: #929292; /* Grey cards */
-    --bg-tertiary: #6b7280; /* Lighter grey for tertiary elements */
+    --bg-secondary: #1a1a1a; /* Lighter black cards */
+    --bg-tertiary: #2a2a2a; /* Even lighter black for tertiary elements */
     --text-primary: #ffffff; /* White text */
     --text-secondary: #ffffff; /* White text */
     --text-muted: #ffffff; /* White text */
-    --border-color: #6b7280; /* Lighter grey borders */
-    --border-hover: #9ca3af; /* Even lighter grey for hover */
+    --border-color: #6b7280; /* Grey borders */
+    --border-hover: #9ca3af; /* Lighter grey for hover */
     --shadow: rgba(0, 0, 0, 0.5);
     --shadow-hover: rgba(0, 0, 0, 0.6);
-    --accent-primary: #d1d5db; /* Lighter grey for buttons */
+    --accent-primary: #1a1a1a; /* Lighter black for buttons */
     --accent-hover: #000000; /* Black hover */
-    --accent-secondary: #d1d5db; /* Lighter grey */
+    --accent-secondary: #1a1a1a; /* Lighter black */
     --success: #34d399;
     --warning: #fbbf24;
     --error: #f87171;
     --modal-overlay: rgba(0, 0, 0, 0.8);
-    --header-bg: #929292; /* Grey header */
-    --icon-color: #d1d5db; /* Lighter grey icons */
+    --header-bg: #1a1a1a; /* Lighter black header */
+    --icon-color: #6b7280; /* Grey icons */
 }
 
 /* Reset and Base Styles */
@@ -105,7 +105,7 @@ p {
 
 .btn-primary:hover {
     background: var(--accent-hover);
-    color: var(--text-primary);
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
@@ -118,7 +118,7 @@ p {
 
 .btn-secondary:hover {
     background: var(--accent-primary);
-    color: var(--text-primary);
+    color: white;
     border-color: var(--accent-primary);
     transform: translateY(-2px);
 }
@@ -131,7 +131,7 @@ p {
 
 .btn-outline:hover {
     background: var(--accent-primary);
-    color: var(--text-primary);
+    color: white;
     border-color: var(--accent-primary);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -188,7 +188,7 @@ p {
 .dark-mode-toggle:hover {
     border-color: var(--accent-primary);
     background-color: var(--accent-primary);
-    color: var(--text-primary);
+    color: white;
     transform: scale(1.05);
 }
 
@@ -1018,7 +1018,7 @@ p {
 
 .copy-btn:hover {
     background: var(--accent-hover);
-    color: var(--text-primary);
+    color: white;
     transform: scale(1.05);
 }
 
