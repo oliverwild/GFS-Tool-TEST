@@ -64,11 +64,13 @@
 }
 
 [data-theme="dark"] .btn-secondary {
+    background: #1a1a1a !important;
     color: #ffffff !important;
     border-color: #1a1a1a !important;
 }
 
 [data-theme="dark"] .btn-outline {
+    background: #1a1a1a !important;
     color: #ffffff !important;
     border-color: #1a1a1a !important;
 }
@@ -278,7 +280,10 @@ p {
     transition: all 0.3s ease;
     text-align: center;
     border: 1px solid var(--border-color);
-    height: fit-content;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .tool-card:hover {
@@ -306,6 +311,7 @@ p {
     font-size: 1.2rem;
     margin-bottom: 0.75rem;
     color: var(--text-primary);
+    flex-shrink: 0;
 }
 
 .tool-card p {
@@ -313,6 +319,10 @@ p {
     color: var(--text-secondary);
     font-size: 0.9rem;
     line-height: 1.4;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Tool Buttons */
@@ -321,6 +331,8 @@ p {
     gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
+    flex-shrink: 0;
+    margin-top: auto;
 }
 
 .tool-buttons .btn {
