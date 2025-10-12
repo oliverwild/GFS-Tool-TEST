@@ -1255,7 +1255,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Copy query button
         copyQueryBtn.addEventListener('click', function() {
-            const queryText = document.getElementById('range-query').textContent;
+            const queryText = `SELECT 
+    csc.contract_no,
+    csc.RANGE_ID,
+    sr.cons_start_no,
+    sr.cons_end_no,
+    sr.cons_cur_no,
+    csc.ITEM_RANGE_ID,
+    ir.START_NO,
+    ir.END_NO,
+    ir.CUR_NO
+FROM cust_site_contracts csc
+INNER JOIN SHIP_RANGES sr ON csc.RANGE_ID = sr.ID
+INNER JOIN ITEM_RANGES ir ON csc.ITEM_RANGE_ID = ir.ID
+WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
             window.copyToClipboard(queryText);
         });
 

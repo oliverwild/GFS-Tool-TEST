@@ -1312,7 +1312,12 @@ p {
     border: 1px solid var(--border-color);
 }
 
-.query-display button {
+/* Textarea container with copy button */
+.textarea-container {
+    position: relative;
+}
+
+.copy-query-btn {
     position: absolute;
     bottom: 0.5rem;
     right: 0.5rem;
