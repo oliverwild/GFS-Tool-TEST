@@ -1842,7 +1842,13 @@ function showCopyNotification(message, type = 'success') {
                     wikiTitle.textContent = `${toolData.title} - Wiki`;
                     wikiContent.innerHTML = generateWikiContent(toolData);
                     wikiModal.style.display = 'block';
+                    wikiModal.style.visibility = 'visible';
+                    wikiModal.style.opacity = '1';
                     console.log('Wiki modal should be visible now');
+                    console.log('wikiModal.style.display:', wikiModal.style.display);
+                    console.log('wikiModal computed style:', window.getComputedStyle(wikiModal).display);
+                    console.log('wikiModal element:', wikiModal);
+                    console.log('wikiModal z-index:', window.getComputedStyle(wikiModal).zIndex);
                 } else {
                     console.log('No tool data found for:', toolType);
                 }
