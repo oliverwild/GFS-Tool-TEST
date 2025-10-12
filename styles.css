@@ -34,9 +34,9 @@
     --border-hover: #9ca3af; /* Lighter grey for hover */
     --shadow: rgba(0, 0, 0, 0.5);
     --shadow-hover: rgba(0, 0, 0, 0.6);
-    --accent-primary: #2a2a2a; /* Lighter black for buttons */
-    --accent-hover: #000000; /* Black hover */
-    --accent-secondary: #2a2a2a; /* Lighter black */
+    --accent-primary: #1a1a1a; /* Darker than cards for buttons */
+    --accent-hover: #0a0a0a; /* Even darker on hover */
+    --accent-secondary: #1a1a1a; /* Darker than cards */
     --success: #34d399;
     --warning: #fbbf24;
     --error: #f87171;
@@ -59,18 +59,18 @@
 }
 
 [data-theme="dark"] .btn-primary {
-    background: #2a2a2a !important;
+    background: #1a1a1a !important;
     color: #ffffff !important;
 }
 
 [data-theme="dark"] .btn-secondary {
     color: #ffffff !important;
-    border-color: #2a2a2a !important;
+    border-color: #1a1a1a !important;
 }
 
 [data-theme="dark"] .btn-outline {
     color: #ffffff !important;
-    border-color: #2a2a2a !important;
+    border-color: #1a1a1a !important;
 }
 
 [data-theme="dark"] .tool-icon {
