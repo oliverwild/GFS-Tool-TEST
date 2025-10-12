@@ -1489,15 +1489,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Close modals when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target === toolModal) {
-            toolModal.style.display = 'none';
-        }
-        if (event.target === wikiModal) {
-            wikiModal.style.display = 'none';
-        }
-    });
+    // Modals only close when clicking the X button (removed outside click closing)
 
     // Close modals with Escape key
     document.addEventListener('keydown', function(event) {

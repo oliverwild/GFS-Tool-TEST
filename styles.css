@@ -315,6 +315,7 @@ p {
     align-items: center;
     justify-content: center;
     margin: 0 auto 1rem;
+    transition: background 0.3s ease;
 }
 
 .tool-icon i {
@@ -412,14 +413,26 @@ p {
 
 .close {
     color: var(--text-secondary);
-    font-size: 28px;
+    font-size: 20px;
     font-weight: bold;
     cursor: pointer;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
 }
 
 .close:hover {
     color: var(--accent-primary);
+    background: var(--accent-primary);
+    color: white;
+    transform: scale(1.05);
 }
 
 .modal-body {
