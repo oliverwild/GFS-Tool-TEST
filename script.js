@@ -1450,31 +1450,6 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
             }
         }
     }
-
-    // Wiki modal
-    function initializeWikiButtons() {
-        document.querySelectorAll('.wiki-tool').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const toolType = this.getAttribute('data-tool');
-                const toolData = toolWikiData[toolType];
-                
-                if (toolData) {
-                    wikiTitle.textContent = `${toolData.title} - Wiki`;
-                    wikiContent.innerHTML = generateWikiContent(toolData);
-                    wikiModal.style.display = 'block';
-                }
-                
-                // Add click animation
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-            });
-        });
-    }
     
 
     // Wiki content
@@ -1495,6 +1470,43 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
                 </div>
             </div>
         `;
+    }
+
+    // Wiki modal
+    function initializeWikiButtons() {
+        console.log('Initializing wiki buttons...');
+        const wikiButtons = document.querySelectorAll('.wiki-tool');
+        console.log('Found wiki buttons:', wikiButtons.length);
+        
+        wikiButtons.forEach((button, index) => {
+            console.log(`Setting up wiki button ${index}:`, button);
+            button.addEventListener('click', function(e) {
+                console.log('Wiki button clicked!', this);
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const toolType = this.getAttribute('data-tool');
+                console.log('Tool type:', toolType);
+                const toolData = toolWikiData[toolType];
+                console.log('Tool data:', toolData);
+                
+                if (toolData) {
+                    console.log('Setting wiki content...');
+                    wikiTitle.textContent = `${toolData.title} - Wiki`;
+                    wikiContent.innerHTML = generateWikiContent(toolData);
+                    wikiModal.style.display = 'block';
+                    console.log('Wiki modal should be visible now');
+                } else {
+                    console.log('No tool data found for:', toolType);
+                }
+                
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
     }
 
     // Close modals
