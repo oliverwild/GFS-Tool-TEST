@@ -133,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'scale(1)';
         }, 150);
     });
-});
 
     // Show tool content based on tool type
     function showToolContent(toolType) {
@@ -1663,14 +1662,14 @@ function showCopyNotification(message, type = 'success') {
         // Show/hide Evri-specific fields
         const evriFields = document.getElementById('evri-fields');
         if (selectedCarrier === 'Evri') {
-            evriFields.style.display = 'block';
+            if (evriFields) evriFields.style.display = 'block';
             // No standard service select for Evri
             if (serviceSelect) {
                 serviceSelect.disabled = true;
                 serviceSelect.innerHTML = '<option value="">Evri uses custom service selection below</option>';
             }
         } else {
-            evriFields.style.display = 'none';
+            if (evriFields) evriFields.style.display = 'none';
             if (serviceSelect) {
                 serviceSelect.disabled = true; // hide/disable since removed
                 serviceSelect.innerHTML = '<option value="">No services required</option>';
@@ -1720,12 +1719,19 @@ function showCopyNotification(message, type = 'success') {
 
     // Function to generate Evri SQL
     function generateEvriSQL() {
-        const accountNumber = document.getElementById('evri-account').value;
-        const isIOD = document.getElementById('evri-iod').checked;
-        const isPOD = document.getElementById('evri-pod').checked;
-        const isNextDay = document.getElementById('evri-next-day').checked;
-        const is2Day = document.getElementById('evri-2-day').checked;
-        const routeDesc = document.getElementById('evri-route-desc').value || 'Evri';
+        const evriAccount = document.getElementById('evri-account');
+        const evriIod = document.getElementById('evri-iod');
+        const evriPod = document.getElementById('evri-pod');
+        const evriNextDay = document.getElementById('evri-next-day');
+        const evri2Day = document.getElementById('evri-2-day');
+        const evriRouteDesc = document.getElementById('evri-route-desc');
+        
+        const accountNumber = evriAccount ? evriAccount.value : '';
+        const isIOD = evriIod ? evriIod.checked : false;
+        const isPOD = evriPod ? evriPod.checked : false;
+        const isNextDay = evriNextDay ? evriNextDay.checked : false;
+        const is2Day = evri2Day ? evri2Day.checked : false;
+        const routeDesc = evriRouteDesc ? evriRouteDesc.value || 'Evri' : 'Evri';
 
         // Validation
         if (!accountNumber || accountNumber < 0 || accountNumber > 9) {
@@ -1785,22 +1791,34 @@ function showCopyNotification(message, type = 'success') {
         if (serviceCodeInput) serviceCodeInput.value = '';
         
         // Clear Evri-specific fields
-        document.getElementById('evri-fields').style.display = 'none';
-        document.getElementById('evri-account').value = '';
-        document.getElementById('evri-iod').checked = false;
-        document.getElementById('evri-pod').checked = false;
-        document.getElementById('evri-next-day').checked = false;
-        document.getElementById('evri-2-day').checked = false;
-        document.getElementById('evri-route-desc').value = '';
+        const evriFields = document.getElementById('evri-fields');
+        const evriAccount = document.getElementById('evri-account');
+        const evriIod = document.getElementById('evri-iod');
+        const evriPod = document.getElementById('evri-pod');
+        const evriNextDay = document.getElementById('evri-next-day');
+        const evri2Day = document.getElementById('evri-2-day');
+        const evriRouteDesc = document.getElementById('evri-route-desc');
         
-        routeResults.style.display = 'none';
+        if (evriFields) evriFields.style.display = 'none';
+        if (evriAccount) evriAccount.value = '';
+        if (evriIod) evriIod.checked = false;
+        if (evriPod) evriPod.checked = false;
+        if (evriNextDay) evriNextDay.checked = false;
+        if (evri2Day) evri2Day.checked = false;
+        if (evriRouteDesc) evriRouteDesc.value = '';
+        
+        if (routeResults) routeResults.style.display = 'none';
     });
 
         // Copy SQL button
         copySqlBtn.addEventListener('click', function() {
             const sqlText = sqlScript.textContent;
             if (sqlText) {
-                window.copyToClipboard(sqlText);
+                navigator.clipboard.writeText(sqlText).then(() => {
+                    showCopyNotification('SQL copied to clipboard!', 'success');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
             }
         });
     }
@@ -1808,4 +1826,3 @@ function showCopyNotification(message, type = 'success') {
     // Initialize wiki buttons
     initializeWikiButtons();
 });
-
