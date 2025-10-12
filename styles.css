@@ -76,7 +76,22 @@
 }
 
 [data-theme="dark"] .tool-icon {
-    background: #2a2a2a !important;
+    background: #000000 !important;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: #0a0a0a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: #0a0a0a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-outline:hover {
+    background: #0a0a0a !important;
+    color: #ffffff !important;
 }
 
 /* Reset and Base Styles */
