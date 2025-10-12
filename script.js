@@ -1452,26 +1452,6 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
     }
     
 
-    // Wiki content
-    function generateWikiContent(toolData) {
-        return `
-            <div class="wiki-section">
-                <h3>Description</h3>
-                <p>${toolData.description}</p>
-                
-                <h3>How to Use</h3>
-                <ol>
-                    ${toolData.howToUse.map(step => `<li>${step}</li>`).join('')}
-                </ol>
-                
-                <h3>Examples</h3>
-                <div class="examples">
-                    ${toolData.examples.map(example => `<div class="example-item">${example}</div>`).join('')}
-                </div>
-            </div>
-        `;
-    }
-
     // Close modals
     closeButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -1796,6 +1776,26 @@ function showCopyNotification(message, type = 'success') {
                 });
             }
         });
+    }
+
+    // Wiki content
+    function generateWikiContent(toolData) {
+        return `
+            <div class="wiki-section">
+                <h3>Description</h3>
+                <p>${toolData.description}</p>
+                
+                <h3>How to Use</h3>
+                <ol>
+                    ${toolData.howToUse.map(step => `<li>${step}</li>`).join('')}
+                </ol>
+                
+                <h3>Examples</h3>
+                <div class="examples">
+                    ${toolData.examples.map(example => `<div class="example-item">${example}</div>`).join('')}
+                </div>
+            </div>
+        `;
     }
 
     // Wiki modal
