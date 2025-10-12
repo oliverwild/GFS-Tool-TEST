@@ -45,6 +45,34 @@
     --icon-color: #6b7280; /* Grey icons */
 }
 
+/* Force dark mode styles */
+[data-theme="dark"] .header {
+    background: #2a2a2a !important;
+}
+
+[data-theme="dark"] .tool-card {
+    background: #2a2a2a !important;
+}
+
+[data-theme="dark"] .nav-logo {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-primary {
+    background: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-secondary {
+    color: #2a2a2a !important;
+    border-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] .btn-outline {
+    color: #2a2a2a !important;
+    border-color: #2a2a2a !important;
+}
+
 /* Reset and Base Styles */
 * {
     margin: 0;
