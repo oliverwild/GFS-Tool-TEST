@@ -24,23 +24,25 @@
 
 /* Dark mode colors */
 [data-theme="dark"] {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --text-primary: #f1f5f9;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --border-color: #475569;
-    --border-hover: #64748b;
-    --shadow: rgba(0, 0, 0, 0.3);
-    --shadow-hover: rgba(0, 0, 0, 0.4);
-    --accent-primary: #60a5fa;
-    --accent-hover: #3b82f6;
-    --accent-secondary: #94a3b8;
+    --bg-primary: #000000; /* Full black background */
+    --bg-secondary: #929292; /* Grey cards */
+    --bg-tertiary: #6b7280; /* Lighter grey for tertiary elements */
+    --text-primary: #ffffff; /* White text */
+    --text-secondary: #ffffff; /* White text */
+    --text-muted: #ffffff; /* White text */
+    --border-color: #6b7280; /* Lighter grey borders */
+    --border-hover: #9ca3af; /* Even lighter grey for hover */
+    --shadow: rgba(0, 0, 0, 0.5);
+    --shadow-hover: rgba(0, 0, 0, 0.6);
+    --accent-primary: #d1d5db; /* Lighter grey for buttons */
+    --accent-hover: #000000; /* Black hover */
+    --accent-secondary: #d1d5db; /* Lighter grey */
     --success: #34d399;
     --warning: #fbbf24;
     --error: #f87171;
-    --modal-overlay: rgba(0, 0, 0, 0.7);
+    --modal-overlay: rgba(0, 0, 0, 0.8);
+    --header-bg: #929292; /* Grey header */
+    --icon-color: #d1d5db; /* Lighter grey icons */
 }
 
 /* Reset and Base Styles */
@@ -103,8 +105,9 @@ p {
 
 .btn-primary:hover {
     background: var(--accent-hover);
+    color: var(--text-primary);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(107, 114, 128, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 .btn-secondary {
@@ -115,7 +118,7 @@ p {
 
 .btn-secondary:hover {
     background: var(--accent-primary);
-    color: white;
+    color: var(--text-primary);
     border-color: var(--accent-primary);
     transform: translateY(-2px);
 }
@@ -128,10 +131,10 @@ p {
 
 .btn-outline:hover {
     background: var(--accent-primary);
-    color: white;
+    color: var(--text-primary);
     border-color: var(--accent-primary);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(107, 114, 128, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 /* Header and Navigation */
@@ -185,7 +188,7 @@ p {
 .dark-mode-toggle:hover {
     border-color: var(--accent-primary);
     background-color: var(--accent-primary);
-    color: white;
+    color: var(--text-primary);
     transform: scale(1.05);
 }
 
@@ -449,7 +452,7 @@ p {
 .input-group input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .range-info {
@@ -605,7 +608,7 @@ p {
 .base64-input-group textarea:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .input-info {
@@ -756,7 +759,7 @@ p {
 .filename-input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .action-buttons {
@@ -988,7 +991,7 @@ p {
 
 .range-copy-box:hover {
     border-color: var(--accent-primary);
-    box-shadow: 0 2px 8px rgba(107, 114, 128, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .range-text {
@@ -1015,6 +1018,7 @@ p {
 
 .copy-btn:hover {
     background: var(--accent-hover);
+    color: var(--text-primary);
     transform: scale(1.05);
 }
 
@@ -1038,7 +1042,7 @@ p {
 .clickable-number:hover {
     background: var(--border-color);
     transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(107, 114, 128, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .clickable-number:active {
@@ -1219,7 +1223,7 @@ p {
 .jump-input-group input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Range Jump textarea styling */
@@ -1241,7 +1245,7 @@ p {
 #insert-script-input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .update-script-output {
@@ -1299,7 +1303,7 @@ p {
 .form-select:focus, .form-input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
 .form-select:disabled {
