@@ -1821,10 +1821,16 @@ function showCopyNotification(message, type = 'success') {
         
         wikiButtons.forEach((button, index) => {
             console.log(`Setting up wiki button ${index}:`, button);
+            console.log(`Button classes:`, button.className);
+            console.log(`Button data-tool:`, button.getAttribute('data-tool'));
+            
             button.addEventListener('click', function(e) {
                 console.log('=== WIKI BUTTON CLICKED ===', this);
                 e.preventDefault();
                 e.stopPropagation();
+                
+                // Test if this is actually being called
+                alert('Wiki button clicked!');
                 
                 const toolType = this.getAttribute('data-tool');
                 console.log('Tool type:', toolType);
