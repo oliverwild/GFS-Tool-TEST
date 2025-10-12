@@ -1477,8 +1477,6 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
         });
     }
     
-    // Initialize
-    initializeWikiButtons();
 
     // Wiki content
     function generateWikiContent(toolData) {
@@ -1806,4 +1804,8 @@ function showCopyNotification(message, type = 'success') {
             }
         });
     }
+
+    // Initialize wiki buttons
+    initializeWikiButtons();
+});
 
