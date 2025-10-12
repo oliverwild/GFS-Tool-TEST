@@ -435,23 +435,23 @@ p {
     transform: scale(1.05);
 }
 
-/* Close button outside modal */
+/* Close button anchored to top-right of modal */
 .close-modal-btn {
     position: absolute;
-    top: 20px;
-    right: -60px;
+    top: -15px;
+    right: -15px;
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
     color: var(--text-primary);
-    font-size: 18px;
+    font-size: 14px;
     z-index: 10001;
     box-shadow: 0 4px 12px var(--shadow);
 }
@@ -982,10 +982,10 @@ p {
 
     /* Adjust close button position for mobile */
     .close-modal-btn {
-        top: 10px;
-        right: 10px;
-        width: 40px;
-        height: 40px;
+        top: -10px;
+        right: -10px;
+        width: 35px;
+        height: 35px;
     }
 
     .tools-section {

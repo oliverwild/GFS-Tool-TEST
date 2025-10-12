@@ -1488,12 +1488,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Close modals with new outside close buttons
-    closeToolModal.addEventListener('click', function() {
-        toolModal.style.display = 'none';
-    });
+    if (closeToolModal) {
+        closeToolModal.addEventListener('click', function() {
+            toolModal.style.display = 'none';
+        });
+    }
 
-    closeWikiModal.addEventListener('click', function() {
-        wikiModal.style.display = 'none';
+    if (closeWikiModal) {
+        closeWikiModal.addEventListener('click', function() {
+            wikiModal.style.display = 'none';
+        });
+    }
+
+    // Fallback: Use event delegation for close buttons
+    document.addEventListener('click', function(event) {
+        if (event.target.id === 'close-tool-modal' || event.target.closest('#close-tool-modal')) {
+            toolModal.style.display = 'none';
+        }
+        if (event.target.id === 'close-wiki-modal' || event.target.closest('#close-wiki-modal')) {
+            wikiModal.style.display = 'none';
+        }
     });
 
     // Modals only close when clicking the X button (removed outside click closing)
