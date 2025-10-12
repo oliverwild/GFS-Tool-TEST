@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Get close buttons
     const closeButtons = document.querySelectorAll('.close');
+    const closeToolModal = document.getElementById('close-tool-modal');
+    const closeWikiModal = document.getElementById('close-wiki-modal');
 
     // Tool data for wiki content
     const toolWikiData = {
@@ -279,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         copyBtn.textContent = 'Copy Results';
                     }, 2000);
                 }).catch(err => {
-                    console.error('Failed to copy: ', err);
+                    // Copy failed silently
                 });
             }
         }
@@ -347,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showResults();
                 
             } catch (error) {
-                console.error('Processing error:', error);
+                // Processing error handled silently
                 showError(`Processing failed: ${error.message}`);
                 hideProcessStatus();
             }
@@ -381,9 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     cleaned += '=';
                 }
                 
-                console.log('Cleaned Base64 length:', cleaned.length);
-                console.log('Cleaned Base64 preview:', cleaned.substring(0, 50) + '...');
-                console.log('Final Base64 ends with:', cleaned.substring(Math.max(0, cleaned.length - 20)));
+                // Base64 cleaned successfully
                 
                 // Try to decode
                 const decoded = atob(cleaned);
@@ -396,24 +396,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 return bytes;
             } catch (error) {
-                console.error('Base64 cleaning/decoding error:', error);
+                // Base64 processing error handled silently
                 throw new Error(`Base64 processing failed: ${error.message}. Please check your input format.`);
             }
         }
 
         function identifyDataType(data) {
-            console.log('Identifying data type for:', data.length, 'bytes');
-            console.log('First 20 bytes as hex:', Array.from(data.slice(0, 20)).map(b => b.toString(16).padStart(2, '0')).join(' '));
-            console.log('First 20 bytes as text:', String.fromCharCode(...data.slice(0, 20)));
+            // Data type identification in progress
             
             // Check if it's a PDF (PDF files start with %PDF)
             if (data.length >= 4) {
                 const header = String.fromCharCode(...data.slice(0, 4));
-                console.log('Header check:', header);
+                // Header check completed
                 
                 // More flexible PDF detection - check for %PDF anywhere in first 10 bytes
                 if (header === '%PDF' || header.startsWith('%PDF')) {
-                    console.log('Identified as PDF (exact header)');
+                    // Identified as PDF
                     return 'PDF';
                 }
                 
@@ -1487,6 +1485,15 @@ document.addEventListener('DOMContentLoaded', function() {
             toolModal.style.display = 'none';
             wikiModal.style.display = 'none';
         });
+    });
+
+    // Close modals with new outside close buttons
+    closeToolModal.addEventListener('click', function() {
+        toolModal.style.display = 'none';
+    });
+
+    closeWikiModal.addEventListener('click', function() {
+        wikiModal.style.display = 'none';
     });
 
     // Modals only close when clicking the X button (removed outside click closing)

@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GFS Tools</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body data-theme="dark">
     <header class="header">
-        <nav class="navbar">
+        <nav class="navbar" role="navigation" aria-label="Main navigation">
             <div class="nav-container">
                 <div class="nav-logo">
-                    <i class="fas fa-tools"></i>
+                    <i class="fas fa-tools" aria-hidden="true"></i>
                     <span>GFS Tools</span>
                 </div>
                 <div class="nav-controls">
-                    <button id="dark-mode-toggle" class="dark-mode-toggle" title="Switch to Light Mode">
-                        <i class="fas fa-sun"></i>
+                    <button id="dark-mode-toggle" class="dark-mode-toggle" title="Switch to Light Mode" aria-label="Toggle dark mode">
+                        <i class="fas fa-sun" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
@@ -30,50 +30,50 @@
             <div class="container">
                 <div class="tools-grid">
                     <div class="tool-card">
-                        <div class="tool-icon">
+                        <div class="tool-icon" aria-hidden="true">
                             <i class="fas fa-arrow-up"></i>
                         </div>
                         <h3>Range Jumping</h3>
                         <p>Convert SQL inserts to update scripts with number jumping functionality.</p>
                         <div class="tool-buttons">
-                            <button class="btn btn-outline open-tool" data-tool="range-jumping">Open</button>
-                            <button class="btn btn-secondary wiki-tool" data-tool="range-jumping">Wiki</button>
+                            <button class="btn btn-outline open-tool" data-tool="range-jumping" aria-label="Open Range Jumping tool">Open</button>
+                            <button class="btn btn-secondary wiki-tool" data-tool="range-jumping" aria-label="View Range Jumping wiki">Wiki</button>
                         </div>
                     </div>
 
                     <div class="tool-card">
-                        <div class="tool-icon">
+                        <div class="tool-icon" aria-hidden="true">
                             <i class="fas fa-cut"></i>
                         </div>
                         <h3>Range Splitting</h3>
                         <p>Split number ranges by percentage for efficient distribution.</p>
                         <div class="tool-buttons">
-                            <button class="btn btn-outline open-tool" data-tool="range-splitting">Open</button>
-                            <button class="btn btn-secondary wiki-tool" data-tool="range-splitting">Wiki</button>
+                            <button class="btn btn-outline open-tool" data-tool="range-splitting" aria-label="Open Range Splitting tool">Open</button>
+                            <button class="btn btn-secondary wiki-tool" data-tool="range-splitting" aria-label="View Range Splitting wiki">Wiki</button>
                         </div>
                     </div>
 
                     <div class="tool-card">
-                        <div class="tool-icon">
+                        <div class="tool-icon" aria-hidden="true">
                             <i class="fas fa-tag"></i>
                         </div>
                         <h3>Label Preview</h3>
                         <p>Decode Base64 and preview labels either with PDF or Labelary API</p>
                         <div class="tool-buttons">
-                            <button class="btn btn-outline open-tool" data-tool="label-preview">Open</button>
-                            <button class="btn btn-secondary wiki-tool" data-tool="label-preview">Wiki</button>
+                            <button class="btn btn-outline open-tool" data-tool="label-preview" aria-label="Open Label Preview tool">Open</button>
+                            <button class="btn btn-secondary wiki-tool" data-tool="label-preview" aria-label="View Label Preview wiki">Wiki</button>
                         </div>
                     </div>
 
                     <div class="tool-card">
-                        <div class="tool-icon">
+                        <div class="tool-icon" aria-hidden="true">
                             <i class="fas fa-route"></i>
                         </div>
                         <h3>Route Mapping</h3>
                         <p>Generate SQL inserts for carriers, services, and route details.</p>
                         <div class="tool-buttons">
-                            <button class="btn btn-outline open-tool" data-tool="route-mapping">Open</button>
-                            <button class="btn btn-secondary wiki-tool" data-tool="route-mapping">Wiki</button>
+                            <button class="btn btn-outline open-tool" data-tool="route-mapping" aria-label="Open Route Mapping tool">Open</button>
+                            <button class="btn btn-secondary wiki-tool" data-tool="route-mapping" aria-label="View Route Mapping wiki">Wiki</button>
                         </div>
                     </div>
                 </div>
@@ -83,10 +83,12 @@
 
     <!-- Tool Modals -->
     <div id="tool-modal" class="modal">
+        <button class="close-modal-btn" id="close-tool-modal" title="Close Tool">
+            <i class="fas fa-times"></i>
+        </button>
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modal-title">Tool</h2>
-                <span class="close">&times;</span>
             </div>
             <div class="modal-body">
                 <!-- Range Splitting Tool Content -->
@@ -375,16 +377,17 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);</pre>
                     <h3>Work In Progress</h3>
                     <p>This tool is currently under development. Check back soon for the full functionality!</p>
                 </div>
-                    </div>
-                </div>
             </div>
+        </div>
 
     <!-- Wiki Modal -->
     <div id="wiki-modal" class="modal">
+        <button class="close-modal-btn" id="close-wiki-modal" title="Close Wiki">
+            <i class="fas fa-times"></i>
+        </button>
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="wiki-title">Tool Wiki</h2>
-                <span class="close">&times;</span>
             </div>
             <div class="modal-body">
                 <div id="wiki-content">
