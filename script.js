@@ -34,23 +34,23 @@ function initializeDarkMode() {
     }
 }
 
-// Modal functionality for GFS Tools
+// GFS Tools
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize dark mode first
+    // Dark mode
     initializeDarkMode();
-    // Get modal elements
+    // Elements
     const toolModal = document.getElementById('tool-modal');
     const wikiModal = document.getElementById('wiki-modal');
     const modalTitle = document.getElementById('modal-title');
     const wikiTitle = document.getElementById('wiki-title');
     const wikiContent = document.getElementById('wiki-content');
 
-    // Get close buttons
+    // Close buttons
     const closeButtons = document.querySelectorAll('.close');
     const closeToolModal = document.getElementById('close-tool-modal');
     const closeWikiModal = document.getElementById('close-wiki-modal');
 
-    // Tool data for wiki content
+    // Wiki data
     const toolWikiData = {
         'range-jumping': {
             title: 'Range Jumping Tool',
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Open tool modal
+    // Tool modal
     document.querySelectorAll('.open-tool').forEach(button => {
         button.addEventListener('click', function() {
             const toolType = this.getAttribute('data-tool');
@@ -1272,7 +1272,7 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
             window.copyToClipboard(queryText);
         });
 
-        // Generate update script button
+        // Generate script
         generateUpdateBtn.addEventListener('click', function() {
             const insertScript = insertScriptInput.value.trim();
             const jumpAmount = parseInt(jumpAmountInput.value) || 0;
@@ -1452,27 +1452,35 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
         }
     }
 
-    // Open wiki modal - using event delegation
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('wiki-tool')) {
-            const toolType = event.target.getAttribute('data-tool');
-            const toolData = toolWikiData[toolType];
-            
-            if (toolData) {
-                wikiTitle.textContent = `${toolData.title} - Wiki`;
-                wikiContent.innerHTML = generateWikiContent(toolData);
-                wikiModal.style.display = 'block';
-            }
-            
-            // Add click animation
-            event.target.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                event.target.style.transform = 'scale(1)';
-            }, 150);
-        }
-    });
+    // Wiki modal
+    function initializeWikiButtons() {
+        document.querySelectorAll('.wiki-tool').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const toolType = this.getAttribute('data-tool');
+                const toolData = toolWikiData[toolType];
+                
+                if (toolData) {
+                    wikiTitle.textContent = `${toolData.title} - Wiki`;
+                    wikiContent.innerHTML = generateWikiContent(toolData);
+                    wikiModal.style.display = 'block';
+                }
+                
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    }
+    
+    // Initialize
+    initializeWikiButtons();
 
-    // Generate wiki content
+    // Wiki content
     function generateWikiContent(toolData) {
         return `
             <div class="wiki-section">
@@ -1492,7 +1500,7 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
         `;
     }
 
-    // Close modals when clicking close button
+    // Close modals
     closeButtons.forEach(button => {
         button.addEventListener('click', function() {
             toolModal.style.display = 'none';
@@ -1500,7 +1508,7 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
         });
     });
 
-    // Close modals with new outside close buttons
+    // Outside close buttons
     if (closeToolModal) {
         closeToolModal.addEventListener('click', function() {
             toolModal.style.display = 'none';
@@ -1523,9 +1531,8 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
         }
     });
 
-    // Modals only close when clicking the X button (removed outside click closing)
 
-    // Close modals with Escape key
+    // Escape key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             toolModal.style.display = 'none';
