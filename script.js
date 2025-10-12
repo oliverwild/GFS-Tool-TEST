@@ -34,23 +34,21 @@ function initializeDarkMode() {
     }
 }
 
-// GFS Tools
+// Modal functionality for GFS Tools
 document.addEventListener('DOMContentLoaded', function() {
-    // Dark mode
+    // Initialize dark mode first
     initializeDarkMode();
-    // Elements
+    // Get modal elements
     const toolModal = document.getElementById('tool-modal');
     const wikiModal = document.getElementById('wiki-modal');
     const modalTitle = document.getElementById('modal-title');
     const wikiTitle = document.getElementById('wiki-title');
     const wikiContent = document.getElementById('wiki-content');
 
-    // Close buttons
+    // Get close buttons
     const closeButtons = document.querySelectorAll('.close');
-    const closeToolModal = document.getElementById('close-tool-modal');
-    const closeWikiModal = document.getElementById('close-wiki-modal');
 
-    // Wiki data
+    // Tool data for wiki content
     const toolWikiData = {
         'range-jumping': {
             title: 'Range Jumping Tool',
@@ -115,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Tool modal
+    // Open tool modal
     document.querySelectorAll('.open-tool').forEach(button => {
         button.addEventListener('click', function() {
             const toolType = this.getAttribute('data-tool');
@@ -133,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'scale(1)';
         }, 150);
     });
+});
 
     // Show tool content based on tool type
     function showToolContent(toolType) {
@@ -280,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         copyBtn.textContent = 'Copy Results';
                     }, 2000);
                 }).catch(err => {
-                    // Copy failed silently
+                    console.error('Failed to copy: ', err);
                 });
             }
         }
@@ -348,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showResults();
                 
             } catch (error) {
-                // Processing error handled silently
+                console.error('Processing error:', error);
                 showError(`Processing failed: ${error.message}`);
                 hideProcessStatus();
             }
@@ -382,7 +381,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     cleaned += '=';
                 }
                 
-                // Base64 cleaned successfully
+                console.log('Cleaned Base64 length:', cleaned.length);
+                console.log('Cleaned Base64 preview:', cleaned.substring(0, 50) + '...');
+                console.log('Final Base64 ends with:', cleaned.substring(Math.max(0, cleaned.length - 20)));
                 
                 // Try to decode
                 const decoded = atob(cleaned);
@@ -395,22 +396,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 return bytes;
             } catch (error) {
-                // Base64 processing error handled silently
+                console.error('Base64 cleaning/decoding error:', error);
                 throw new Error(`Base64 processing failed: ${error.message}. Please check your input format.`);
             }
         }
 
         function identifyDataType(data) {
-            // Data type identification in progress
+            console.log('Identifying data type for:', data.length, 'bytes');
+            console.log('First 20 bytes as hex:', Array.from(data.slice(0, 20)).map(b => b.toString(16).padStart(2, '0')).join(' '));
+            console.log('First 20 bytes as text:', String.fromCharCode(...data.slice(0, 20)));
             
             // Check if it's a PDF (PDF files start with %PDF)
             if (data.length >= 4) {
                 const header = String.fromCharCode(...data.slice(0, 4));
-                // Header check completed
+                console.log('Header check:', header);
                 
                 // More flexible PDF detection - check for %PDF anywhere in first 10 bytes
                 if (header === '%PDF' || header.startsWith('%PDF')) {
-                    // Identified as PDF
+                    console.log('Identified as PDF (exact header)');
                     return 'PDF';
                 }
                 
@@ -980,244 +983,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
-
-        // Add event listeners for copy and download buttons
-        const copyBtn = document.getElementById('copy-label-btn');
-        const downloadBtn = document.getElementById('download-label-btn');
-        const filenameInput = document.getElementById('filename-input');
-
-        if (copyBtn) {
-            copyBtn.addEventListener('click', copyLabelData);
-        }
-
-        if (downloadBtn) {
-            downloadBtn.addEventListener('click', downloadLabelData);
-        }
-
-        // Store the current label data for copy/download
-        let currentLabelData = null;
-        let currentDataType = null;
-
-        function copyLabelData() {
-            try {
-                // Look for the actual preview image in the preview container
-                const previewContainer = document.getElementById('preview-container');
-                const previewImage = previewContainer.querySelector('img, embed');
-                
-                if (previewImage && previewImage.tagName === 'IMG') {
-                    // For images, copy the image to clipboard
-                    copyImageToClipboard(previewImage);
-                } else if (previewImage && previewImage.tagName === 'EMBED') {
-                    // For PDF embeds, try to capture as image
-                    copyPDFAsImage(previewImage);
-                } else {
-                    // Fallback to copying data based on type
-                    copyDataBasedOnType();
-                }
-            } catch (error) {
-                console.error('Copy failed:', error);
-                // Fallback to original data copy
-                copyDataBasedOnType();
-            }
-        }
-
-        function copyImageToClipboard(imgElement) {
-            // Create a canvas to capture the image
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Set canvas size to match image
-            canvas.width = imgElement.naturalWidth || imgElement.width;
-            canvas.height = imgElement.naturalHeight || imgElement.height;
-            
-            // Draw image to canvas
-            ctx.drawImage(imgElement, 0, 0);
-            
-            // Convert canvas to blob
-            canvas.toBlob(async (blob) => {
-                try {
-                    // Copy blob to clipboard
-                    await navigator.clipboard.write([
-                        new ClipboardItem({
-                            'image/png': blob
-                        })
-                    ]);
-                    showCopyNotification('Preview image copied to clipboard!', 'success');
-                } catch (error) {
-                    console.error('Failed to copy image to clipboard:', error);
-                    // Fallback to data copy
-                    copyDataBasedOnType();
-                }
-            }, 'image/png');
-        }
-
-        function copyPDFAsImage(embedElement) {
-            // For PDF embeds, we can't directly capture them as images
-            // So we'll fall back to copying the original Base64 data
-            copyDataBasedOnType();
-        }
-
-        function copyDataBasedOnType() {
-            try {
-                // Try to get the original Base64 input first
-                const base64Input = document.getElementById('base64-input');
-                if (base64Input && base64Input.value.trim()) {
-                    window.copyToClipboard(base64Input.value.trim());
-                    showCopyNotification('Base64 data copied to clipboard!', 'success');
-                    return;
-                }
-                
-                // If no Base64 input, try to copy current label data
-                if (currentLabelData) {
-                    window.copyToClipboard(currentLabelData);
-                    showCopyNotification('Label data copied to clipboard!', 'success');
-                    return;
-                }
-                
-                showCopyNotification('No data available to copy', 'error');
-            } catch (error) {
-                console.error('Data copy failed:', error);
-                showCopyNotification('Failed to copy data', 'error');
-            }
-        }
-
-        function downloadLabelData() {
-            try {
-                const filename = filenameInput.value.trim() || 'label';
-                let blob;
-                let extension;
-
-                // Look for the actual preview image in the preview container
-                const previewContainer = document.getElementById('preview-container');
-                const previewImage = previewContainer.querySelector('img, embed');
-
-                if (previewImage && previewImage.tagName === 'IMG') {
-                    // For images, download the actual preview image
-                    downloadImageFromElement(previewImage, filename);
-                    return;
-                } else if (previewImage && previewImage.tagName === 'EMBED') {
-                    // For PDF embeds, download the original PDF
-                    downloadPDFFromBase64(filename);
-                    return;
-                } else {
-                    // Fallback to downloading data based on type
-                    downloadDataBasedOnType(filename);
-                }
-            } catch (error) {
-                console.error('Download failed:', error);
-                showCopyNotification('Failed to download file', 'error');
-            }
-        }
-
-        function downloadImageFromElement(imgElement, filename) {
-            try {
-                // Create a canvas to capture the image
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                // Set canvas size to match image
-                canvas.width = imgElement.naturalWidth || imgElement.width;
-                canvas.height = imgElement.naturalHeight || imgElement.height;
-                
-                // Draw image to canvas
-                ctx.drawImage(imgElement, 0, 0);
-                
-                // Convert canvas to blob and download
-                canvas.toBlob((blob) => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${filename}.png`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    
-                    showCopyNotification('Preview image downloaded successfully!', 'success');
-                }, 'image/png');
-            } catch (error) {
-                console.error('Failed to download image:', error);
-                // Fallback to data download
-                downloadDataBasedOnType(filename);
-            }
-        }
-
-        function downloadPDFFromBase64(filename) {
-            try {
-                const base64Data = document.getElementById('base64-input').value.trim();
-                const binaryString = atob(base64Data);
-                const bytes = new Uint8Array(binaryString.length);
-                for (let i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i);
-                }
-                const blob = new Blob([bytes], { type: 'application/pdf' });
-                
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${filename}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showCopyNotification('PDF downloaded successfully!', 'success');
-            } catch (error) {
-                console.error('Failed to download PDF:', error);
-                showCopyNotification('Failed to download PDF', 'error');
-            }
-        }
-
-        function downloadDataBasedOnType(filename) {
-            try {
-                // Try to get the original Base64 input first
-                const base64Input = document.getElementById('base64-input');
-                if (base64Input && base64Input.value.trim()) {
-                    // Download the Base64 data as a text file
-                    const blob = new Blob([base64Input.value.trim()], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${filename}.txt`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    
-                    showCopyNotification('Base64 data downloaded successfully!', 'success');
-                    return;
-                }
-                
-                // If no Base64 input, try to download current label data
-                if (currentLabelData) {
-                    const blob = new Blob([currentLabelData], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${filename}.txt`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    
-                    showCopyNotification('Label data downloaded successfully!', 'success');
-                    return;
-                }
-                
-                showCopyNotification('No data available to download', 'error');
-            } catch (error) {
-                console.error('Data download failed:', error);
-                showCopyNotification('Failed to download file', 'error');
-            }
-        }
-
-        // Update the generateLabelPreview function to store data
-        const originalGenerateLabelPreview = window.generateLabelPreview;
-        window.generateLabelPreview = function(data, dataType) {
-            currentLabelData = data;
-            currentDataType = dataType;
-            return originalGenerateLabelPreview(data, dataType);
-        };
     }
 
     // Initialize Range Jumping functionality
@@ -1254,24 +1019,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Copy query button
         copyQueryBtn.addEventListener('click', function() {
-            const queryText = `SELECT 
-    csc.contract_no,
-    csc.RANGE_ID,
-    sr.cons_start_no,
-    sr.cons_end_no,
-    sr.cons_cur_no,
-    csc.ITEM_RANGE_ID,
-    ir.START_NO,
-    ir.END_NO,
-    ir.CUR_NO
-FROM cust_site_contracts csc
-INNER JOIN SHIP_RANGES sr ON csc.RANGE_ID = sr.ID
-INNER JOIN ITEM_RANGES ir ON csc.ITEM_RANGE_ID = ir.ID
-WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
+            const queryText = document.getElementById('range-query').textContent;
             window.copyToClipboard(queryText);
         });
 
-        // Generate script
+        // Generate update script button
         generateUpdateBtn.addEventListener('click', function() {
             const insertScript = insertScriptInput.value.trim();
             const jumpAmount = parseInt(jumpAmountInput.value) || 0;
@@ -1450,9 +1202,48 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
             }
         }
     }
-    
 
-    // Close modals
+    // Open wiki modal
+    document.querySelectorAll('.wiki-tool').forEach(button => {
+        button.addEventListener('click', function() {
+            const toolType = this.getAttribute('data-tool');
+            const toolData = toolWikiData[toolType];
+            
+            if (toolData) {
+                wikiTitle.textContent = `${toolData.title} - Wiki`;
+                wikiContent.innerHTML = generateWikiContent(toolData);
+                wikiModal.style.display = 'block';
+            }
+            
+            // Add click animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+    });
+
+    // Generate wiki content
+    function generateWikiContent(toolData) {
+        return `
+            <div class="wiki-section">
+                <h3>Description</h3>
+                <p>${toolData.description}</p>
+                
+                <h3>How to Use</h3>
+                <ol>
+                    ${toolData.howToUse.map(step => `<li>${step}</li>`).join('')}
+                </ol>
+                
+                <h3>Examples</h3>
+                <div class="examples">
+                    ${toolData.examples.map(example => `<div class="example-item">${example}</div>`).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // Close modals when clicking close button
     closeButtons.forEach(button => {
         button.addEventListener('click', function() {
             toolModal.style.display = 'none';
@@ -1460,31 +1251,17 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
         });
     });
 
-    // Outside close buttons
-    if (closeToolModal) {
-        closeToolModal.addEventListener('click', function() {
-            toolModal.style.display = 'none';
-        });
-    }
-
-    if (closeWikiModal) {
-        closeWikiModal.addEventListener('click', function() {
-            wikiModal.style.display = 'none';
-        });
-    }
-
-    // Fallback: Use event delegation for close buttons
-    document.addEventListener('click', function(event) {
-        if (event.target.id === 'close-tool-modal' || event.target.closest('#close-tool-modal')) {
+    // Close modals when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === toolModal) {
             toolModal.style.display = 'none';
         }
-        if (event.target.id === 'close-wiki-modal' || event.target.closest('#close-wiki-modal')) {
+        if (event.target === wikiModal) {
             wikiModal.style.display = 'none';
         }
     });
 
-
-    // Escape key
+    // Close modals with Escape key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             toolModal.style.display = 'none';
@@ -1617,14 +1394,14 @@ function showCopyNotification(message, type = 'success') {
         // Show/hide Evri-specific fields
         const evriFields = document.getElementById('evri-fields');
         if (selectedCarrier === 'Evri') {
-            if (evriFields) evriFields.style.display = 'block';
+            evriFields.style.display = 'block';
             // No standard service select for Evri
             if (serviceSelect) {
                 serviceSelect.disabled = true;
                 serviceSelect.innerHTML = '<option value="">Evri uses custom service selection below</option>';
             }
         } else {
-            if (evriFields) evriFields.style.display = 'none';
+            evriFields.style.display = 'none';
             if (serviceSelect) {
                 serviceSelect.disabled = true; // hide/disable since removed
                 serviceSelect.innerHTML = '<option value="">No services required</option>';
@@ -1674,19 +1451,12 @@ function showCopyNotification(message, type = 'success') {
 
     // Function to generate Evri SQL
     function generateEvriSQL() {
-        const evriAccount = document.getElementById('evri-account');
-        const evriIod = document.getElementById('evri-iod');
-        const evriPod = document.getElementById('evri-pod');
-        const evriNextDay = document.getElementById('evri-next-day');
-        const evri2Day = document.getElementById('evri-2-day');
-        const evriRouteDesc = document.getElementById('evri-route-desc');
-        
-        const accountNumber = evriAccount ? evriAccount.value : '';
-        const isIOD = evriIod ? evriIod.checked : false;
-        const isPOD = evriPod ? evriPod.checked : false;
-        const isNextDay = evriNextDay ? evriNextDay.checked : false;
-        const is2Day = evri2Day ? evri2Day.checked : false;
-        const routeDesc = evriRouteDesc ? evriRouteDesc.value || 'Evri' : 'Evri';
+        const accountNumber = document.getElementById('evri-account').value;
+        const isIOD = document.getElementById('evri-iod').checked;
+        const isPOD = document.getElementById('evri-pod').checked;
+        const isNextDay = document.getElementById('evri-next-day').checked;
+        const is2Day = document.getElementById('evri-2-day').checked;
+        const routeDesc = document.getElementById('evri-route-desc').value || 'Evri';
 
         // Validation
         if (!accountNumber || accountNumber < 0 || accountNumber > 9) {
@@ -1746,75 +1516,22 @@ function showCopyNotification(message, type = 'success') {
         if (serviceCodeInput) serviceCodeInput.value = '';
         
         // Clear Evri-specific fields
-        const evriFields = document.getElementById('evri-fields');
-        const evriAccount = document.getElementById('evri-account');
-        const evriIod = document.getElementById('evri-iod');
-        const evriPod = document.getElementById('evri-pod');
-        const evriNextDay = document.getElementById('evri-next-day');
-        const evri2Day = document.getElementById('evri-2-day');
-        const evriRouteDesc = document.getElementById('evri-route-desc');
+        document.getElementById('evri-fields').style.display = 'none';
+        document.getElementById('evri-account').value = '';
+        document.getElementById('evri-iod').checked = false;
+        document.getElementById('evri-pod').checked = false;
+        document.getElementById('evri-next-day').checked = false;
+        document.getElementById('evri-2-day').checked = false;
+        document.getElementById('evri-route-desc').value = '';
         
-        if (evriFields) evriFields.style.display = 'none';
-        if (evriAccount) evriAccount.value = '';
-        if (evriIod) evriIod.checked = false;
-        if (evriPod) evriPod.checked = false;
-        if (evriNextDay) evriNextDay.checked = false;
-        if (evri2Day) evri2Day.checked = false;
-        if (evriRouteDesc) evriRouteDesc.value = '';
-        
-        if (routeResults) routeResults.style.display = 'none';
+        routeResults.style.display = 'none';
     });
 
         // Copy SQL button
         copySqlBtn.addEventListener('click', function() {
             const sqlText = sqlScript.textContent;
             if (sqlText) {
-                navigator.clipboard.writeText(sqlText).then(() => {
-                    showCopyNotification('SQL copied to clipboard!', 'success');
-                }).catch(err => {
-                    console.error('Failed to copy: ', err);
-                });
+                window.copyToClipboard(sqlText);
             }
         });
     }
-
-    // Wiki content
-    function generateWikiContent(toolData) {
-        return `
-            <div class="wiki-section">
-                <h3>Description</h3>
-                <p>${toolData.description}</p>
-                
-                <h3>How to Use</h3>
-                <ol>
-                    ${toolData.howToUse.map(step => `<li>${step}</li>`).join('')}
-                </ol>
-                
-                <h3>Examples</h3>
-                <div class="examples">
-                    ${toolData.examples.map(example => `<div class="example-item">${example}</div>`).join('')}
-                </div>
-            </div>
-        `;
-    }
-
-    // Open wiki modal
-    document.querySelectorAll('.wiki-tool').forEach(button => {
-        button.addEventListener('click', function() {
-            const toolType = this.getAttribute('data-tool');
-            const toolData = toolWikiData[toolType];
-            
-            if (toolData) {
-                wikiTitle.textContent = `${toolData.title} - Wiki`;
-                wikiContent.innerHTML = generateWikiContent(toolData);
-                wikiModal.style.display = 'block';
-            }
-            
-            // Add click animation
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
-        });
-    });
-});
