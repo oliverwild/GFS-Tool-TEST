@@ -1,23 +1,25 @@
 /* CSS Variables for Light/Dark Mode */
 :root {
     /* Light mode colors */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8fafc;
+    --bg-primary: #f5f5f5; /* Grey background */
+    --bg-secondary: #ffffff; /* White for cards */
     --bg-tertiary: #f1f5f9;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --text-muted: #94a3b8;
+    --text-primary: #000000; /* Black text */
+    --text-secondary: #000000; /* Black text */
+    --text-muted: #000000; /* Black text */
     --border-color: #e2e8f0;
     --border-hover: #cbd5e1;
     --shadow: rgba(0, 0, 0, 0.1);
     --shadow-hover: rgba(0, 0, 0, 0.15);
-    --accent-primary: #3b82f6;
-    --accent-hover: #2563eb;
-    --accent-secondary: #64748b;
+    --accent-primary: #6b7280; /* Grey for buttons */
+    --accent-hover: #374151; /* Dark grey for button hover */
+    --accent-secondary: #6b7280; /* Grey */
     --success: #10b981;
     --warning: #f59e0b;
     --error: #ef4444;
     --modal-overlay: rgba(0, 0, 0, 0.5);
+    --header-bg: #ffffff; /* White header */
+    --icon-color: #6b7280; /* Grey icons */
 }
 
 /* Dark mode colors */
@@ -94,47 +96,47 @@ p {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--accent-primary);
     color: white;
-    border-color: #667eea;
+    border-color: var(--accent-primary);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    background: var(--accent-hover);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 10px 25px rgba(107, 114, 128, 0.3);
 }
 
 .btn-secondary {
     background: transparent;
-    color: #667eea;
-    border-color: #667eea;
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
 }
 
 .btn-secondary:hover {
-    background: #667eea;
+    background: var(--accent-primary);
     color: white;
-    border-color: #667eea;
+    border-color: var(--accent-primary);
     transform: translateY(-2px);
 }
 
 .btn-outline {
     background: transparent;
-    color: #667eea;
-    border-color: #667eea;
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
 }
 
 .btn-outline:hover {
-    background: #667eea;
+    background: var(--accent-primary);
     color: white;
-    border-color: #667eea;
+    border-color: var(--accent-primary);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 5px 15px rgba(107, 114, 128, 0.2);
 }
 
 /* Header and Navigation */
 .header {
-    background: var(--bg-primary);
+    background: var(--header-bg);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
     position: fixed;
@@ -177,7 +179,7 @@ p {
     cursor: pointer;
     transition: all 0.3s ease;
     color: var(--text-primary);
-    background-color: var(--bg-primary);
+    background-color: var(--header-bg);
 }
 
 .dark-mode-toggle:hover {
@@ -201,7 +203,7 @@ p {
     align-items: center;
     font-size: 1.5rem;
     font-weight: 700;
-    color: #667eea;
+    color: var(--accent-primary);
 }
 
 .nav-logo i {
@@ -233,7 +235,7 @@ p {
 }
 
 .tool-card {
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 4px 20px var(--shadow);
@@ -251,7 +253,7 @@ p {
 .tool-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--icon-color);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -354,7 +356,7 @@ p {
 }
 
 .close:hover {
-    color: #667eea;
+    color: var(--accent-primary);
 }
 
 .modal-body {
@@ -370,7 +372,7 @@ p {
 
 .wip-notice i {
     font-size: 4rem;
-    color: #667eea;
+    color: var(--accent-primary);
     margin-bottom: 1rem;
 }
 
@@ -447,7 +449,7 @@ p {
 .input-group input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
 }
 
 .range-info {
@@ -494,6 +496,7 @@ p {
     background: var(--border-color);
     outline: none;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 .percentage-control input[type="range"]::-webkit-slider-thumb {
@@ -502,7 +505,7 @@ p {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #667eea;
+    background: var(--accent-primary);
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
@@ -511,7 +514,7 @@ p {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #667eea;
+    background: var(--accent-primary);
     cursor: pointer;
     border: none;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
@@ -602,7 +605,7 @@ p {
 .base64-input-group textarea:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
 }
 
 .input-info {
@@ -753,7 +756,7 @@ p {
 .filename-input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
 }
 
 .action-buttons {
@@ -985,7 +988,7 @@ p {
 
 .range-copy-box:hover {
     border-color: var(--accent-primary);
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 2px 8px rgba(107, 114, 128, 0.1);
 }
 
 .range-text {
@@ -1035,7 +1038,7 @@ p {
 .clickable-number:hover {
     background: var(--border-color);
     transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 2px 8px rgba(107, 114, 128, 0.2);
 }
 
 .clickable-number:active {
@@ -1216,7 +1219,7 @@ p {
 .jump-input-group input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
 }
 
 /* Range Jump textarea styling */
@@ -1238,7 +1241,7 @@ p {
 #insert-script-input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
 }
 
 .update-script-output {
@@ -1296,7 +1299,7 @@ p {
 .form-select:focus, .form-input:focus {
     outline: none;
     border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
 }
 
 .form-select:disabled {
