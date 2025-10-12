@@ -1452,10 +1452,10 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
         }
     }
 
-    // Open wiki modal
-    document.querySelectorAll('.wiki-tool').forEach(button => {
-        button.addEventListener('click', function() {
-            const toolType = this.getAttribute('data-tool');
+    // Open wiki modal - using event delegation
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('wiki-tool')) {
+            const toolType = event.target.getAttribute('data-tool');
             const toolData = toolWikiData[toolType];
             
             if (toolData) {
@@ -1465,11 +1465,11 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);`;
             }
             
             // Add click animation
-            this.style.transform = 'scale(0.95)';
+            event.target.style.transform = 'scale(0.95)';
             setTimeout(() => {
-                this.style.transform = 'scale(1)';
+                event.target.style.transform = 'scale(1)';
             }, 150);
-        });
+        }
     });
 
     // Generate wiki content
