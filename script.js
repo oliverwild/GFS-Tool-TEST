@@ -380,26 +380,34 @@ function showSimpleSettingsModal() {
     
     // Set initial state based on current theme
     if (currentTheme === 'dark') {
-        themeSlider.style.background = '#4CAF50';
+        themeSlider.style.background = '#000000';
+        themeSlider.style.borderColor = '#000000';
+        themeSliderHandle.style.background = '#ffffff';
         themeSliderHandle.style.transform = 'translateX(30px)';
     } else {
-        themeSlider.style.background = '#333';
+        themeSlider.style.background = '#ffffff';
+        themeSlider.style.borderColor = '#000000';
+        themeSliderHandle.style.background = '#000000';
         themeSliderHandle.style.transform = 'translateX(0px)';
     }
     
     themeSlider.addEventListener('click', () => {
-        const isDark = themeSlider.style.background === 'rgb(76, 175, 80)';
+        const isDark = themeSlider.style.background === 'rgb(0, 0, 0)';
         
         if (isDark) {
             // Switch to light mode
-            themeSlider.style.background = '#333';
+            themeSlider.style.background = '#ffffff';
+            themeSlider.style.borderColor = '#000000';
+            themeSliderHandle.style.background = '#000000';
             themeSliderHandle.style.transform = 'translateX(0px)';
             applyTheme('light');
             // Update modal theme
             modal.setAttribute('data-theme', 'light');
         } else {
             // Switch to dark mode
-            themeSlider.style.background = '#4CAF50';
+            themeSlider.style.background = '#000000';
+            themeSlider.style.borderColor = '#000000';
+            themeSliderHandle.style.background = '#ffffff';
             themeSliderHandle.style.transform = 'translateX(30px)';
             applyTheme('dark');
             // Update modal theme
