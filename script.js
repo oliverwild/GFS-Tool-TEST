@@ -150,8 +150,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const title = document.getElementById('wiki-title');
             const content = document.getElementById('wiki-content');
             
-            if (!modal || !title || !content) {
-                console.log('Modal elements not found!');
+            console.log('Modal element:', modal);
+            console.log('Title element:', title);
+            console.log('Content element:', content);
+            
+            if (!modal) {
+                console.log('ERROR: Modal element not found!');
+                return;
+            }
+            if (!title) {
+                console.log('ERROR: Title element not found!');
+                return;
+            }
+            if (!content) {
+                console.log('ERROR: Content element not found!');
                 return;
             }
             
@@ -171,6 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Style modal content
             const modalContent = modal.querySelector('.modal-content');
+            console.log('Modal content element:', modalContent);
+            
             if (modalContent) {
                 modalContent.style.position = 'absolute';
                 modalContent.style.top = '50%';
@@ -183,7 +197,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 modalContent.style.borderRadius = '8px';
                 modalContent.style.boxShadow = '0 20px 60px rgba(0,0,0,0.3)';
                 modalContent.style.overflow = 'auto';
+                console.log('Modal content styled');
+            } else {
+                console.log('ERROR: Modal content element not found!');
             }
+            
+            // Check final modal state
+            console.log('Final modal display:', modal.style.display);
+            console.log('Final modal position:', modal.style.position);
+            console.log('Final modal z-index:', modal.style.zIndex);
+            console.log('Final modal rect:', modal.getBoundingClientRect());
             
             console.log('Modal should be visible now');
         });
