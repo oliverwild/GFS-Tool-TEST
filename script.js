@@ -1773,4 +1773,3 @@ function showCopyNotification(message, type = 'success') {
             }
         });
     }
-
