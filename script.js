@@ -983,6 +983,244 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
+
+        // Add event listeners for copy and download buttons
+        const copyBtn = document.getElementById('copy-label-btn');
+        const downloadBtn = document.getElementById('download-label-btn');
+        const filenameInput = document.getElementById('filename-input');
+
+        if (copyBtn) {
+            copyBtn.addEventListener('click', copyLabelData);
+        }
+
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', downloadLabelData);
+        }
+
+        // Store the current label data for copy/download
+        let currentLabelData = null;
+        let currentDataType = null;
+
+        function copyLabelData() {
+            try {
+                // Look for the actual preview image in the preview container
+                const previewContainer = document.getElementById('preview-container');
+                const previewImage = previewContainer.querySelector('img, embed');
+                
+                if (previewImage && previewImage.tagName === 'IMG') {
+                    // For images, copy the image to clipboard
+                    copyImageToClipboard(previewImage);
+                } else if (previewImage && previewImage.tagName === 'EMBED') {
+                    // For PDF embeds, try to capture as image
+                    copyPDFAsImage(previewImage);
+                } else {
+                    // Fallback to copying data based on type
+                    copyDataBasedOnType();
+                }
+            } catch (error) {
+                console.error('Copy failed:', error);
+                // Fallback to original data copy
+                copyDataBasedOnType();
+            }
+        }
+
+        function copyImageToClipboard(imgElement) {
+            // Create a canvas to capture the image
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size to match image
+            canvas.width = imgElement.naturalWidth || imgElement.width;
+            canvas.height = imgElement.naturalHeight || imgElement.height;
+            
+            // Draw image to canvas
+            ctx.drawImage(imgElement, 0, 0);
+            
+            // Convert canvas to blob
+            canvas.toBlob(async (blob) => {
+                try {
+                    // Copy blob to clipboard
+                    await navigator.clipboard.write([
+                        new ClipboardItem({
+                            'image/png': blob
+                        })
+                    ]);
+                    showCopyNotification('Preview image copied to clipboard!', 'success');
+                } catch (error) {
+                    console.error('Failed to copy image to clipboard:', error);
+                    // Fallback to data copy
+                    copyDataBasedOnType();
+                }
+            }, 'image/png');
+        }
+
+        function copyPDFAsImage(embedElement) {
+            // For PDF embeds, we can't directly capture them as images
+            // So we'll fall back to copying the original Base64 data
+            copyDataBasedOnType();
+        }
+
+        function copyDataBasedOnType() {
+            try {
+                // Try to get the original Base64 input first
+                const base64Input = document.getElementById('base64-input');
+                if (base64Input && base64Input.value.trim()) {
+                    window.copyToClipboard(base64Input.value.trim());
+                    showCopyNotification('Base64 data copied to clipboard!', 'success');
+                    return;
+                }
+                
+                // If no Base64 input, try to copy current label data
+                if (currentLabelData) {
+                    window.copyToClipboard(currentLabelData);
+                    showCopyNotification('Label data copied to clipboard!', 'success');
+                    return;
+                }
+                
+                showCopyNotification('No data available to copy', 'error');
+            } catch (error) {
+                console.error('Data copy failed:', error);
+                showCopyNotification('Failed to copy data', 'error');
+            }
+        }
+
+        function downloadLabelData() {
+            try {
+                const filename = filenameInput.value.trim() || 'label';
+                let blob;
+                let extension;
+
+                // Look for the actual preview image in the preview container
+                const previewContainer = document.getElementById('preview-container');
+                const previewImage = previewContainer.querySelector('img, embed');
+
+                if (previewImage && previewImage.tagName === 'IMG') {
+                    // For images, download the actual preview image
+                    downloadImageFromElement(previewImage, filename);
+                    return;
+                } else if (previewImage && previewImage.tagName === 'EMBED') {
+                    // For PDF embeds, download the original PDF
+                    downloadPDFFromBase64(filename);
+                    return;
+                } else {
+                    // Fallback to downloading data based on type
+                    downloadDataBasedOnType(filename);
+                }
+            } catch (error) {
+                console.error('Download failed:', error);
+                showCopyNotification('Failed to download file', 'error');
+            }
+        }
+
+        function downloadImageFromElement(imgElement, filename) {
+            try {
+                // Create a canvas to capture the image
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas size to match image
+                canvas.width = imgElement.naturalWidth || imgElement.width;
+                canvas.height = imgElement.naturalHeight || imgElement.height;
+                
+                // Draw image to canvas
+                ctx.drawImage(imgElement, 0, 0);
+                
+                // Convert canvas to blob and download
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showCopyNotification('Preview image downloaded successfully!', 'success');
+                }, 'image/png');
+            } catch (error) {
+                console.error('Failed to download image:', error);
+                // Fallback to data download
+                downloadDataBasedOnType(filename);
+            }
+        }
+
+        function downloadPDFFromBase64(filename) {
+            try {
+                const base64Data = document.getElementById('base64-input').value.trim();
+                const binaryString = atob(base64Data);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], { type: 'application/pdf' });
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showCopyNotification('PDF downloaded successfully!', 'success');
+            } catch (error) {
+                console.error('Failed to download PDF:', error);
+                showCopyNotification('Failed to download PDF', 'error');
+            }
+        }
+
+        function downloadDataBasedOnType(filename) {
+            try {
+                // Try to get the original Base64 input first
+                const base64Input = document.getElementById('base64-input');
+                if (base64Input && base64Input.value.trim()) {
+                    // Download the Base64 data as a text file
+                    const blob = new Blob([base64Input.value.trim()], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showCopyNotification('Base64 data downloaded successfully!', 'success');
+                    return;
+                }
+                
+                // If no Base64 input, try to download current label data
+                if (currentLabelData) {
+                    const blob = new Blob([currentLabelData], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${filename}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showCopyNotification('Label data downloaded successfully!', 'success');
+                    return;
+                }
+                
+                showCopyNotification('No data available to download', 'error');
+            } catch (error) {
+                console.error('Data download failed:', error);
+                showCopyNotification('Failed to download file', 'error');
+            }
+        }
+
+        // Update the generateLabelPreview function to store data
+        const originalGenerateLabelPreview = window.generateLabelPreview;
+        window.generateLabelPreview = function(data, dataType) {
+            currentLabelData = data;
+            currentDataType = dataType;
+            return originalGenerateLabelPreview(data, dataType);
+        };
     }
 
     // Initialize Range Jumping functionality
