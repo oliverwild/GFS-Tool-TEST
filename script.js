@@ -310,10 +310,12 @@ function showSimpleSettingsModal() {
     
     // Add content with theme-aware styling
     content.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <h2 style="margin: 0; color: var(--text-primary, #ffffff);">Settings</h2>
             <button id="close-simple-settings" style="background: var(--bg-secondary, #444); border: 1px solid var(--border-color, #666); color: var(--text-primary, #fff); padding: 0.5rem; border-radius: 6px; cursor: pointer;">✕</button>
         </div>
+        
+        <div style="height: 1px; background: var(--border-color, #666); margin-bottom: 1.5rem;"></div>
         
         <div style="margin-bottom: 2rem;">
             <h3 style="color: var(--text-primary, #ffffff); margin-bottom: 1rem;">Theme</h3>
@@ -380,8 +382,8 @@ function showSimpleSettingsModal() {
     
     // Set initial state based on current theme
     if (currentTheme === 'dark') {
-        themeSlider.style.background = '#000000';
-        themeSlider.style.borderColor = '#000000';
+        themeSlider.style.background = '#333333';
+        themeSlider.style.borderColor = '#555555';
         themeSliderHandle.style.background = '#ffffff';
         themeSliderHandle.style.transform = 'translateX(30px)';
     } else {
@@ -392,7 +394,7 @@ function showSimpleSettingsModal() {
     }
     
     themeSlider.addEventListener('click', () => {
-        const isDark = themeSlider.style.background === 'rgb(0, 0, 0)';
+        const isDark = themeSlider.style.background === 'rgb(51, 51, 51)';
         
         if (isDark) {
             // Switch to light mode
@@ -405,8 +407,8 @@ function showSimpleSettingsModal() {
             modal.setAttribute('data-theme', 'light');
         } else {
             // Switch to dark mode
-            themeSlider.style.background = '#000000';
-            themeSlider.style.borderColor = '#000000';
+            themeSlider.style.background = '#333333';
+            themeSlider.style.borderColor = '#555555';
             themeSliderHandle.style.background = '#ffffff';
             themeSliderHandle.style.transform = 'translateX(30px)';
             applyTheme('dark');
@@ -555,42 +557,114 @@ function populateSimpleToolList() {
 function initializeSimpleDragAndDrop() {
     const toolList = document.getElementById('simple-tool-list');
     let draggedElement = null;
+    let dropIndicator = null;
+    
+    // Create drop indicator element
+    function createDropIndicator() {
+        const indicator = document.createElement('div');
+        indicator.className = 'drop-indicator';
+        indicator.style.cssText = `
+            height: 2px;
+            background: #4CAF50;
+            margin: 2px 0;
+            border-radius: 1px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        `;
+        return indicator;
+    }
     
     toolList.addEventListener('dragstart', (e) => {
         draggedElement = e.target.closest('.simple-tool-item');
-        draggedElement.style.opacity = '0.5';
-        draggedElement.style.transform = 'rotate(5deg)';
+        if (draggedElement) {
+            // Keep element solid but add subtle shadow and scale
+            draggedElement.style.opacity = '1';
+            draggedElement.style.transform = 'scale(1.02)';
+            draggedElement.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.3)';
+            draggedElement.style.zIndex = '1000';
+            draggedElement.style.border = '2px solid #4CAF50';
+            
+            // Create drop indicator
+            dropIndicator = createDropIndicator();
+        }
     });
     
     toolList.addEventListener('dragend', (e) => {
         if (draggedElement) {
+            // Reset styles
             draggedElement.style.opacity = '1';
-            draggedElement.style.transform = 'rotate(0deg)';
+            draggedElement.style.transform = 'scale(1)';
+            draggedElement.style.boxShadow = '';
+            draggedElement.style.zIndex = '';
+            draggedElement.style.border = '';
             draggedElement = null;
         }
+        
+        // Remove drop indicator
+        if (dropIndicator && dropIndicator.parentNode) {
+            dropIndicator.parentNode.removeChild(dropIndicator);
+        }
+        dropIndicator = null;
     });
     
     toolList.addEventListener('dragover', (e) => {
         e.preventDefault();
+        if (!draggedElement) return;
+        
         const afterElement = getSimpleDragAfterElement(toolList, e.clientY);
-        if (draggedElement) {
-            if (afterElement == null) {
-                toolList.appendChild(draggedElement);
-            } else {
-                toolList.insertBefore(draggedElement, afterElement);
+        
+        // Remove existing indicator
+        if (dropIndicator && dropIndicator.parentNode) {
+            dropIndicator.parentNode.removeChild(dropIndicator);
+        }
+        
+        // Add indicator at drop position
+        if (afterElement) {
+            toolList.insertBefore(dropIndicator, afterElement);
+        } else {
+            toolList.appendChild(dropIndicator);
+        }
+        
+        // Show indicator
+        dropIndicator.style.opacity = '1';
+    });
+    
+    toolList.addEventListener('dragleave', (e) => {
+        // Only hide indicator if leaving the entire list
+        if (!toolList.contains(e.relatedTarget)) {
+            if (dropIndicator) {
+                dropIndicator.style.opacity = '0';
             }
         }
     });
     
-    toolList.addEventListener('drop', () => {
-        // Save new order
-        const newOrder = Array.from(toolList.children).map(item => item.dataset.toolId);
-        const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
-        settings.toolOrder = newOrder;
-        localStorage.setItem('gfs-settings', JSON.stringify(settings));
+    toolList.addEventListener('drop', (e) => {
+        e.preventDefault();
         
-        // Apply new order to main page
-        applyToolOrder(newOrder);
+        // Remove drop indicator
+        if (dropIndicator && dropIndicator.parentNode) {
+            dropIndicator.parentNode.removeChild(dropIndicator);
+        }
+        dropIndicator = null;
+        
+        if (draggedElement) {
+            const afterElement = getSimpleDragAfterElement(toolList, e.clientY);
+            
+            if (afterElement) {
+                toolList.insertBefore(draggedElement, afterElement);
+            } else {
+                toolList.appendChild(draggedElement);
+            }
+            
+            // Save new order
+            const newOrder = Array.from(toolList.children).map(item => item.dataset.toolId);
+            const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
+            settings.toolOrder = newOrder;
+            localStorage.setItem('gfs-settings', JSON.stringify(settings));
+            
+            // Apply new order to main page
+            applyToolOrder(newOrder);
+        }
     });
 }
 
