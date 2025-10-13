@@ -157,49 +157,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show modal
             modal.style.display = 'block';
-            modal.classList.add('show');
-            
-            // Also add show class to modal content and force CSS properties
-            const modalContent = modal.querySelector('.modal-content');
-            modalContent.classList.add('show');
-            
-            // Force CSS properties directly via JavaScript
-            modalContent.style.display = 'block';
-            modalContent.style.flexDirection = 'unset';
-            modalContent.style.flexWrap = 'unset';
-            modalContent.style.alignItems = 'unset';
-            modalContent.style.justifyContent = 'unset';
-            modalContent.style.height = 'auto';
-            modalContent.style.minHeight = '400px';
-            modalContent.style.width = '90%';
-            modalContent.style.maxWidth = '800px';
-            
-            // Check computed styles
-            console.log('Modal content element:', modalContent);
-            console.log('Modal content computed display:', window.getComputedStyle(modalContent).display);
-            console.log('Modal content computed flex-direction:', window.getComputedStyle(modalContent).flexDirection);
-            console.log('Modal content classes:', modalContent.className);
-            console.log('Modal content style attribute:', modalContent.getAttribute('style'));
-            
-            console.log('Modal display set to block and show class added');
-            console.log('Modal rect after display:', modal.getBoundingClientRect());
-            console.log('Modal content rect:', modalContent.getBoundingClientRect());
             
         });
     });
     
     // Set up close button for wiki modal
-    const closeButton = document.getElementById('close-wiki-modal');
+    const closeButton = document.querySelector('#wiki-modal .close');
     if (closeButton) {
         closeButton.addEventListener('click', function() {
             const modal = document.getElementById('wiki-modal');
-            const modalContent = modal.querySelector('.modal-content');
             if (modal) {
                 modal.style.display = 'none';
-                modal.classList.remove('show');
-                if (modalContent) {
-                    modalContent.classList.remove('show');
-                }
             }
         });
     }
@@ -208,12 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(e) {
         const modal = document.getElementById('wiki-modal');
         if (e.target === modal) {
-            const modalContent = modal.querySelector('.modal-content');
             modal.style.display = 'none';
-            modal.classList.remove('show');
-            if (modalContent) {
-                modalContent.classList.remove('show');
-            }
         }
     });
     

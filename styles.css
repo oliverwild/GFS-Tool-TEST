@@ -386,60 +386,6 @@ p {
     flex-direction: column;
 }
 
-/* Force modal content to display as block when modal is shown */
-.modal.show .modal-content,
-.modal[style*="display: block"] .modal-content {
-    display: block !important;
-    flex-direction: unset !important;
-    height: auto !important;
-    min-height: 400px !important;
-}
-
-/* More aggressive approach - target the specific modal */
-#wiki-modal.show .modal-content,
-#wiki-modal[style*="display: block"] .modal-content {
-    display: block !important;
-    flex-direction: unset !important;
-    height: auto !important;
-    min-height: 400px !important;
-    width: 90% !important;
-    max-width: 800px !important;
-}
-
-/* Target modal content directly when it has show class */
-.modal-content.show {
-    display: block !important;
-    flex-direction: unset !important;
-    height: auto !important;
-    min-height: 400px !important;
-    width: 90% !important;
-    max-width: 800px !important;
-}
-
-/* Even more specific - target the exact modal content */
-#wiki-modal .modal-content.show {
-    display: block !important;
-    flex-direction: unset !important;
-    height: auto !important;
-    min-height: 400px !important;
-    width: 90% !important;
-    max-width: 800px !important;
-}
-
-/* Nuclear option - override everything */
-.modal-content.show,
-#wiki-modal .modal-content.show,
-.modal.show .modal-content.show {
-    display: block !important;
-    flex-direction: unset !important;
-    flex-wrap: unset !important;
-    align-items: unset !important;
-    justify-content: unset !important;
-    height: auto !important;
-    min-height: 400px !important;
-    width: 90% !important;
-    max-width: 800px !important;
-}
 
 @keyframes modalSlideIn {
     from {
