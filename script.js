@@ -6,43 +6,16 @@ function initializeSettings() {
     const themeSelect = document.getElementById('theme-select');
     const resetSettingsBtn = document.getElementById('reset-settings');
     
-    console.log('Settings elements found:', {
-        settingsToggle: !!settingsToggle,
-        settingsModal: !!settingsModal,
-        closeSettingsBtn: !!closeSettingsBtn,
-        themeSelect: !!themeSelect,
-        resetSettingsBtn: !!resetSettingsBtn
-    });
     
     // Load saved settings
     loadSettings();
     
     // Settings modal toggle
     if (settingsToggle) {
-        console.log('Settings toggle button found, adding event listener');
         settingsToggle.addEventListener('click', (e) => {
-            console.log('Settings button clicked!', e);
             if (settingsModal) {
                 settingsModal.style.display = 'block';
-                settingsModal.style.visibility = 'visible';
-                settingsModal.style.opacity = '1';
-                settingsModal.style.zIndex = '9999';
-                console.log('Settings modal should be visible now');
                 
-                // Debug modal visibility
-                const computedStyle = window.getComputedStyle(settingsModal);
-                console.log('Modal computed styles:', {
-                    display: computedStyle.display,
-                    visibility: computedStyle.visibility,
-                    opacity: computedStyle.opacity,
-                    zIndex: computedStyle.zIndex,
-                    position: computedStyle.position,
-                    width: computedStyle.width,
-                    height: computedStyle.height
-                });
-                
-                const rect = settingsModal.getBoundingClientRect();
-                console.log('Modal rect:', rect);
                 
                 populateToolOrderList();
             } else {
@@ -50,10 +23,6 @@ function initializeSettings() {
             }
         });
         
-        // Also add a simple test
-        settingsToggle.addEventListener('mouseenter', () => {
-            console.log('Settings button hover detected');
-        });
     } else {
         console.error('Settings toggle button not found!');
     }
