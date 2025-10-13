@@ -34,12 +34,10 @@ function initializeDarkMode() {
     }
 }
 
-// SIMPLE WIKI BUTTON LOGIC - COMPLETELY SEPARATE
+// WIKI BUTTON LOGIC - DYNAMIC MODAL APPROACH
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Setting up simple wiki buttons...');
-    
-    // Simple wiki data
-    const simpleWikiData = {
+    // Wiki data
+    const wikiData = {
         'range-jumping': {
             title: 'Range Jumping Tool',
             description: 'Generate UPDATE scripts to jump range numbers in SHIP_RANGES and ITEM_RANGES tables.',
@@ -105,8 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Simple wiki content generator
-    function createSimpleWikiContent(toolData) {
+    // Wiki content generator
+    function createWikiContent(toolData) {
         return `
             <div style="padding: 20px; color: #333;">
                 <h3 style="color: #2563eb; margin-bottom: 15px;">Description</h3>
@@ -127,124 +125,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Set up wiki buttons
     const wikiButtons = document.querySelectorAll('.wiki-tool');
-    console.log('Found wiki buttons:', wikiButtons.length);
     
     wikiButtons.forEach(button => {
-        console.log('Setting up wiki button:', button);
         button.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
-            console.log('Wiki button clicked!');
             const toolType = this.getAttribute('data-tool');
-            console.log('Tool type:', toolType);
+            const toolData = wikiData[toolType];
             
-            const toolData = simpleWikiData[toolType];
             if (!toolData) {
-                console.log('No data found for tool type:', toolType);
                 return;
             }
             
-            // Create a completely new modal dynamically
-            console.log('Creating new modal dynamically...');
+            // Use the original modal with CSS fix
+            const modal = document.getElementById('wiki-modal');
+            const title = document.getElementById('wiki-title');
+            const content = document.getElementById('wiki-content');
             
-            // Remove any existing dynamic modal
-            const existingModal = document.getElementById('dynamic-wiki-modal');
-            if (existingModal) {
-                existingModal.remove();
+            if (!modal || !title || !content) {
+                return;
             }
             
-            // Create new modal
-            const modal = document.createElement('div');
-            modal.id = 'dynamic-wiki-modal';
-            modal.style.cssText = `
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                background-color: rgba(0,0,0,0.8) !important;
-                z-index: 999999 !important;
-                display: block !important;
-            `;
-            
-            // Create modal content
-            const modalContent = document.createElement('div');
-            modalContent.style.cssText = `
-                position: absolute !important;
-                top: 50% !important;
-                left: 50% !important;
-                transform: translate(-50%, -50%) !important;
-                width: 600px !important;
-                max-width: 90vw !important;
-                max-height: 80vh !important;
-                background-color: white !important;
-                border-radius: 8px !important;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
-                overflow: auto !important;
-                padding: 20px !important;
-            `;
-            
-            // Create close button
-            const closeButton = document.createElement('button');
-            closeButton.innerHTML = '×';
-            closeButton.style.cssText = `
-                position: absolute !important;
-                top: 10px !important;
-                right: 15px !important;
-                background: none !important;
-                border: none !important;
-                font-size: 24px !important;
-                cursor: pointer !important;
-                color: #666 !important;
-                z-index: 1 !important;
-            `;
-            
-            // Create title
-            const title = document.createElement('h2');
+            // Set content
             title.textContent = `${toolData.title} - Wiki`;
-            title.style.cssText = `
-                margin: 0 0 20px 0 !important;
-                color: #2563eb !important;
-                font-size: 24px !important;
-            `;
+            content.innerHTML = createWikiContent(toolData);
             
-            // Create content
-            const content = document.createElement('div');
-            content.innerHTML = createSimpleWikiContent(toolData);
+            // Show modal
+            modal.style.display = 'block';
             
-            // Assemble modal
-            modalContent.appendChild(closeButton);
-            modalContent.appendChild(title);
-            modalContent.appendChild(content);
-            modal.appendChild(modalContent);
-            
-            // Add to page
-            document.body.appendChild(modal);
-            
-            // Set up close button
-            closeButton.addEventListener('click', function() {
-                modal.remove();
-            });
-            
-            // Close on outside click
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-            
-            console.log('Dynamic modal created and added to page');
-            console.log('Modal rect:', modal.getBoundingClientRect());
-            console.log('Modal content rect:', modalContent.getBoundingClientRect());
         });
     });
     
-    // Set up close button
+    // Set up close button for wiki modal
     const closeButton = document.getElementById('close-wiki-modal');
     if (closeButton) {
         closeButton.addEventListener('click', function() {
-            console.log('Close button clicked');
             const modal = document.getElementById('wiki-modal');
             if (modal) {
                 modal.style.display = 'none';
@@ -252,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Close on outside click
+    // Close wiki modal on outside click
     document.addEventListener('click', function(e) {
         const modal = document.getElementById('wiki-modal');
         if (e.target === modal) {
@@ -260,7 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    console.log('Simple wiki button setup complete');
 });
 
 // Modal functionality for GFS Tools

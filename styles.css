@@ -386,6 +386,11 @@ p {
     flex-direction: column;
 }
 
+/* Allow JavaScript to override modal display */
+.modal[style*="display: block"] .modal-content {
+    display: block !important;
+}
+
 @keyframes modalSlideIn {
     from {
         opacity: 0;
