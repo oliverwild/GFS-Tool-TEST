@@ -59,20 +59,21 @@
 }
 
 [data-theme="dark"] .btn-primary {
-    background: #1a1a1a !important;
+    background: #2a2a2a !important;
     color: #ffffff !important;
+    border-color: #6b7280 !important;
 }
 
 [data-theme="dark"] .btn-secondary {
-    background: #1a1a1a !important;
+    background: #2a2a2a !important;
     color: #ffffff !important;
-    border-color: #1a1a1a !important;
+    border-color: #6b7280 !important;
 }
 
 [data-theme="dark"] .btn-outline {
-    background: #1a1a1a !important;
+    background: #2a2a2a !important;
     color: #ffffff !important;
-    border-color: #1a1a1a !important;
+    border-color: #6b7280 !important;
 }
 
 [data-theme="dark"] .tool-icon {
@@ -82,16 +83,22 @@
 [data-theme="dark"] .btn-primary:hover {
     background: #0a0a0a !important;
     color: #ffffff !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
 }
 
 [data-theme="dark"] .btn-secondary:hover {
     background: #0a0a0a !important;
     color: #ffffff !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
 [data-theme="dark"] .btn-outline:hover {
     background: #0a0a0a !important;
     color: #ffffff !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Base Styles */
