@@ -1457,7 +1457,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (toolData) {
                 wikiTitle.textContent = `${toolData.title} - Wiki`;
-                wikiContent.innerHTML = generateWikiContent(toolData);
+                const generatedContent = generateWikiContent(toolData);
+                console.log('Generated wiki content:', generatedContent);
+                wikiContent.innerHTML = generatedContent;
+                console.log('Wiki content after setting innerHTML:', wikiContent.innerHTML);
                 wikiModal.style.display = 'block';
                 console.log('Modal should be visible now');
                 console.log('Modal computed style:', window.getComputedStyle(wikiModal).display);
