@@ -1473,6 +1473,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Modal width:', window.getComputedStyle(wikiModal).width);
                 console.log('Modal height:', window.getComputedStyle(wikiModal).height);
                 console.log('Modal rect:', wikiModal.getBoundingClientRect());
+                console.log('Modal content rect:', wikiModal.querySelector('.modal-content')?.getBoundingClientRect());
+                console.log('Wiki section rect:', wikiModal.querySelector('.wiki-section')?.getBoundingClientRect());
+                console.log('Modal content computed height:', window.getComputedStyle(wikiModal.querySelector('.modal-content')).height);
+                console.log('Wiki section computed height:', window.getComputedStyle(wikiModal.querySelector('.wiki-section')).height);
             } else {
                 console.log('No tool data found for:', toolType);
             }
