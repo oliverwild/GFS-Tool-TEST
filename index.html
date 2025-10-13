@@ -17,8 +17,8 @@
                     <span>GFS Tools</span>
                 </div>
                 <div class="nav-controls">
-                    <button id="dark-mode-toggle" class="dark-mode-toggle" title="Switch to Light Mode" aria-label="Toggle dark mode">
-                        <i class="fas fa-sun" aria-hidden="true"></i>
+                    <button id="settings-toggle" class="settings-toggle" title="Open Settings" aria-label="Open settings">
+                        <i class="fas fa-cog" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
@@ -359,6 +359,48 @@
             </div>
         </div>
 
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="close-modal-btn" id="close-settings-modal" title="Close Settings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-content">
+                    <!-- Theme Settings -->
+                    <div class="settings-section">
+                        <h3>Appearance</h3>
+                        <div class="setting-item">
+                            <label for="theme-select">Theme:</label>
+                            <select id="theme-select">
+                                <option value="dark">Dark Mode</option>
+                                <option value="light">Light Mode</option>
+                                <option value="auto">Auto (System)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tool Management -->
+                    <div class="settings-section">
+                        <h3>Tool Management</h3>
+                        <p class="settings-description">Drag tools to reorder them, or toggle to show/hide tools you don't use.</p>
+                        <div id="tool-order-list" class="tool-order-list">
+                            <!-- Tool cards will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Reset Settings -->
+                    <div class="settings-section">
+                        <h3>Reset</h3>
+                        <button id="reset-settings" class="btn btn-outline">Reset to Defaults</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

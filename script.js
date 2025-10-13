@@ -1,44 +1,248 @@
-// Dark Mode Functionality
-function initializeDarkMode() {
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const body = document.body;
+// Settings and Theme Management
+function initializeSettings() {
+    const settingsToggle = document.getElementById('settings-toggle');
+    const settingsModal = document.getElementById('settings-modal');
+    const closeSettingsBtn = document.getElementById('close-settings-modal');
+    const themeSelect = document.getElementById('theme-select');
+    const resetSettingsBtn = document.getElementById('reset-settings');
     
-    // Check for saved theme preference or default to dark mode
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // Load saved settings
+    loadSettings();
     
-    // Set initial theme - default to dark mode
-    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'dark');
-    setTheme(initialTheme);
-    
-    // Add event listener for toggle button
-    darkModeToggle.addEventListener('click', function() {
-        const currentTheme = body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
+    // Settings modal toggle
+    settingsToggle.addEventListener('click', () => {
+        settingsModal.style.display = 'block';
+        populateToolOrderList();
     });
     
-    function setTheme(theme) {
-        body.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-        
-        // Update toggle button icon
-        const icon = darkModeToggle.querySelector('i');
-        if (theme === 'dark') {
-            icon.className = 'fas fa-sun';
-            darkModeToggle.title = 'Switch to Light Mode';
-        } else {
-            icon.className = 'fas fa-moon';
-            darkModeToggle.title = 'Switch to Dark Mode';
+    // Close settings modal
+    closeSettingsBtn.addEventListener('click', () => {
+        settingsModal.style.display = 'none';
+    });
+    
+    // Theme selection
+    themeSelect.addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+        saveSettings();
+    });
+    
+    // Reset settings
+    resetSettingsBtn.addEventListener('click', () => {
+        resetSettings();
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && settingsModal.style.display === 'block') {
+            settingsModal.style.display = 'none';
         }
+    });
+}
+
+function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
+    
+    // Load theme
+    const theme = settings.theme || 'dark';
+    applyTheme(theme);
+    document.getElementById('theme-select').value = theme;
+    
+    // Load tool order and visibility
+    const toolOrder = settings.toolOrder || ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping'];
+    const toolVisibility = settings.toolVisibility || {
+        'range-splitting': true,
+        'label-preview': true,
+        'range-jumping': true,
+        'route-mapping': true
+    };
+    
+    applyToolOrder(toolOrder);
+    applyToolVisibility(toolVisibility);
+}
+
+function saveSettings() {
+    const settings = {
+        theme: document.getElementById('theme-select').value,
+        toolOrder: getCurrentToolOrder(),
+        toolVisibility: getCurrentToolVisibility()
+    };
+    localStorage.setItem('gfs-settings', JSON.stringify(settings));
+}
+
+function applyTheme(theme) {
+    const body = document.body;
+    
+    if (theme === 'auto') {
+        // Use system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        body.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+        body.setAttribute('data-theme', theme);
     }
+}
+
+function resetSettings() {
+    localStorage.removeItem('gfs-settings');
+    location.reload(); // Reload to apply defaults
+}
+
+// Tool Management Functions
+function populateToolOrderList() {
+    const toolOrderList = document.getElementById('tool-order-list');
+    const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
+    const toolOrder = settings.toolOrder || ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping'];
+    const toolVisibility = settings.toolVisibility || {
+        'range-splitting': true,
+        'label-preview': true,
+        'range-jumping': true,
+        'route-mapping': true
+    };
+    
+    const toolData = {
+        'range-splitting': { name: 'Range Splitting', description: 'Split ranges into smaller segments', icon: 'fas fa-cut' },
+        'label-preview': { name: 'Label Preview', description: 'Preview and generate shipping labels', icon: 'fas fa-tag' },
+        'range-jumping': { name: 'Range Jumping', description: 'Generate UPDATE scripts for range numbers', icon: 'fas fa-arrow-right' },
+        'route-mapping': { name: 'Route Mapping', description: 'Generate SQL INSERT statements for carrier routes', icon: 'fas fa-route' }
+    };
+    
+    toolOrderList.innerHTML = '';
+    
+    toolOrder.forEach(toolId => {
+        const tool = toolData[toolId];
+        if (tool) {
+            const item = document.createElement('div');
+            item.className = 'tool-order-item';
+            item.draggable = true;
+            item.dataset.toolId = toolId;
+            
+            item.innerHTML = `
+                <div class="drag-handle">
+                    <i class="fas fa-grip-vertical"></i>
+                </div>
+                <div class="tool-info">
+                    <div class="tool-icon">
+                        <i class="${tool.icon}"></i>
+                    </div>
+                    <div class="tool-details">
+                        <h4>${tool.name}</h4>
+                        <p>${tool.description}</p>
+                    </div>
+                </div>
+                <div class="tool-toggle">
+                    <div class="toggle-switch ${toolVisibility[toolId] ? 'active' : ''}" data-tool-id="${toolId}"></div>
+                </div>
+            `;
+            
+            toolOrderList.appendChild(item);
+        }
+    });
+    
+    // Add drag and drop functionality
+    initializeDragAndDrop();
+    
+    // Add toggle functionality
+    initializeToolToggles();
+}
+
+function initializeDragAndDrop() {
+    const toolOrderList = document.getElementById('tool-order-list');
+    let draggedElement = null;
+    
+    toolOrderList.addEventListener('dragstart', (e) => {
+        draggedElement = e.target.closest('.tool-order-item');
+        draggedElement.classList.add('dragging');
+    });
+    
+    toolOrderList.addEventListener('dragend', (e) => {
+        if (draggedElement) {
+            draggedElement.classList.remove('dragging');
+            draggedElement = null;
+        }
+    });
+    
+    toolOrderList.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const afterElement = getDragAfterElement(toolOrderList, e.clientY);
+        if (draggedElement) {
+            if (afterElement == null) {
+                toolOrderList.appendChild(draggedElement);
+            } else {
+                toolOrderList.insertBefore(draggedElement, afterElement);
+            }
+        }
+    });
+    
+    toolOrderList.addEventListener('drop', () => {
+        saveSettings();
+        applyToolOrder(getCurrentToolOrder());
+    });
+}
+
+function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.tool-order-item:not(.dragging)')];
+    
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function initializeToolToggles() {
+    document.querySelectorAll('.toggle-switch').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            toggle.classList.toggle('active');
+            saveSettings();
+            applyToolVisibility(getCurrentToolVisibility());
+        });
+    });
+}
+
+function getCurrentToolOrder() {
+    const toolOrderList = document.getElementById('tool-order-list');
+    return Array.from(toolOrderList.children).map(item => item.dataset.toolId);
+}
+
+function getCurrentToolVisibility() {
+    const visibility = {};
+    document.querySelectorAll('.toggle-switch').forEach(toggle => {
+        visibility[toggle.dataset.toolId] = toggle.classList.contains('active');
+    });
+    return visibility;
+}
+
+function applyToolOrder(toolOrder) {
+    const toolsContainer = document.querySelector('.tools-grid');
+    const toolCards = Array.from(toolsContainer.children);
+    
+    // Reorder tool cards based on settings
+    toolOrder.forEach(toolId => {
+        const toolCard = toolCards.find(card => card.querySelector(`[data-tool="${toolId}"]`));
+        if (toolCard) {
+            toolsContainer.appendChild(toolCard);
+        }
+    });
+}
+
+function applyToolVisibility(toolVisibility) {
+    Object.entries(toolVisibility).forEach(([toolId, isVisible]) => {
+        const toolCard = document.querySelector(`[data-tool="${toolId}"]`).closest('.tool-card');
+        if (toolCard) {
+            toolCard.style.display = isVisible ? 'block' : 'none';
+        }
+    });
 }
 
 
 // Modal functionality for GFS Tools
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize dark mode first
-    initializeDarkMode();
+    // Initialize settings first
+    initializeSettings();
     // Get modal elements
     const toolModal = document.getElementById('tool-modal');
     const modalTitle = document.getElementById('modal-title');
