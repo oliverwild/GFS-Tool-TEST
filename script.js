@@ -1441,52 +1441,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Open wiki modal
-    document.querySelectorAll('.wiki-tool').forEach(button => {
-        button.addEventListener('click', function() {
-            const toolType = this.getAttribute('data-tool');
-            const toolData = toolWikiData[toolType];
-            
-            if (toolData) {
-                wikiTitle.textContent = `${toolData.title} - Wiki`;
-                wikiContent.innerHTML = generateWikiContent(toolData);
-                
-                // Force visibility with inline styles
-                wikiModal.style.cssText = `
-                    display: block !important;
-                    position: fixed !important;
-                    top: 0 !important;
-                    left: 0 !important;
-                    width: 100vw !important;
-                    height: 100vh !important;
-                    background-color: rgba(0,0,0,0.8) !important;
-                    z-index: 99999 !important;
-                `;
-                
-                const modalContent = wikiModal.querySelector('.modal-content');
-                if (modalContent) {
-                    modalContent.style.cssText = `
-                        display: block !important;
-                        position: absolute !important;
-                        top: 50% !important;
-                        left: 50% !important;
-                        transform: translate(-50%, -50%) !important;
-                        width: 600px !important;
-                        height: 400px !important;
-                        background-color: white !important;
-                        border: 2px solid red !important;
-                        padding: 20px !important;
-                    `;
-                }
-            }
-            
-            // Add click animation
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
-        });
-    });
 
     // Generate wiki content
     function generateWikiContent(toolData) {
@@ -1509,12 +1463,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Close modals when clicking close button
-    console.log('Setting up close button listeners...');
-    console.log('Found close buttons:', closeButtons);
     closeButtons.forEach(button => {
-        console.log('Setting up close button:', button);
         button.addEventListener('click', function() {
-            console.log('Close button clicked!');
             toolModal.style.display = 'none';
             wikiModal.style.display = 'none';
         });
@@ -1548,6 +1498,26 @@ document.addEventListener('DOMContentLoaded', function() {
             header.style.background = 'rgba(255, 255, 255, 0.95)';
             header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
         }
+    });
+
+    // Open wiki modal
+    document.querySelectorAll('.wiki-tool').forEach(button => {
+        button.addEventListener('click', function() {
+            const toolType = this.getAttribute('data-tool');
+            const toolData = toolWikiData[toolType];
+            
+            if (toolData) {
+                wikiTitle.textContent = `${toolData.title} - Wiki`;
+                wikiContent.innerHTML = generateWikiContent(toolData);
+                wikiModal.style.display = 'block';
+            }
+            
+            // Add click animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
     });
 });
 
