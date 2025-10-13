@@ -1463,13 +1463,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Wiki content after setting innerHTML:', wikiContent.innerHTML);
                 wikiModal.style.display = 'block';
                 
-                // Force modal content to be visible
+                // Force modal content to be visible with aggressive styling
                 const modalContent = wikiModal.querySelector('.modal-content');
                 if (modalContent) {
                     modalContent.style.display = 'block';
-                    modalContent.style.minHeight = '200px';
-                    console.log('Forced modal content display and min-height');
+                    modalContent.style.minHeight = '400px';
+                    modalContent.style.height = '400px';
+                    modalContent.style.width = '600px';
+                    modalContent.style.position = 'relative';
+                    modalContent.style.backgroundColor = 'white';
+                    modalContent.style.border = '2px solid red';
+                    console.log('Forced modal content with aggressive styling');
                 }
+                
+                // Also force the modal itself
+                wikiModal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                wikiModal.style.position = 'fixed';
+                wikiModal.style.top = '0';
+                wikiModal.style.left = '0';
+                wikiModal.style.width = '100vw';
+                wikiModal.style.height = '100vh';
+                wikiModal.style.zIndex = '99999';
                 console.log('Modal should be visible now');
                 console.log('Modal computed style:', window.getComputedStyle(wikiModal).display);
                 console.log('Modal visibility:', window.getComputedStyle(wikiModal).visibility);
