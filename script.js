@@ -541,7 +541,7 @@ function initializeSimpleDragAndDrop() {
             draggedElement.style.transform = 'scale(1)';
             draggedElement.style.boxShadow = '';
             draggedElement.style.zIndex = '';
-            draggedElement.style.border = '';
+            draggedElement.style.border = '1px solid var(--border-color, #555)';
             draggedElement = null;
         }
         
