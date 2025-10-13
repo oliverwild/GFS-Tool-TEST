@@ -389,6 +389,13 @@ p {
 /* Allow JavaScript to override modal display */
 .modal[style*="display: block"] .modal-content {
     display: block !important;
+    flex-direction: unset !important;
+}
+
+/* Alternative approach - when modal is shown, override flex */
+.modal.show .modal-content {
+    display: block !important;
+    flex-direction: unset !important;
 }
 
 @keyframes modalSlideIn {

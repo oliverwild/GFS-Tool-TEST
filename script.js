@@ -139,11 +139,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Use the original modal with CSS fix
+            console.log('Using original modal approach...');
             const modal = document.getElementById('wiki-modal');
             const title = document.getElementById('wiki-title');
             const content = document.getElementById('wiki-content');
             
+            console.log('Modal elements found:', { modal: !!modal, title: !!title, content: !!content });
+            
             if (!modal || !title || !content) {
+                console.log('Missing modal elements!');
                 return;
             }
             
@@ -153,6 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show modal
             modal.style.display = 'block';
+            modal.classList.add('show');
+            console.log('Modal display set to block and show class added');
+            console.log('Modal rect after display:', modal.getBoundingClientRect());
             
         });
     });
@@ -164,6 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('wiki-modal');
             if (modal) {
                 modal.style.display = 'none';
+                modal.classList.remove('show');
             }
         });
     }
@@ -173,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('wiki-modal');
         if (e.target === modal) {
             modal.style.display = 'none';
+            modal.classList.remove('show');
         }
     });
     
