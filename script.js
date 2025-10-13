@@ -1462,6 +1462,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 wikiContent.innerHTML = generatedContent;
                 console.log('Wiki content after setting innerHTML:', wikiContent.innerHTML);
                 wikiModal.style.display = 'block';
+                
+                // Force modal content to be visible
+                const modalContent = wikiModal.querySelector('.modal-content');
+                if (modalContent) {
+                    modalContent.style.display = 'block';
+                    modalContent.style.minHeight = '200px';
+                    console.log('Forced modal content display and min-height');
+                }
                 console.log('Modal should be visible now');
                 console.log('Modal computed style:', window.getComputedStyle(wikiModal).display);
                 console.log('Modal visibility:', window.getComputedStyle(wikiModal).visibility);
