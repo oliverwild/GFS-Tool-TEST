@@ -386,16 +386,24 @@ p {
     flex-direction: column;
 }
 
-/* Allow JavaScript to override modal display */
+/* Force modal content to display as block when modal is shown */
+.modal.show .modal-content,
 .modal[style*="display: block"] .modal-content {
     display: block !important;
     flex-direction: unset !important;
+    height: auto !important;
+    min-height: 400px !important;
 }
 
-/* Alternative approach - when modal is shown, override flex */
-.modal.show .modal-content {
+/* More aggressive approach - target the specific modal */
+#wiki-modal.show .modal-content,
+#wiki-modal[style*="display: block"] .modal-content {
     display: block !important;
     flex-direction: unset !important;
+    height: auto !important;
+    min-height: 400px !important;
+    width: 90% !important;
+    max-width: 800px !important;
 }
 
 @keyframes modalSlideIn {

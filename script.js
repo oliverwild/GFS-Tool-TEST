@@ -158,8 +158,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show modal
             modal.style.display = 'block';
             modal.classList.add('show');
+            
+            // Check computed styles
+            const modalContent = modal.querySelector('.modal-content');
+            console.log('Modal content element:', modalContent);
+            console.log('Modal content computed display:', window.getComputedStyle(modalContent).display);
+            console.log('Modal content computed flex-direction:', window.getComputedStyle(modalContent).flexDirection);
+            console.log('Modal content classes:', modalContent.className);
+            console.log('Modal content style attribute:', modalContent.getAttribute('style'));
+            
             console.log('Modal display set to block and show class added');
             console.log('Modal rect after display:', modal.getBoundingClientRect());
+            console.log('Modal content rect:', modalContent.getBoundingClientRect());
             
         });
     });
