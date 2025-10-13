@@ -159,9 +159,20 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.style.display = 'block';
             modal.classList.add('show');
             
-            // Also add show class to modal content
+            // Also add show class to modal content and force CSS properties
             const modalContent = modal.querySelector('.modal-content');
             modalContent.classList.add('show');
+            
+            // Force CSS properties directly via JavaScript
+            modalContent.style.display = 'block';
+            modalContent.style.flexDirection = 'unset';
+            modalContent.style.flexWrap = 'unset';
+            modalContent.style.alignItems = 'unset';
+            modalContent.style.justifyContent = 'unset';
+            modalContent.style.height = 'auto';
+            modalContent.style.minHeight = '400px';
+            modalContent.style.width = '90%';
+            modalContent.style.maxWidth = '800px';
             
             // Check computed styles
             console.log('Modal content element:', modalContent);
