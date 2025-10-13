@@ -297,7 +297,7 @@ p {
     height: 280px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
 .tool-card:hover {
@@ -338,6 +338,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 60px;
 }
 
 /* Buttons */
