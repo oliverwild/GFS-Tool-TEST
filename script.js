@@ -1460,6 +1460,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 wikiContent.innerHTML = generateWikiContent(toolData);
                 wikiModal.style.display = 'block';
                 console.log('Modal should be visible now');
+                console.log('Modal computed style:', window.getComputedStyle(wikiModal).display);
+                console.log('Modal visibility:', window.getComputedStyle(wikiModal).visibility);
+                console.log('Modal opacity:', window.getComputedStyle(wikiModal).opacity);
+                console.log('Modal z-index:', window.getComputedStyle(wikiModal).zIndex);
             } else {
                 console.log('No tool data found for:', toolType);
             }
