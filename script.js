@@ -379,8 +379,10 @@ function populateSimpleToolList() {
     console.log('Populating tool list, element found:', !!toolList);
     
     const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
-    const toolOrder = settings.toolOrder || ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping'];
-    const toolVisibility = settings.toolVisibility || {
+    console.log('Raw settings from localStorage:', settings);
+    
+    const toolOrder = (settings.toolOrder && settings.toolOrder.length > 0) ? settings.toolOrder : ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping'];
+    const toolVisibility = (settings.toolVisibility && Object.keys(settings.toolVisibility).length > 0) ? settings.toolVisibility : {
         'range-splitting': true,
         'label-preview': true,
         'range-jumping': true,
@@ -389,6 +391,7 @@ function populateSimpleToolList() {
     
     console.log('Tool order:', toolOrder);
     console.log('Tool visibility:', toolVisibility);
+    console.log('Tool order length:', toolOrder.length);
     
     const toolData = {
         'range-splitting': { name: 'Range Splitting', description: 'Split ranges into smaller segments' },
