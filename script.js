@@ -1442,65 +1442,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Open wiki modal
-    console.log('Setting up wiki button listeners...');
     document.querySelectorAll('.wiki-tool').forEach(button => {
-        console.log('Found wiki button:', button);
         button.addEventListener('click', function() {
-            console.log('Wiki button clicked!');
             const toolType = this.getAttribute('data-tool');
-            console.log('Tool type:', toolType);
             const toolData = toolWikiData[toolType];
-            console.log('Tool data:', toolData);
-            console.log('Wiki modal element:', wikiModal);
-            console.log('Wiki title element:', wikiTitle);
-            console.log('Wiki content element:', wikiContent);
             
             if (toolData) {
                 wikiTitle.textContent = `${toolData.title} - Wiki`;
-                const generatedContent = generateWikiContent(toolData);
-                console.log('Generated wiki content:', generatedContent);
-                wikiContent.innerHTML = generatedContent;
-                console.log('Wiki content after setting innerHTML:', wikiContent.innerHTML);
-                wikiModal.style.display = 'block';
+                wikiContent.innerHTML = generateWikiContent(toolData);
                 
-                // Force modal content to be visible with aggressive styling
+                // Force visibility with inline styles
+                wikiModal.style.cssText = `
+                    display: block !important;
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    background-color: rgba(0,0,0,0.8) !important;
+                    z-index: 99999 !important;
+                `;
+                
                 const modalContent = wikiModal.querySelector('.modal-content');
                 if (modalContent) {
-                    modalContent.style.display = 'block';
-                    modalContent.style.minHeight = '400px';
-                    modalContent.style.height = '400px';
-                    modalContent.style.width = '600px';
-                    modalContent.style.position = 'relative';
-                    modalContent.style.backgroundColor = 'white';
-                    modalContent.style.border = '2px solid red';
-                    console.log('Forced modal content with aggressive styling');
+                    modalContent.style.cssText = `
+                        display: block !important;
+                        position: absolute !important;
+                        top: 50% !important;
+                        left: 50% !important;
+                        transform: translate(-50%, -50%) !important;
+                        width: 600px !important;
+                        height: 400px !important;
+                        background-color: white !important;
+                        border: 2px solid red !important;
+                        padding: 20px !important;
+                    `;
                 }
-                
-                // Also force the modal itself
-                wikiModal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-                wikiModal.style.position = 'fixed';
-                wikiModal.style.top = '0';
-                wikiModal.style.left = '0';
-                wikiModal.style.width = '100vw';
-                wikiModal.style.height = '100vh';
-                wikiModal.style.zIndex = '99999';
-                console.log('Modal should be visible now');
-                console.log('Modal computed style:', window.getComputedStyle(wikiModal).display);
-                console.log('Modal visibility:', window.getComputedStyle(wikiModal).visibility);
-                console.log('Modal opacity:', window.getComputedStyle(wikiModal).opacity);
-                console.log('Modal z-index:', window.getComputedStyle(wikiModal).zIndex);
-                console.log('Modal position:', window.getComputedStyle(wikiModal).position);
-                console.log('Modal top:', window.getComputedStyle(wikiModal).top);
-                console.log('Modal left:', window.getComputedStyle(wikiModal).left);
-                console.log('Modal width:', window.getComputedStyle(wikiModal).width);
-                console.log('Modal height:', window.getComputedStyle(wikiModal).height);
-                console.log('Modal rect:', wikiModal.getBoundingClientRect());
-                console.log('Modal content rect:', wikiModal.querySelector('.modal-content')?.getBoundingClientRect());
-                console.log('Wiki section rect:', wikiModal.querySelector('.wiki-section')?.getBoundingClientRect());
-                console.log('Modal content computed height:', window.getComputedStyle(wikiModal.querySelector('.modal-content')).height);
-                console.log('Wiki section computed height:', window.getComputedStyle(wikiModal.querySelector('.wiki-section')).height);
-            } else {
-                console.log('No tool data found for:', toolType);
             }
             
             // Add click animation
