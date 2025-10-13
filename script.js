@@ -26,7 +26,19 @@ function initializeSettings(toolModal) {
             if (settingsModal) {
                 console.log('Opening settings modal');
                 settingsModal.style.display = 'block';
-                populateToolOrderList();
+                settingsModal.style.visibility = 'visible';
+                settingsModal.style.opacity = '1';
+                settingsModal.style.zIndex = '9999';
+                
+                // Debug modal visibility
+                setTimeout(() => {
+                    const rect = settingsModal.getBoundingClientRect();
+                    console.log('Settings modal rect:', rect);
+                    console.log('Settings modal computed display:', window.getComputedStyle(settingsModal).display);
+                }, 100);
+                
+                // Temporarily disable populateToolOrderList to test
+                // populateToolOrderList();
             }
         });
     } else {
