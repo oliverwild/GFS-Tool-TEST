@@ -34,6 +34,184 @@ function initializeDarkMode() {
     }
 }
 
+// SIMPLE WIKI BUTTON LOGIC - COMPLETELY SEPARATE
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Setting up simple wiki buttons...');
+    
+    // Simple wiki data
+    const simpleWikiData = {
+        'range-jumping': {
+            title: 'Range Jumping Tool',
+            description: 'Generate UPDATE scripts to jump range numbers in SHIP_RANGES and ITEM_RANGES tables.',
+            howToUse: [
+                'Copy the provided SQL query to get your range data',
+                'Paste the INSERT script results from your query',
+                'Enter the jump amount you want to apply',
+                'Click "Generate Update Script" to create UPDATE statements',
+                'Copy the generated script for use in your database'
+            ],
+            examples: [
+                'Query: SELECT contract_no, RANGE_ID, cons_cur_no, ITEM_RANGE_ID, cur_no FROM tables',
+                'Jump Amount: 100',
+                'Output: UPDATE SHIP_RANGES SET cons_cur_no = cons_cur_no + 100 WHERE ID = range_id; UPDATE ITEM_RANGES SET cur_no = cur_no + 100 WHERE ID = item_range_id;'
+            ]
+        },
+        'range-splitting': {
+            title: 'Range Splitting Tool',
+            description: 'Split a range of numbers into two parts based on a percentage.',
+            howToUse: [
+                'Enter the start and end numbers of your range',
+                'Adjust the percentage slider to set the split point',
+                'View the results showing both ranges and their counts',
+                'Copy the results if needed'
+            ],
+            examples: [
+                'Range: 1000 to 2000',
+                'Split: 60%',
+                'Result: First range 1000-1600 (600 numbers), Second range 1601-2000 (400 numbers)'
+            ]
+        },
+        'label-preview': {
+            title: 'Label Preview Tool',
+            description: 'Decode and preview Base64 encoded label data (PDF, PNG, JPEG, ZPL).',
+            howToUse: [
+                'Paste your Base64 encoded label data',
+                'Click "Process Label" to decode and identify the data type',
+                'View the preview of your label',
+                'Copy or download the processed data'
+            ],
+            examples: [
+                'PDF Labels: Base64 encoded PDF data',
+                'Image Labels: Base64 encoded PNG/JPEG data',
+                'ZPL Labels: Base64 encoded ZPL commands'
+            ]
+        },
+        'route-mapping': {
+            title: 'Route Mapping Tool',
+            description: 'Generate SQL INSERT statements for carrier routes, specifically for Evri.',
+            howToUse: [
+                'Select the carrier (currently supports Evri)',
+                'Enter the contract number and route description',
+                'Select the required services',
+                'Click "Generate SQL" to create INSERT statements',
+                'Copy the generated SQL for your database'
+            ],
+            examples: [
+                'Carrier: Evri, Account: 5, Services: Next Day, 2 Day',
+                'Output: SQL INSERT statements with ROUTE_CODE, CONTRACT_NO, SERVICE_CODE',
+                'Multiple statements generated for different service combinations',
+                'Ready to copy and use in your database'
+            ]
+        }
+    };
+
+    // Simple wiki content generator
+    function createSimpleWikiContent(toolData) {
+        return `
+            <div style="padding: 20px; color: #333;">
+                <h3 style="color: #2563eb; margin-bottom: 15px;">Description</h3>
+                <p style="margin-bottom: 20px; line-height: 1.6;">${toolData.description}</p>
+                
+                <h3 style="color: #2563eb; margin-bottom: 15px;">How to Use</h3>
+                <ol style="margin-bottom: 20px; padding-left: 20px;">
+                    ${toolData.howToUse.map(step => `<li style="margin-bottom: 8px; line-height: 1.5;">${step}</li>`).join('')}
+                </ol>
+                
+                <h3 style="color: #2563eb; margin-bottom: 15px;">Examples</h3>
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #2563eb;">
+                    ${toolData.examples.map(example => `<div style="margin-bottom: 10px; font-family: monospace; font-size: 14px;">${example}</div>`).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // Set up wiki buttons
+    const wikiButtons = document.querySelectorAll('.wiki-tool');
+    console.log('Found wiki buttons:', wikiButtons.length);
+    
+    wikiButtons.forEach(button => {
+        console.log('Setting up wiki button:', button);
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('Wiki button clicked!');
+            const toolType = this.getAttribute('data-tool');
+            console.log('Tool type:', toolType);
+            
+            const toolData = simpleWikiData[toolType];
+            if (!toolData) {
+                console.log('No data found for tool type:', toolType);
+                return;
+            }
+            
+            // Get modal elements
+            const modal = document.getElementById('wiki-modal');
+            const title = document.getElementById('wiki-title');
+            const content = document.getElementById('wiki-content');
+            
+            if (!modal || !title || !content) {
+                console.log('Modal elements not found!');
+                return;
+            }
+            
+            // Set content
+            title.textContent = `${toolData.title} - Wiki`;
+            content.innerHTML = createSimpleWikiContent(toolData);
+            
+            // Show modal with simple styling
+            modal.style.display = 'block';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            modal.style.zIndex = '99999';
+            
+            // Style modal content
+            const modalContent = modal.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.style.position = 'absolute';
+                modalContent.style.top = '50%';
+                modalContent.style.left = '50%';
+                modalContent.style.transform = 'translate(-50%, -50%)';
+                modalContent.style.width = '600px';
+                modalContent.style.maxWidth = '90vw';
+                modalContent.style.maxHeight = '80vh';
+                modalContent.style.backgroundColor = 'white';
+                modalContent.style.borderRadius = '8px';
+                modalContent.style.boxShadow = '0 20px 60px rgba(0,0,0,0.3)';
+                modalContent.style.overflow = 'auto';
+            }
+            
+            console.log('Modal should be visible now');
+        });
+    });
+    
+    // Set up close button
+    const closeButton = document.getElementById('close-wiki-modal');
+    if (closeButton) {
+        closeButton.addEventListener('click', function() {
+            console.log('Close button clicked');
+            const modal = document.getElementById('wiki-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+    
+    // Close on outside click
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('wiki-modal');
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    console.log('Simple wiki button setup complete');
+});
+
 // Modal functionality for GFS Tools
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize dark mode first
@@ -1500,25 +1678,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Open wiki modal
-    document.querySelectorAll('.wiki-tool').forEach(button => {
-        button.addEventListener('click', function() {
-            const toolType = this.getAttribute('data-tool');
-            const toolData = toolWikiData[toolType];
-            
-            if (toolData) {
-                wikiTitle.textContent = `${toolData.title} - Wiki`;
-                wikiContent.innerHTML = generateWikiContent(toolData);
-                wikiModal.style.display = 'block';
-            }
-            
-            // Add click animation
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
-        });
-    });
 });
 
 // Global function for copying to clipboard
