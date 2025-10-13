@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const wikiContent = document.getElementById('wiki-content');
 
     // Get close buttons
-    const closeButtons = document.querySelectorAll('.close');
+    const closeButtons = document.querySelectorAll('.close-modal-btn');
 
     // Tool data for wiki content
     const toolWikiData = {
@@ -715,7 +715,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function callLabelaryAPI(data, dataType) {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 console.log('Calling Labelary API for data type:', dataType);
                 
                 // Convert data to ZPL (Zebra Programming Language) format
@@ -787,8 +787,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
         }
-
-
 
         function createLocalZPLPreview(zplData, resolve) {
             console.log('Creating local ZPL preview for:', zplData.substring(0, 100));
@@ -911,8 +909,6 @@ document.addEventListener('DOMContentLoaded', function() {
             imgElement.src = canvas.toDataURL('image/png');
         }
 
-
-
         function clearLabelInputs() {
             base64Input.value = '';
             dataLengthSpan.textContent = '0 characters';
@@ -999,7 +995,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Store the current label data for copy/download
         let currentLabelData = null;
-        let currentDataType = null;
 
         function copyLabelData() {
             try {
@@ -1054,7 +1049,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 'image/png');
         }
 
-        function copyPDFAsImage(embedElement) {
+        function copyPDFAsImage() {
             // For PDF embeds, we can't directly capture them as images
             // So we'll fall back to copying the original Base64 data
             copyDataBasedOnType();
@@ -1087,8 +1082,6 @@ document.addEventListener('DOMContentLoaded', function() {
         function downloadLabelData() {
             try {
                 const filename = filenameInput.value.trim() || 'label';
-                let blob;
-                let extension;
 
                 // Look for the actual preview image in the preview container
                 const previewContainer = document.getElementById('preview-container');
@@ -1518,6 +1511,46 @@ document.addEventListener('DOMContentLoaded', function() {
             header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
         }
     });
+
+    // Open wiki modal
+    document.querySelectorAll('.wiki-tool').forEach(button => {
+        button.addEventListener('click', function() {
+            const toolType = this.getAttribute('data-tool');
+            const toolData = toolWikiData[toolType];
+            
+            if (toolData) {
+                wikiTitle.textContent = `${toolData.title} - Wiki`;
+                wikiContent.innerHTML = generateWikiContent(toolData);
+                wikiModal.style.display = 'block';
+            }
+            
+            // Add click animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+    });
+
+    // Generate wiki content
+    function generateWikiContent(toolData) {
+        return `
+            <div class="wiki-section">
+                <h3>Description</h3>
+                <p>${toolData.description}</p>
+                
+                <h3>How to Use</h3>
+                <ol>
+                    ${toolData.howToUse.map(step => `<li>${step}</li>`).join('')}
+                </ol>
+                
+                <h3>Examples</h3>
+                <div class="examples">
+                    ${toolData.examples.map(example => `<div class="example-item">${example}</div>`).join('')}
+                </div>
+            </div>
+        `;
+    }
 });
 
 // Global function for copying to clipboard
