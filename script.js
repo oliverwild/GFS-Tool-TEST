@@ -9,11 +9,9 @@ function initializeSettings(toolModal) {
     // Load saved settings
     loadSettings();
     
-    // Settings modal toggle - separate from tool modals
+    // Settings modal toggle - completely separate approach
     if (settingsToggle) {
-        console.log('Settings button found, adding event listener');
         settingsToggle.addEventListener('click', function(e) {
-            console.log('Settings button clicked!');
             e.preventDefault();
             e.stopPropagation();
             
@@ -22,27 +20,9 @@ function initializeSettings(toolModal) {
                 toolModal.style.display = 'none';
             }
             
-            // Open settings modal
-            if (settingsModal) {
-                console.log('Opening settings modal');
-                settingsModal.style.display = 'block';
-                settingsModal.style.visibility = 'visible';
-                settingsModal.style.opacity = '1';
-                settingsModal.style.zIndex = '9999';
-                
-                // Debug modal visibility
-                setTimeout(() => {
-                    const rect = settingsModal.getBoundingClientRect();
-                    console.log('Settings modal rect:', rect);
-                    console.log('Settings modal computed display:', window.getComputedStyle(settingsModal).display);
-                }, 100);
-                
-                // Temporarily disable populateToolOrderList to test
-                // populateToolOrderList();
-            }
+            // Create a simple settings modal dynamically
+            showSimpleSettingsModal();
         });
-    } else {
-        console.error('Settings button not found!');
     }
     
     // Close settings modal
@@ -282,6 +262,208 @@ function applyToolVisibility(toolVisibility) {
         if (toolCard) {
             toolCard.style.display = isVisible ? 'block' : 'none';
         }
+    });
+}
+
+// Simple settings modal - completely separate approach
+function showSimpleSettingsModal() {
+    // Remove any existing simple modal
+    const existingModal = document.getElementById('simple-settings-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Create modal overlay
+    const modal = document.createElement('div');
+    modal.id = 'simple-settings-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+    
+    // Create modal content
+    const content = document.createElement('div');
+    content.style.cssText = `
+        background: #2a2a2a;
+        color: #ffffff;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        border: 1px solid #444;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    `;
+    
+    // Add content
+    content.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="margin: 0; color: #ffffff;">Settings</h2>
+            <button id="close-simple-settings" style="background: #444; border: 1px solid #666; color: #fff; padding: 0.5rem; border-radius: 6px; cursor: pointer;">✕</button>
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+            <h3 style="color: #ffffff; margin-bottom: 1rem;">Theme</h3>
+            <select id="simple-theme-select" style="background: #333; color: #fff; border: 1px solid #666; padding: 0.5rem; border-radius: 6px; width: 200px;">
+                <option value="dark">Dark Mode</option>
+                <option value="light">Light Mode</option>
+                <option value="auto">Auto (System)</option>
+            </select>
+        </div>
+        
+        <div style="margin-bottom: 2rem;">
+            <h3 style="color: #ffffff; margin-bottom: 1rem;">Tool Management</h3>
+            <p style="color: #ccc; margin-bottom: 1rem;">Drag tools to reorder them, or toggle to show/hide tools you don't use.</p>
+            <div id="simple-tool-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <!-- Tools will be populated here -->
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button id="reset-simple-settings" style="background: #666; border: 1px solid #888; color: #fff; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Reset to Defaults</button>
+        </div>
+    `;
+    
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+    
+    // Add event listeners
+    document.getElementById('close-simple-settings').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    document.getElementById('reset-simple-settings').addEventListener('click', () => {
+        localStorage.removeItem('gfs-settings');
+        location.reload();
+    });
+    
+    document.getElementById('simple-theme-select').addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+        saveSettings();
+    });
+    
+    // Close on overlay click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+    
+    // Close on Escape key
+    document.addEventListener('keydown', function escapeHandler(e) {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escapeHandler);
+        }
+    });
+    
+    // Populate tool list
+    populateSimpleToolList();
+    
+    // Set current theme
+    const currentTheme = document.body.getAttribute('data-theme') || 'dark';
+    document.getElementById('simple-theme-select').value = currentTheme;
+}
+
+function populateSimpleToolList() {
+    const toolList = document.getElementById('simple-tool-list');
+    const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
+    const toolOrder = settings.toolOrder || ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping'];
+    const toolVisibility = settings.toolVisibility || {
+        'range-splitting': true,
+        'label-preview': true,
+        'range-jumping': true,
+        'route-mapping': true
+    };
+    
+    const toolData = {
+        'range-splitting': { name: 'Range Splitting', description: 'Split ranges into smaller segments' },
+        'label-preview': { name: 'Label Preview', description: 'Preview and generate shipping labels' },
+        'range-jumping': { name: 'Range Jumping', description: 'Generate UPDATE scripts for range numbers' },
+        'route-mapping': { name: 'Route Mapping', description: 'Generate SQL INSERT statements for carrier routes' }
+    };
+    
+    toolList.innerHTML = '';
+    
+    toolOrder.forEach(toolId => {
+        const tool = toolData[toolId];
+        if (tool) {
+            const item = document.createElement('div');
+            item.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1rem;
+                background: #333;
+                border: 1px solid #555;
+                border-radius: 8px;
+            `;
+            
+            item.innerHTML = `
+                <div style="flex: 1;">
+                    <h4 style="margin: 0; color: #ffffff;">${tool.name}</h4>
+                    <p style="margin: 0; color: #ccc; font-size: 0.9rem;">${tool.description}</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="color: #ccc; font-size: 0.9rem;">Show</span>
+                    <div class="simple-toggle" data-tool-id="${toolId}" style="
+                        width: 44px;
+                        height: 24px;
+                        background: ${toolVisibility[toolId] ? '#4CAF50' : '#666'};
+                        border-radius: 12px;
+                        cursor: pointer;
+                        position: relative;
+                        transition: background 0.3s ease;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: 2px;
+                            left: 2px;
+                            width: 20px;
+                            height: 20px;
+                            background: white;
+                            border-radius: 50%;
+                            transition: transform 0.3s ease;
+                            transform: translateX(${toolVisibility[toolId] ? '20px' : '0px'});
+                        "></div>
+                    </div>
+                </div>
+            `;
+            
+            toolList.appendChild(item);
+        }
+    });
+    
+    // Add toggle functionality
+    document.querySelectorAll('.simple-toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const toolId = toggle.dataset.toolId;
+            const isActive = toggle.style.background === 'rgb(76, 175, 80)';
+            
+            toggle.style.background = isActive ? '#666' : '#4CAF50';
+            toggle.querySelector('div').style.transform = isActive ? 'translateX(0px)' : 'translateX(20px)';
+            
+            // Update settings
+            const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
+            if (!settings.toolVisibility) settings.toolVisibility = {};
+            settings.toolVisibility[toolId] = !isActive;
+            localStorage.setItem('gfs-settings', JSON.stringify(settings));
+            
+            // Apply visibility
+            const toolCard = document.querySelector(`[data-tool="${toolId}"]`).closest('.tool-card');
+            if (toolCard) {
+                toolCard.style.display = !isActive ? 'block' : 'none';
+            }
+        });
     });
 }
 
