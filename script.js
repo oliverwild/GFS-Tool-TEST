@@ -101,7 +101,7 @@ function applyTheme(theme) {
     
     if (theme === 'auto') {
         // Use system preference
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         body.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
     } else {
         body.setAttribute('data-theme', theme);
@@ -193,7 +193,7 @@ function initializeDragAndDrop() {
         if (draggedElement) {
             if (afterElement == null) {
                 toolOrderList.appendChild(draggedElement);
-            } else {
+        } else {
                 toolOrderList.insertBefore(draggedElement, afterElement);
             }
         }
@@ -289,47 +289,75 @@ function showSimpleSettingsModal() {
         justify-content: center;
     `;
     
-    // Create modal content
+    // Add theme class to modal
+    const currentTheme = document.body.getAttribute('data-theme') || 'dark';
+    modal.setAttribute('data-theme', currentTheme);
+    
+    // Create modal content with theme-aware styling
     const content = document.createElement('div');
     content.style.cssText = `
-        background: #2a2a2a;
-        color: #ffffff;
+        background: var(--bg-primary, #2a2a2a);
+        color: var(--text-primary, #ffffff);
         padding: 2rem;
         border-radius: 12px;
         width: 90%;
         max-width: 600px;
         max-height: 80vh;
         overflow-y: auto;
-        border: 1px solid #444;
+        border: 1px solid var(--border-color, #444);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     `;
     
-    // Add content
+    // Add content with theme-aware styling
     content.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <h2 style="margin: 0; color: #ffffff;">Settings</h2>
-            <button id="close-simple-settings" style="background: #444; border: 1px solid #666; color: #fff; padding: 0.5rem; border-radius: 6px; cursor: pointer;">✕</button>
+            <h2 style="margin: 0; color: var(--text-primary, #ffffff);">Settings</h2>
+            <button id="close-simple-settings" style="background: var(--bg-secondary, #444); border: 1px solid var(--border-color, #666); color: var(--text-primary, #fff); padding: 0.5rem; border-radius: 6px; cursor: pointer;">✕</button>
         </div>
         
         <div style="margin-bottom: 2rem;">
-            <h3 style="color: #ffffff; margin-bottom: 1rem;">Theme</h3>
-            <select id="simple-theme-select" style="background: #333; color: #fff; border: 1px solid #666; padding: 0.5rem; border-radius: 6px; width: 200px;">
-                <option value="dark">Dark Mode</option>
-                <option value="light">Light Mode</option>
-                <option value="auto">Auto (System)</option>
-            </select>
+            <h3 style="color: var(--text-primary, #ffffff); margin-bottom: 1rem;">Theme</h3>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span style="color: var(--text-secondary, #ccc); font-size: 0.9rem;">Light</span>
+                <div id="theme-toggle-slider" style="
+                    width: 60px;
+                    height: 30px;
+                    background: var(--bg-secondary, #333);
+                    border-radius: 15px;
+                    cursor: pointer;
+                    position: relative;
+                    transition: background 0.3s ease;
+                    border: 1px solid var(--border-color, #666);
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 2px;
+                        left: 2px;
+                        width: 24px;
+                        height: 24px;
+                        background: var(--text-primary, white);
+                        border-radius: 50%;
+                        transition: transform 0.3s ease;
+                    "></div>
+                </div>
+                <span style="color: var(--text-secondary, #ccc); font-size: 0.9rem;">Dark</span>
+            </div>
         </div>
         
+        <div style="height: 1px; background: var(--border-color, #666); margin: 1.5rem 0;"></div>
+        
         <div style="margin-bottom: 2rem;">
-            <h3 style="color: #ffffff; margin-bottom: 1rem;">Tool Management</h3>
-            <p style="color: #ccc; margin-bottom: 1rem;">Drag tools to reorder them, or toggle to show/hide tools you don't use.</p>
+            <h3 style="color: var(--text-primary, #ffffff); margin-bottom: 1rem;">Tool Management</h3>
+            <p style="color: var(--text-secondary, #ccc); margin-bottom: 1rem;">Drag tools to reorder them, or toggle to show/hide tools you don't use.</p>
             <div id="simple-tool-list" style="display: flex; flex-direction: column; gap: 0.5rem;">
                 <!-- Tools will be populated here -->
             </div>
         </div>
         
+        <div style="height: 1px; background: var(--border-color, #666); margin: 1.5rem 0;"></div>
+        
         <div style="text-align: center;">
-            <button id="reset-simple-settings" style="background: #666; border: 1px solid #888; color: #fff; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Reset to Defaults</button>
+            <button id="reset-simple-settings" style="background: var(--bg-secondary, #666); border: 1px solid var(--border-color, #888); color: var(--text-primary, #fff); padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">Reset to Defaults</button>
         </div>
     `;
     
@@ -346,8 +374,38 @@ function showSimpleSettingsModal() {
         location.reload();
     });
     
-    document.getElementById('simple-theme-select').addEventListener('change', (e) => {
-        applyTheme(e.target.value);
+    // Theme toggle slider functionality
+    const themeSlider = document.getElementById('theme-toggle-slider');
+    const themeSliderHandle = themeSlider.querySelector('div');
+    
+    // Set initial state based on current theme
+    if (currentTheme === 'dark') {
+        themeSlider.style.background = '#4CAF50';
+        themeSliderHandle.style.transform = 'translateX(30px)';
+    } else {
+        themeSlider.style.background = '#333';
+        themeSliderHandle.style.transform = 'translateX(0px)';
+    }
+    
+    themeSlider.addEventListener('click', () => {
+        const isDark = themeSlider.style.background === 'rgb(76, 175, 80)';
+        
+        if (isDark) {
+            // Switch to light mode
+            themeSlider.style.background = '#333';
+            themeSliderHandle.style.transform = 'translateX(0px)';
+            applyTheme('light');
+            // Update modal theme
+            modal.setAttribute('data-theme', 'light');
+        } else {
+            // Switch to dark mode
+            themeSlider.style.background = '#4CAF50';
+            themeSliderHandle.style.transform = 'translateX(30px)';
+            applyTheme('dark');
+            // Update modal theme
+            modal.setAttribute('data-theme', 'dark');
+        }
+        
         saveSettings();
     });
     
@@ -369,9 +427,7 @@ function showSimpleSettingsModal() {
     // Populate tool list
     populateSimpleToolList();
     
-    // Set current theme
-    const currentTheme = document.body.getAttribute('data-theme') || 'dark';
-    document.getElementById('simple-theme-select').value = currentTheme;
+    // Theme is already set via the toggle slider initialization above
 }
 
 function populateSimpleToolList() {
@@ -416,27 +472,27 @@ function populateSimpleToolList() {
                 align-items: center;
                 gap: 1rem;
                 padding: 1rem;
-                background: #333;
-                border: 1px solid #555;
+                background: var(--bg-secondary, #333);
+                border: 1px solid var(--border-color, #555);
                 border-radius: 8px;
                 cursor: move;
                 transition: all 0.2s ease;
             `;
             
             item.innerHTML = `
-                <div style="color: #888; cursor: grab; padding: 0.25rem;">
+                <div style="color: var(--text-secondary, #888); cursor: grab; padding: 0.25rem;">
                     ⋮⋮
                 </div>
                 <div style="flex: 1;">
-                    <h4 style="margin: 0; color: #ffffff;">${tool.name}</h4>
-                    <p style="margin: 0; color: #ccc; font-size: 0.9rem;">${tool.description}</p>
+                    <h4 style="margin: 0; color: var(--text-primary, #ffffff);">${tool.name}</h4>
+                    <p style="margin: 0; color: var(--text-secondary, #ccc); font-size: 0.9rem;">${tool.description}</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span style="color: #ccc; font-size: 0.9rem;">Show</span>
+                    <span style="color: var(--text-secondary, #ccc); font-size: 0.9rem;">Show</span>
                     <div class="simple-toggle" data-tool-id="${toolId}" style="
                         width: 44px;
                         height: 24px;
-                        background: ${toolVisibility[toolId] ? '#4CAF50' : '#666'};
+                        background: ${toolVisibility[toolId] ? '#4CAF50' : 'var(--bg-secondary, #666)'};
                         border-radius: 12px;
                         cursor: pointer;
                         position: relative;
@@ -448,7 +504,7 @@ function populateSimpleToolList() {
                             left: 2px;
                             width: 20px;
                             height: 20px;
-                            background: white;
+                            background: var(--text-primary, white);
                             border-radius: 50%;
                             transition: transform 0.3s ease;
                             transform: translateX(${toolVisibility[toolId] ? '20px' : '0px'});
@@ -585,7 +641,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'scale(1)';
         }, 150);
     });
-});
+    });
 
     // Show tool content based on tool type
     function showToolContent(toolType) {
@@ -1239,7 +1295,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('Falling back to local ZPL preview');
                     createLocalZPLPreview(zplData, resolve);
     });
-});
+        });
         }
 
 
@@ -1894,7 +1950,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-
+    
 
     // Close modals when clicking close button
     closeButtons.forEach(button => {
@@ -1922,7 +1978,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-});
+    });
 
 // Global function for copying to clipboard
 window.copyToClipboard = function(text) {
