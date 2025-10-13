@@ -398,6 +398,9 @@ function populateSimpleToolList() {
         const tool = toolData[toolId];
         if (tool) {
             const item = document.createElement('div');
+            item.className = 'simple-tool-item';
+            item.draggable = true;
+            item.dataset.toolId = toolId;
             item.style.cssText = `
                 display: flex;
                 align-items: center;
@@ -406,9 +409,14 @@ function populateSimpleToolList() {
                 background: #333;
                 border: 1px solid #555;
                 border-radius: 8px;
+                cursor: move;
+                transition: all 0.2s ease;
             `;
             
             item.innerHTML = `
+                <div style="color: #888; cursor: grab; padding: 0.25rem;">
+                    ⋮⋮
+                </div>
                 <div style="flex: 1;">
                     <h4 style="margin: 0; color: #ffffff;">${tool.name}</h4>
                     <p style="margin: 0; color: #ccc; font-size: 0.9rem;">${tool.description}</p>
@@ -443,6 +451,9 @@ function populateSimpleToolList() {
         }
     });
     
+    // Add drag and drop functionality
+    initializeSimpleDragAndDrop();
+    
     // Add toggle functionality
     document.querySelectorAll('.simple-toggle').forEach(toggle => {
         toggle.addEventListener('click', () => {
@@ -465,6 +476,63 @@ function populateSimpleToolList() {
             }
         });
     });
+}
+
+function initializeSimpleDragAndDrop() {
+    const toolList = document.getElementById('simple-tool-list');
+    let draggedElement = null;
+    
+    toolList.addEventListener('dragstart', (e) => {
+        draggedElement = e.target.closest('.simple-tool-item');
+        draggedElement.style.opacity = '0.5';
+        draggedElement.style.transform = 'rotate(5deg)';
+    });
+    
+    toolList.addEventListener('dragend', (e) => {
+        if (draggedElement) {
+            draggedElement.style.opacity = '1';
+            draggedElement.style.transform = 'rotate(0deg)';
+            draggedElement = null;
+        }
+    });
+    
+    toolList.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const afterElement = getSimpleDragAfterElement(toolList, e.clientY);
+        if (draggedElement) {
+            if (afterElement == null) {
+                toolList.appendChild(draggedElement);
+            } else {
+                toolList.insertBefore(draggedElement, afterElement);
+            }
+        }
+    });
+    
+    toolList.addEventListener('drop', () => {
+        // Save new order
+        const newOrder = Array.from(toolList.children).map(item => item.dataset.toolId);
+        const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
+        settings.toolOrder = newOrder;
+        localStorage.setItem('gfs-settings', JSON.stringify(settings));
+        
+        // Apply new order to main page
+        applyToolOrder(newOrder);
+    });
+}
+
+function getSimpleDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.simple-tool-item:not([style*="opacity: 0.5"])')];
+    
+    return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
 
