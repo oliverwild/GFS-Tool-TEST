@@ -34,153 +34,6 @@ function initializeDarkMode() {
     }
 }
 
-// WIKI BUTTON LOGIC - DYNAMIC MODAL APPROACH
-document.addEventListener('DOMContentLoaded', function() {
-    // Wiki data
-    const wikiData = {
-        'range-jumping': {
-            title: 'Range Jumping Tool',
-            description: 'Generate UPDATE scripts to jump range numbers in SHIP_RANGES and ITEM_RANGES tables.',
-            howToUse: [
-                'Copy the provided SQL query to get your range data',
-                'Paste the INSERT script results from your query',
-                'Enter the jump amount you want to apply',
-                'Click "Generate Update Script" to create UPDATE statements',
-                'Copy the generated script for use in your database'
-            ],
-            examples: [
-                'Query: SELECT contract_no, RANGE_ID, cons_cur_no, ITEM_RANGE_ID, cur_no FROM tables',
-                'Jump Amount: 100',
-                'Output: UPDATE SHIP_RANGES SET cons_cur_no = cons_cur_no + 100 WHERE ID = range_id; UPDATE ITEM_RANGES SET cur_no = cur_no + 100 WHERE ID = item_range_id;'
-            ]
-        },
-        'range-splitting': {
-            title: 'Range Splitting Tool',
-            description: 'Split a range of numbers into two parts based on a percentage.',
-            howToUse: [
-                'Enter the start and end numbers of your range',
-                'Adjust the percentage slider to set the split point',
-                'View the results showing both ranges and their counts',
-                'Copy the results if needed'
-            ],
-            examples: [
-                'Range: 1000 to 2000',
-                'Split: 60%',
-                'Result: First range 1000-1600 (600 numbers), Second range 1601-2000 (400 numbers)'
-            ]
-        },
-        'label-preview': {
-            title: 'Label Preview Tool',
-            description: 'Decode and preview Base64 encoded label data (PDF, PNG, JPEG, ZPL).',
-            howToUse: [
-                'Paste your Base64 encoded label data',
-                'Click "Process Label" to decode and identify the data type',
-                'View the preview of your label',
-                'Copy or download the processed data'
-            ],
-            examples: [
-                'PDF Labels: Base64 encoded PDF data',
-                'Image Labels: Base64 encoded PNG/JPEG data',
-                'ZPL Labels: Base64 encoded ZPL commands'
-            ]
-        },
-        'route-mapping': {
-            title: 'Route Mapping Tool',
-            description: 'Generate SQL INSERT statements for carrier routes, specifically for Evri.',
-            howToUse: [
-                'Select the carrier (currently supports Evri)',
-                'Enter the contract number and route description',
-                'Select the required services',
-                'Click "Generate SQL" to create INSERT statements',
-                'Copy the generated SQL for your database'
-            ],
-            examples: [
-                'Carrier: Evri, Account: 5, Services: Next Day, 2 Day',
-                'Output: SQL INSERT statements with ROUTE_CODE, CONTRACT_NO, SERVICE_CODE',
-                'Multiple statements generated for different service combinations',
-                'Ready to copy and use in your database'
-            ]
-        }
-    };
-
-    // Wiki content generator
-    function createWikiContent(toolData) {
-        return `
-            <div style="padding: 20px; color: #333;">
-                <h3 style="color: #2563eb; margin-bottom: 15px;">Description</h3>
-                <p style="margin-bottom: 20px; line-height: 1.6;">${toolData.description}</p>
-                
-                <h3 style="color: #2563eb; margin-bottom: 15px;">How to Use</h3>
-                <ol style="margin-bottom: 20px; padding-left: 20px;">
-                    ${toolData.howToUse.map(step => `<li style="margin-bottom: 8px; line-height: 1.5;">${step}</li>`).join('')}
-                </ol>
-                
-                <h3 style="color: #2563eb; margin-bottom: 15px;">Examples</h3>
-                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #2563eb;">
-                    ${toolData.examples.map(example => `<div style="margin-bottom: 10px; font-family: monospace; font-size: 14px;">${example}</div>`).join('')}
-                </div>
-            </div>
-        `;
-    }
-
-    // Set up wiki buttons
-    const wikiButtons = document.querySelectorAll('.wiki-tool');
-    
-    wikiButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const toolType = this.getAttribute('data-tool');
-            const toolData = wikiData[toolType];
-            
-            if (!toolData) {
-                return;
-            }
-            
-            // Use the original modal with CSS fix
-            console.log('Using original modal approach...');
-            const modal = document.getElementById('wiki-modal');
-            const title = document.getElementById('wiki-title');
-            const content = document.getElementById('wiki-content');
-            
-            console.log('Modal elements found:', { modal: !!modal, title: !!title, content: !!content });
-            
-            if (!modal || !title || !content) {
-                console.log('Missing modal elements!');
-                return;
-            }
-            
-            // Set content
-            title.textContent = `${toolData.title} - Wiki`;
-            content.innerHTML = createWikiContent(toolData);
-            
-            // Show modal
-            modal.style.display = 'block';
-            
-        });
-    });
-    
-    // Set up close button for wiki modal
-    const closeButton = document.querySelector('#wiki-modal .close');
-    if (closeButton) {
-        closeButton.addEventListener('click', function() {
-            const modal = document.getElementById('wiki-modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        });
-    }
-    
-    // Close wiki modal on outside click
-    document.addEventListener('click', function(e) {
-        const modal = document.getElementById('wiki-modal');
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-    
-});
 
 // Modal functionality for GFS Tools
 document.addEventListener('DOMContentLoaded', function() {
@@ -188,78 +41,11 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeDarkMode();
     // Get modal elements
     const toolModal = document.getElementById('tool-modal');
-    const wikiModal = document.getElementById('wiki-modal');
     const modalTitle = document.getElementById('modal-title');
-    const wikiTitle = document.getElementById('wiki-title');
-    const wikiContent = document.getElementById('wiki-content');
 
     // Get close buttons
     const closeButtons = document.querySelectorAll('.close-modal-btn');
 
-    // Tool data for wiki content
-    const toolWikiData = {
-        'range-jumping': {
-            title: 'Range Jumping Tool',
-            description: 'Generate UPDATE scripts to jump range numbers in SHIP_RANGES and ITEM_RANGES tables.',
-            howToUse: [
-                'Copy the provided SQL query to get your range data',
-                'Paste the INSERT script results from your query',
-                'Enter the jump amount you want to apply',
-                'Click "Generate Update Script" to create UPDATE statements',
-                'Copy the generated script for use in your database'
-            ],
-            examples: [
-                'Query: SELECT contract_no, RANGE_ID, cons_cur_no, ITEM_RANGE_ID, cur_no FROM tables',
-                'Jump Amount: 100',
-                'Output: UPDATE SHIP_RANGES SET cons_cur_no = cons_cur_no + 100 WHERE ID = range_id; UPDATE ITEM_RANGES SET cur_no = cur_no + 100 WHERE ID = item_range_id;'
-            ]
-        },
-        'range-splitting': {
-            title: 'Range Splitting Tool',
-            description: 'Split number ranges by percentage for efficient distribution.',
-            howToUse: [
-                'Enter the starting number in the first field',
-                'Enter the ending number in the second field',
-                'Adjust the percentage slider to your desired split',
-                'View the calculated ranges and copy results'
-            ],
-            examples: [
-                'Start: 1, End: 100, Split: 50%',
-                'Result: Range 1-50 and Range 51-100'
-            ]
-        },
-        'label-preview': {
-            title: 'Label Preview Tool',
-            description: 'Decode Base64 and preview labels either with PDF or Labelary API.',
-            howToUse: [
-                'Paste your Base64 encoded data (PDF, text, images, etc.)',
-                'Click "Process Label" to decode and identify content type',
-                'View the generated label preview from Labelary',
-                'Download as PNG if needed'
-            ],
-            examples: [
-                'Input: Base64 encoded data (PDF, text, images)',
-                'Process: Decode → Identify Type → Convert to ZPL → Labelary API',
-                'Output: Visual label preview based on content type'
-            ]
-        },
-        'route-mapping': {
-            title: 'Route Mapping Tool',
-            description: 'Generate SQL inserts for carriers, services, and route details.',
-            howToUse: [
-                'Select carrier from the dropdown menu (DPD, DPD Local, DHL eCom, Evri, UPS, GFSI)',
-                'Configure carrier-specific settings and services',
-                'Fill in route details and parameters',
-                'Generate SQL INSERT statements for database use'
-            ],
-            examples: [
-                'Carrier: Evri, Account: 5, Services: Next Day, 2 Day',
-                'Output: SQL INSERT statements with ROUTE_CODE, CONTRACT_NO, SERVICE_CODE',
-                'Multiple statements generated for different service combinations',
-                'Ready to copy and use in your database'
-            ]
-        }
-    };
 
     // Open tool modal
     document.querySelectorAll('.open-tool').forEach(button => {
@@ -1614,7 +1400,6 @@ document.addEventListener('DOMContentLoaded', function() {
     closeButtons.forEach(button => {
         button.addEventListener('click', function() {
             toolModal.style.display = 'none';
-            wikiModal.style.display = 'none';
         });
     });
 
@@ -1623,16 +1408,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.target === toolModal) {
             toolModal.style.display = 'none';
         }
-        if (event.target === wikiModal) {
-            wikiModal.style.display = 'none';
-        }
     });
 
     // Close modals with Escape key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             toolModal.style.display = 'none';
-            wikiModal.style.display = 'none';
         }
     });
 
