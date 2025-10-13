@@ -10,21 +10,23 @@ function initializeSettings() {
     // Load saved settings
     loadSettings();
     
-    // Settings modal toggle
+    // Settings modal toggle - separate from tool modals
     if (settingsToggle) {
-        settingsToggle.addEventListener('click', (e) => {
+        settingsToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Close any open tool modals first
+            if (toolModal) {
+                toolModal.style.display = 'none';
+            }
+            
+            // Open settings modal
             if (settingsModal) {
                 settingsModal.style.display = 'block';
-                
-                
                 populateToolOrderList();
-            } else {
-                console.error('Settings modal not found!');
             }
         });
-        
-    } else {
-        console.error('Settings toggle button not found!');
     }
     
     // Close settings modal
@@ -283,6 +285,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Open tool modal
     document.querySelectorAll('.open-tool').forEach(button => {
         button.addEventListener('click', function() {
+            // Close any open settings modal first
+            if (settingsModal) {
+                settingsModal.style.display = 'none';
+            }
+            
             const toolType = this.getAttribute('data-tool');
             const toolName = this.closest('.tool-card').querySelector('h3').textContent;
             
