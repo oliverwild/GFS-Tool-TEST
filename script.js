@@ -1464,6 +1464,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Modal visibility:', window.getComputedStyle(wikiModal).visibility);
                 console.log('Modal opacity:', window.getComputedStyle(wikiModal).opacity);
                 console.log('Modal z-index:', window.getComputedStyle(wikiModal).zIndex);
+                console.log('Modal position:', window.getComputedStyle(wikiModal).position);
+                console.log('Modal top:', window.getComputedStyle(wikiModal).top);
+                console.log('Modal left:', window.getComputedStyle(wikiModal).left);
+                console.log('Modal width:', window.getComputedStyle(wikiModal).width);
+                console.log('Modal height:', window.getComputedStyle(wikiModal).height);
+                console.log('Modal rect:', wikiModal.getBoundingClientRect());
             } else {
                 console.log('No tool data found for:', toolType);
             }
