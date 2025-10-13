@@ -406,6 +406,16 @@ p {
     max-width: 800px !important;
 }
 
+/* Target modal content directly when it has show class */
+.modal-content.show {
+    display: block !important;
+    flex-direction: unset !important;
+    height: auto !important;
+    min-height: 400px !important;
+    width: 90% !important;
+    max-width: 800px !important;
+}
+
 @keyframes modalSlideIn {
     from {
         opacity: 0;

@@ -159,8 +159,11 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.style.display = 'block';
             modal.classList.add('show');
             
-            // Check computed styles
+            // Also add show class to modal content
             const modalContent = modal.querySelector('.modal-content');
+            modalContent.classList.add('show');
+            
+            // Check computed styles
             console.log('Modal content element:', modalContent);
             console.log('Modal content computed display:', window.getComputedStyle(modalContent).display);
             console.log('Modal content computed flex-direction:', window.getComputedStyle(modalContent).flexDirection);
@@ -179,9 +182,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (closeButton) {
         closeButton.addEventListener('click', function() {
             const modal = document.getElementById('wiki-modal');
+            const modalContent = modal.querySelector('.modal-content');
             if (modal) {
                 modal.style.display = 'none';
                 modal.classList.remove('show');
+                if (modalContent) {
+                    modalContent.classList.remove('show');
+                }
             }
         });
     }
@@ -190,8 +197,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(e) {
         const modal = document.getElementById('wiki-modal');
         if (e.target === modal) {
+            const modalContent = modal.querySelector('.modal-content');
             modal.style.display = 'none';
             modal.classList.remove('show');
+            if (modalContent) {
+                modalContent.classList.remove('show');
+            }
         }
     });
     
