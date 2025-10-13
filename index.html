@@ -56,7 +56,7 @@
                             <i class="fas fa-tag"></i>
                         </div>
                         <h3>Label Preview</h3>
-                        <p>Decode Base64 and preview labels either with PDF or Labelary API</p>
+                        <p>Decode Base64 and preview labels either with PDF or Labelary API.</p>
                         <div class="tool-buttons">
                             <button class="btn btn-outline open-tool" data-tool="label-preview" aria-label="Open Label Preview tool">Open</button>
                         </div>
@@ -313,13 +313,31 @@
                             
                             <div class="jump-section">
                                 <h4>Jump Amount</h4>
-                                <div class="jump-input-group">
-                                    <div class="jump-input-row">
-                                        <label for="jump-amount">Enter the amount to jump by:</label>
-                                        <button class="btn btn-secondary copy-query-btn" id="copy-query">Query to get current ranges</button>
-                                    </div>
-                                    <input type="number" id="jump-amount" placeholder="e.g., 100" min="1" value="100">
+                            <div class="jump-input-group">
+                                <div class="jump-input-row">
+                                    <label for="jump-amount">Enter the amount to jump by:</label>
+                                    <button class="btn btn-secondary copy-query-btn" id="copy-query">Query to get current ranges</button>
                                 </div>
+                                <input type="number" id="jump-amount" placeholder="e.g., 100" min="1" value="100">
+                            </div>
+                            
+                            <!-- Hidden query element for copying -->
+                            <div id="range-query" style="display: none;">
+SELECT 
+    csc.contract_no,
+    csc.RANGE_ID,
+    sr.cons_start_no,
+    sr.cons_end_no,
+    sr.cons_cur_no,
+    csc.ITEM_RANGE_ID,
+    ir.START_NO,
+    ir.END_NO,
+    ir.CUR_NO
+FROM cust_site_contracts csc
+INNER JOIN SHIP_RANGES sr ON csc.RANGE_ID = sr.ID
+INNER JOIN ITEM_RANGES ir ON csc.ITEM_RANGE_ID = ir.ID
+WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);
+                            </div>
                             </div>
                         </div>
 
