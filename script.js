@@ -376,6 +376,8 @@ function showSimpleSettingsModal() {
 
 function populateSimpleToolList() {
     const toolList = document.getElementById('simple-tool-list');
+    console.log('Populating tool list, element found:', !!toolList);
+    
     const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
     const toolOrder = settings.toolOrder || ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping'];
     const toolVisibility = settings.toolVisibility || {
@@ -385,6 +387,9 @@ function populateSimpleToolList() {
         'route-mapping': true
     };
     
+    console.log('Tool order:', toolOrder);
+    console.log('Tool visibility:', toolVisibility);
+    
     const toolData = {
         'range-splitting': { name: 'Range Splitting', description: 'Split ranges into smaller segments' },
         'label-preview': { name: 'Label Preview', description: 'Preview and generate shipping labels' },
@@ -393,9 +398,11 @@ function populateSimpleToolList() {
     };
     
     toolList.innerHTML = '';
+    console.log('Cleared tool list, creating items...');
     
     toolOrder.forEach(toolId => {
         const tool = toolData[toolId];
+        console.log('Processing tool:', toolId, tool);
         if (tool) {
             const item = document.createElement('div');
             item.className = 'simple-tool-item';
