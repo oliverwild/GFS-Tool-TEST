@@ -917,35 +917,6 @@ p {
     font-weight: 500;
 }
 
-/* Wiki Content Styles */
-.wiki-section h3 {
-    color: var(--text-primary);
-    margin: 1.5rem 0 1rem 0;
-    font-size: 1.3rem;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 0.5rem;
-}
-
-.wiki-section h3:first-child {
-    margin-top: 0;
-}
-
-.wiki-section p {
-    color: var(--text-secondary);
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-.wiki-section ol {
-    margin-left: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.wiki-section ol li {
-    color: var(--text-secondary);
-    margin-bottom: 0.5rem;
-    line-height: 1.5;
-}
 
 .examples {
     background: var(--bg-secondary);

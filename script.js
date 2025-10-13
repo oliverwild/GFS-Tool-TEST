@@ -1376,38 +1376,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    // Generate wiki content
-    function generateWikiContent(toolData) {
-        return `
-            <div class="wiki-section">
-                <h3>Description</h3>
-                <p>${toolData.description}</p>
-                
-                <h3>How to Use</h3>
-                <ol>
-                    ${toolData.howToUse.map(step => `<li>${step}</li>`).join('')}
-                </ol>
-                
-                <h3>Examples</h3>
-                <div class="examples">
-                    ${toolData.examples.map(example => `<div class="example-item">${example}</div>`).join('')}
-                </div>
-            </div>
-        `;
-    }
-
     // Close modals when clicking close button
     closeButtons.forEach(button => {
         button.addEventListener('click', function() {
             toolModal.style.display = 'none';
         });
-    });
-
-    // Close modals when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target === toolModal) {
-            toolModal.style.display = 'none';
-        }
     });
 
     // Close modals with Escape key
