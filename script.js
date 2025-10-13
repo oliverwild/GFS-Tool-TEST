@@ -715,7 +715,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function callLabelaryAPI(data, dataType) {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 console.log('Calling Labelary API for data type:', dataType);
                 
                 // Convert data to ZPL (Zebra Programming Language) format
@@ -787,6 +787,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
         }
+
+
 
         function createLocalZPLPreview(zplData, resolve) {
             console.log('Creating local ZPL preview for:', zplData.substring(0, 100));
@@ -909,6 +911,8 @@ document.addEventListener('DOMContentLoaded', function() {
             imgElement.src = canvas.toDataURL('image/png');
         }
 
+
+
         function clearLabelInputs() {
             base64Input.value = '';
             dataLengthSpan.textContent = '0 characters';
@@ -995,6 +999,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Store the current label data for copy/download
         let currentLabelData = null;
+        let currentDataType = null;
 
         function copyLabelData() {
             try {
@@ -1049,7 +1054,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 'image/png');
         }
 
-        function copyPDFAsImage() {
+        function copyPDFAsImage(embedElement) {
             // For PDF embeds, we can't directly capture them as images
             // So we'll fall back to copying the original Base64 data
             copyDataBasedOnType();
@@ -1082,6 +1087,8 @@ document.addEventListener('DOMContentLoaded', function() {
         function downloadLabelData() {
             try {
                 const filename = filenameInput.value.trim() || 'label';
+                let blob;
+                let extension;
 
                 // Look for the actual preview image in the preview container
                 const previewContainer = document.getElementById('preview-container');
@@ -1435,15 +1442,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Open wiki modal
+    console.log('Setting up wiki button listeners...');
     document.querySelectorAll('.wiki-tool').forEach(button => {
+        console.log('Found wiki button:', button);
         button.addEventListener('click', function() {
+            console.log('Wiki button clicked!');
             const toolType = this.getAttribute('data-tool');
+            console.log('Tool type:', toolType);
             const toolData = toolWikiData[toolType];
+            console.log('Tool data:', toolData);
+            console.log('Wiki modal element:', wikiModal);
+            console.log('Wiki title element:', wikiTitle);
+            console.log('Wiki content element:', wikiContent);
             
             if (toolData) {
                 wikiTitle.textContent = `${toolData.title} - Wiki`;
                 wikiContent.innerHTML = generateWikiContent(toolData);
                 wikiModal.style.display = 'block';
+                console.log('Modal should be visible now');
+            } else {
+                console.log('No tool data found for:', toolType);
             }
             
             // Add click animation
@@ -1475,8 +1493,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Close modals when clicking close button
+    console.log('Setting up close button listeners...');
+    console.log('Found close buttons:', closeButtons);
     closeButtons.forEach(button => {
+        console.log('Setting up close button:', button);
         button.addEventListener('click', function() {
+            console.log('Close button clicked!');
             toolModal.style.display = 'none';
             wikiModal.style.display = 'none';
         });
@@ -1511,46 +1533,6 @@ document.addEventListener('DOMContentLoaded', function() {
             header.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
         }
     });
-
-    // Open wiki modal
-    document.querySelectorAll('.wiki-tool').forEach(button => {
-        button.addEventListener('click', function() {
-            const toolType = this.getAttribute('data-tool');
-            const toolData = toolWikiData[toolType];
-            
-            if (toolData) {
-                wikiTitle.textContent = `${toolData.title} - Wiki`;
-                wikiContent.innerHTML = generateWikiContent(toolData);
-                wikiModal.style.display = 'block';
-            }
-            
-            // Add click animation
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 150);
-        });
-    });
-
-    // Generate wiki content
-    function generateWikiContent(toolData) {
-        return `
-            <div class="wiki-section">
-                <h3>Description</h3>
-                <p>${toolData.description}</p>
-                
-                <h3>How to Use</h3>
-                <ol>
-                    ${toolData.howToUse.map(step => `<li>${step}</li>`).join('')}
-                </ol>
-                
-                <h3>Examples</h3>
-                <div class="examples">
-                    ${toolData.examples.map(example => `<div class="example-item">${example}</div>`).join('')}
-                </div>
-            </div>
-        `;
-    }
 });
 
 // Global function for copying to clipboard
@@ -1806,3 +1788,4 @@ function showCopyNotification(message, type = 'success') {
             }
         });
     }
+
