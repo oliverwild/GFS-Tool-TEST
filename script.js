@@ -1,18 +1,19 @@
 // Settings and Theme Management
-function initializeSettings() {
+function initializeSettings(toolModal) {
     const settingsToggle = document.getElementById('settings-toggle');
     const settingsModal = document.getElementById('settings-modal');
     const closeSettingsBtn = document.getElementById('close-settings-modal');
     const themeSelect = document.getElementById('theme-select');
     const resetSettingsBtn = document.getElementById('reset-settings');
     
-    
     // Load saved settings
     loadSettings();
     
     // Settings modal toggle - separate from tool modals
     if (settingsToggle) {
+        console.log('Settings button found, adding event listener');
         settingsToggle.addEventListener('click', function(e) {
+            console.log('Settings button clicked!');
             e.preventDefault();
             e.stopPropagation();
             
@@ -23,10 +24,13 @@ function initializeSettings() {
             
             // Open settings modal
             if (settingsModal) {
+                console.log('Opening settings modal');
                 settingsModal.style.display = 'block';
                 populateToolOrderList();
             }
         });
+    } else {
+        console.error('Settings button not found!');
     }
     
     // Close settings modal
@@ -272,11 +276,12 @@ function applyToolVisibility(toolVisibility) {
 
 // Modal functionality for GFS Tools
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize settings first
-    initializeSettings();
     // Get modal elements
     const toolModal = document.getElementById('tool-modal');
     const modalTitle = document.getElementById('modal-title');
+    
+    // Initialize settings after toolModal is defined
+    initializeSettings(toolModal);
 
     // Get close buttons
     const closeButtons = document.querySelectorAll('.close-modal-btn');
@@ -284,8 +289,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Open tool modal
     document.querySelectorAll('.open-tool').forEach(button => {
+        console.log('Adding event listener to tool button:', button);
         button.addEventListener('click', function() {
+            console.log('Tool button clicked!');
             // Close any open settings modal first
+            const settingsModal = document.getElementById('settings-modal');
             if (settingsModal) {
                 settingsModal.style.display = 'none';
             }
