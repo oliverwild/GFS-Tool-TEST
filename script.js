@@ -6,30 +6,66 @@ function initializeSettings() {
     const themeSelect = document.getElementById('theme-select');
     const resetSettingsBtn = document.getElementById('reset-settings');
     
+    console.log('Settings elements found:', {
+        settingsToggle: !!settingsToggle,
+        settingsModal: !!settingsModal,
+        closeSettingsBtn: !!closeSettingsBtn,
+        themeSelect: !!themeSelect,
+        resetSettingsBtn: !!resetSettingsBtn
+    });
+    
     // Load saved settings
     loadSettings();
     
     // Settings modal toggle
-    settingsToggle.addEventListener('click', () => {
-        settingsModal.style.display = 'block';
-        populateToolOrderList();
-    });
+    if (settingsToggle) {
+        console.log('Settings toggle button found, adding event listener');
+        settingsToggle.addEventListener('click', (e) => {
+            console.log('Settings button clicked!', e);
+            if (settingsModal) {
+                settingsModal.style.display = 'block';
+                console.log('Settings modal should be visible now');
+                populateToolOrderList();
+            } else {
+                console.error('Settings modal not found!');
+            }
+        });
+        
+        // Also add a simple test
+        settingsToggle.addEventListener('mouseenter', () => {
+            console.log('Settings button hover detected');
+        });
+    } else {
+        console.error('Settings toggle button not found!');
+    }
     
     // Close settings modal
-    closeSettingsBtn.addEventListener('click', () => {
-        settingsModal.style.display = 'none';
-    });
+    if (closeSettingsBtn) {
+        closeSettingsBtn.addEventListener('click', () => {
+            settingsModal.style.display = 'none';
+        });
+    } else {
+        console.error('Close settings button not found!');
+    }
     
     // Theme selection
-    themeSelect.addEventListener('change', (e) => {
-        applyTheme(e.target.value);
-        saveSettings();
-    });
+    if (themeSelect) {
+        themeSelect.addEventListener('change', (e) => {
+            applyTheme(e.target.value);
+            saveSettings();
+        });
+    } else {
+        console.error('Theme select not found!');
+    }
     
     // Reset settings
-    resetSettingsBtn.addEventListener('click', () => {
-        resetSettings();
-    });
+    if (resetSettingsBtn) {
+        resetSettingsBtn.addEventListener('click', () => {
+            resetSettings();
+        });
+    } else {
+        console.error('Reset settings button not found!');
+    }
     
     // Close modal with Escape key
     document.addEventListener('keydown', (e) => {
@@ -45,7 +81,12 @@ function loadSettings() {
     // Load theme
     const theme = settings.theme || 'dark';
     applyTheme(theme);
-    document.getElementById('theme-select').value = theme;
+    const themeSelect = document.getElementById('theme-select');
+    if (themeSelect) {
+        themeSelect.value = theme;
+    } else {
+        console.error('Theme select element not found!');
+    }
     
     // Load tool order and visibility
     const toolOrder = settings.toolOrder || ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping'];
