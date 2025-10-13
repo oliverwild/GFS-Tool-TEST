@@ -145,70 +145,98 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Get modal elements
-            const modal = document.getElementById('wiki-modal');
-            const title = document.getElementById('wiki-title');
-            const content = document.getElementById('wiki-content');
+            // Create a completely new modal dynamically
+            console.log('Creating new modal dynamically...');
             
-            console.log('Modal element:', modal);
-            console.log('Title element:', title);
-            console.log('Content element:', content);
-            
-            if (!modal) {
-                console.log('ERROR: Modal element not found!');
-                return;
-            }
-            if (!title) {
-                console.log('ERROR: Title element not found!');
-                return;
-            }
-            if (!content) {
-                console.log('ERROR: Content element not found!');
-                return;
+            // Remove any existing dynamic modal
+            const existingModal = document.getElementById('dynamic-wiki-modal');
+            if (existingModal) {
+                existingModal.remove();
             }
             
-            // Set content
+            // Create new modal
+            const modal = document.createElement('div');
+            modal.id = 'dynamic-wiki-modal';
+            modal.style.cssText = `
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                background-color: rgba(0,0,0,0.8) !important;
+                z-index: 999999 !important;
+                display: block !important;
+            `;
+            
+            // Create modal content
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                position: absolute !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                width: 600px !important;
+                max-width: 90vw !important;
+                max-height: 80vh !important;
+                background-color: white !important;
+                border-radius: 8px !important;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+                overflow: auto !important;
+                padding: 20px !important;
+            `;
+            
+            // Create close button
+            const closeButton = document.createElement('button');
+            closeButton.innerHTML = '×';
+            closeButton.style.cssText = `
+                position: absolute !important;
+                top: 10px !important;
+                right: 15px !important;
+                background: none !important;
+                border: none !important;
+                font-size: 24px !important;
+                cursor: pointer !important;
+                color: #666 !important;
+                z-index: 1 !important;
+            `;
+            
+            // Create title
+            const title = document.createElement('h2');
             title.textContent = `${toolData.title} - Wiki`;
+            title.style.cssText = `
+                margin: 0 0 20px 0 !important;
+                color: #2563eb !important;
+                font-size: 24px !important;
+            `;
+            
+            // Create content
+            const content = document.createElement('div');
             content.innerHTML = createSimpleWikiContent(toolData);
             
-            // Show modal with simple styling
-            modal.style.display = 'block';
-            modal.style.position = 'fixed';
-            modal.style.top = '0';
-            modal.style.left = '0';
-            modal.style.width = '100%';
-            modal.style.height = '100%';
-            modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
-            modal.style.zIndex = '99999';
+            // Assemble modal
+            modalContent.appendChild(closeButton);
+            modalContent.appendChild(title);
+            modalContent.appendChild(content);
+            modal.appendChild(modalContent);
             
-            // Style modal content
-            const modalContent = modal.querySelector('.modal-content');
-            console.log('Modal content element:', modalContent);
+            // Add to page
+            document.body.appendChild(modal);
             
-            if (modalContent) {
-                modalContent.style.position = 'absolute';
-                modalContent.style.top = '50%';
-                modalContent.style.left = '50%';
-                modalContent.style.transform = 'translate(-50%, -50%)';
-                modalContent.style.width = '600px';
-                modalContent.style.maxWidth = '90vw';
-                modalContent.style.maxHeight = '80vh';
-                modalContent.style.backgroundColor = 'white';
-                modalContent.style.borderRadius = '8px';
-                modalContent.style.boxShadow = '0 20px 60px rgba(0,0,0,0.3)';
-                modalContent.style.overflow = 'auto';
-                console.log('Modal content styled');
-            } else {
-                console.log('ERROR: Modal content element not found!');
-            }
+            // Set up close button
+            closeButton.addEventListener('click', function() {
+                modal.remove();
+            });
             
-            // Check final modal state
-            console.log('Final modal display:', modal.style.display);
-            console.log('Final modal position:', modal.style.position);
-            console.log('Final modal z-index:', modal.style.zIndex);
-            console.log('Final modal rect:', modal.getBoundingClientRect());
+            // Close on outside click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
             
-            console.log('Modal should be visible now');
+            console.log('Dynamic modal created and added to page');
+            console.log('Modal rect:', modal.getBoundingClientRect());
+            console.log('Modal content rect:', modalContent.getBoundingClientRect());
         });
     });
     
