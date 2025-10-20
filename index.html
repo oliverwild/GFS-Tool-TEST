@@ -332,32 +332,7 @@
                                 </div>
                                 <input type="number" id="jump-amount" placeholder="e.g., 100" min="1" value="100">
                             </div>
-                 <!-- SQL Search Macro -->
-                            <div id="sql-search-macro-content" class="tool-content" style="display: none;">
-                                <div class="input-section">
-                                    <h3>Consignment Numbers</h3>
-                                    <div class="textarea-container">
-                                        <textarea id="sql-macro-input" placeholder="Paste consignment numbers..." rows="6"></textarea>
-                                    </div>
-                                </div>
-                            
-                                <div class="actions">
-                                    <button class="btn btn-primary" id="sql-macro-generate">Generate SQL</button>
-                                    <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
-                                </div>
-                            
-                                <div class="results-section" id="sql-macro-results" style="display: none; margin-top: 20px;">
-                                    <h3>Generated SQL Script</h3>
-                                    <div class="sql-output">
-                                        <div class="sql-header">
-                                            <span class="sql-label">Query:</span>
-                                            <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
-                                        </div>
-                                        <pre id="sql-macro-output" class="sql-code"></pre>
-                                    </div>
-                                </div>
-                            </div>
-
+                 
                             
                                 <!-- Results box (hidden until generated) -->
                                 <div class="results-section" id="sql-macro-results" style="display: none; margin-top: 20px;">
@@ -409,6 +384,31 @@ WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);
                             </div>
                         </div>
                     </div>
+<!-- SQL Search Macro -->
+                            <div id="sql-search-macro-content" class="tool-content" style="display: none;">
+                                <div class="input-section">
+                                    <h3>Consignment Numbers</h3>
+                                    <div class="textarea-container">
+                                        <textarea id="sql-macro-input" placeholder="Paste consignment numbers..." rows="6"></textarea>
+                                    </div>
+                                </div>
+                            
+                                <div class="actions">
+                                    <button class="btn btn-primary" id="sql-macro-generate">Generate SQL</button>
+                                    <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
+                                </div>
+                            
+                                <div class="results-section" id="sql-macro-results" style="display: none; margin-top: 20px;">
+                                    <h3>Generated SQL Script</h3>
+                                    <div class="sql-output">
+                                        <div class="sql-header">
+                                            <span class="sql-label">Query:</span>
+                                            <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
+                                        </div>
+                                        <pre id="sql-macro-output" class="sql-code"></pre>
+                                    </div>
+                                </div>
+                            </div>
 
                     <!-- Coming Soon Option -->
                     <div id="coming-soon-content" class="option-content">
