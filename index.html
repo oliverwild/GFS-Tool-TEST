@@ -332,51 +332,46 @@
                                 </div>
                                 <input type="number" id="jump-amount" placeholder="e.g., 100" min="1" value="100">
                             </div>
-                            <!-- SQL Search Macro -->
-<div id="sql-search-macro-content" class="tool-content" style="display: none;">
-  <div class="input-section">
-    <h3>Consignment Numbers</h3>
-    <div class="textarea-container">
-      <textarea id="sql-macro-input" placeholder="Paste numbers (newlines, spaces, or commas)..." rows="8"></textarea>
-    </div>
-    <div class="input-hint">
-      <p><strong>Tip:</strong> Non-numeric characters are ignored; we’ll keep digits (and optional letters if present).</p>
-    </div>
-  </div>
+                 <!-- SQL Search Macro -->
+                            <div id="sql-search-macro-content" class="tool-content" style="display: none;">
+                                <div class="input-section">
+                                    <h3>Consignment Numbers</h3>
+                                    <div class="textarea-container">
+                                        <textarea id="sql-macro-input" placeholder="Paste consignment numbers..." rows="6"></textarea>
+                                    </div>
+                                </div>
+                            
+                                <div class="actions">
+                                    <button class="btn btn-primary" id="sql-macro-generate">Generate SQL</button>
+                                    <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
+                                </div>
+                            
+                                <div class="results-section" id="sql-macro-results" style="display: none; margin-top: 20px;">
+                                    <h3>Generated SQL Script</h3>
+                                    <div class="sql-output">
+                                        <div class="sql-header">
+                                            <span class="sql-label">Query:</span>
+                                            <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
+                                        </div>
+                                        <pre id="sql-macro-output" class="sql-code"></pre>
+                                    </div>
+                                </div>
+                            </div>
 
-  <div class="options-section">
-    <h3>Field & Template</h3>
-    <div class="options-grid">
-      <div class="input-group">
-        <label for="sql-macro-field">Field name</label>
-        <input type="text" id="sql-macro-field" value="consignment_no" />
-      </div>
-      <div class="input-group">
-        <label for="sql-macro-style">Style</label>
-        <select id="sql-macro-style">
-          <option value="in" selected>IN (...) list</option>
-          <option value="ors">OR chain</option>
-        </select>
-      </div>
-    </div>
-  </div>
+                            
+                                <!-- Results box (hidden until generated) -->
+                                <div class="results-section" id="sql-macro-results" style="display: none; margin-top: 20px;">
+                                    <h3>Generated SQL Script</h3>
+                                    <div class="sql-output">
+                                        <div class="sql-header">
+                                            <span class="sql-label">Query:</span>
+                                            <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
+                                        </div>
+                                        <pre id="sql-macro-output" class="sql-code"></pre>
+                                    </div>
+                                </div>
+                            </div>
 
-  <div class="results-section">
-    <h3>SQL Output</h3>
-    <div class="sql-output">
-      <div class="sql-header">
-        <span class="sql-label">WHERE clause:</span>
-        <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
-      </div>
-      <pre id="sql-macro-output" class="sql-code"></pre>
-    </div>
-  </div>
-
-  <div class="actions">
-    <button class="btn btn-primary" id="sql-macro-generate">Generate</button>
-    <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
-  </div>
-</div>
 
                             <!-- Hidden query element for copying -->
                             <div id="range-query" style="display: none;">

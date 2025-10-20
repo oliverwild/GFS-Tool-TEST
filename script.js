@@ -674,6 +674,12 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('route-mapping-content').style.display = 'block';
             initializeRouteMapping();
         }
+        else if (toolType === 'sql-search-macro') {
+            document.getElementById('default-wip').style.display = 'none';
+            document.getElementById('sql-search-macro-content').style.display = 'block';
+            initializeSqlSearchMacro();
+        }
+
     }
 
     function initializeRangeSplitter() {
@@ -1972,6 +1978,56 @@ function showCopyNotification(message, type = 'success') {
 
         return sqlStatements.join('\n\n');
     }
+        function initializeSqlSearchMacro() {
+            const inputEl = document.getElementById('sql-macro-input');
+            const outEl = document.getElementById('sql-macro-output');
+            const btnGen = document.getElementById('sql-macro-generate');
+            const btnClear = document.getElementById('sql-macro-clear');
+            const btnCopy = document.getElementById('sql-macro-copy');
+            const results = document.getElementById('sql-macro-results');
+
+            if (!inputEl || !outEl || !btnGen) return; // safety check if tool isn't loaded yet
+
+            function parseConsignments(raw) {
+                return raw
+                    .split(/[,\s]+/)
+                    .map(s => s.replace(/[^A-Za-z0-9]/g, ''))
+                    .filter(Boolean);
+            }
+
+            function buildSql(cons) {
+                if (cons.length === 0) return '-- Paste consignment numbers and click Generate';
+                const list = '(' + cons.map(v => `'${v}'`).join(',') + ')';
+                return `SELECT *\nFROM shipments\nWHERE cons_no IN ${list};`;
+            }
+
+            btnGen.addEventListener('click', () => {
+                const cons = parseConsignments(inputEl.value);
+                outEl.textContent = buildSql(cons);
+                results.style.display = 'block';
+            });
+
+            btnClear.addEventListener('click', () => {
+                inputEl.value = '';
+                outEl.textContent = '';
+                results.style.display = 'none';
+            });
+
+            btnCopy.addEventListener('click', async () => {
+                const text = outEl.textContent || '';
+                if (!text.trim()) return;
+                try {
+                    await navigator.clipboard.writeText(text);
+                    btnCopy.textContent = 'Copied!';
+                    setTimeout(() => (btnCopy.textContent = 'Copy'), 1200);
+                } catch {
+                    const ta = document.createElement('textarea');
+                    ta.value = text; document.body.appendChild(ta);
+                    ta.select(); document.execCommand('copy');
+                    ta.remove();
+                }
+            });
+        }
 
     // Clear button
     clearRouteBtn.addEventListener('click', function() {
