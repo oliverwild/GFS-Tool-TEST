@@ -660,21 +660,35 @@ function initializeRangeJumping() {
 }
 
 function initializeSqlSearchMacro() {
-  const inputEl = document.getElementById('sql-macro-input');
-  const outEl = document.getElementById('sql-macro-output');
-  const btnGen = document.getElementById('sql-macro-generate');
+  const inputEl  = document.getElementById('sql-macro-input');
+  const outEl    = document.getElementById('sql-macro-output');
+  const btnGen   = document.getElementById('sql-macro-generate');
   const btnClear = document.getElementById('sql-macro-clear');
-  const btnCopy = document.getElementById('sql-macro-copy');
-  const results = document.getElementById('sql-macro-results');
+  const btnCopy  = document.getElementById('sql-macro-copy');
+  const results  = document.getElementById('sql-macro-results');
 
-  if (!inputEl || !outEl || !btnGen) return;
+  if (!inputEl || !outEl || !btnGen) return; // safety
 
-  const parseConsignments = (raw) =>
-    raw.split(/[,\s]+/).map(s => s.replace(/[^A-Za-z0-9]/g, '')).filter(Boolean);
+  // Keep only digits; drop everything else. Deduplicate while preserving order.
+  function parseConsignments(raw) {
+    const parts = raw.split(/[\s,;|\t\r\n]+/); // split on common delimiters/whitespace
+    const seen = new Set();
+    const out = [];
+
+    for (const p of parts) {
+      const digits = p.replace(/\D+/g, ''); // remove all non-digits
+      if (digits && !seen.has(digits)) {
+        seen.add(digits);
+        out.push(digits);
+      }
+    }
+    return out;
+  }
 
   const buildSql = (list) => {
     if (!list.length) return '-- Paste consignment numbers and click Generate';
     const inList = '(' + list.map(v => `'${v}'`).join(',') + ')';
+    // No trailing semicolon
     return `SELECT *\nFROM shipments\nWHERE cons_no IN ${inList}`;
   };
 
@@ -698,10 +712,12 @@ function initializeSqlSearchMacro() {
       btnCopy.textContent = 'Copied!';
       setTimeout(() => (btnCopy.textContent = 'Copy'), 1200);
     } catch {
-      copyToClipboard(text);
+      // Fallback to the global helper you already have
+      window.copyToClipboard(text);
     }
   });
 }
+
 
 /* =========================
    App Bootstrap
