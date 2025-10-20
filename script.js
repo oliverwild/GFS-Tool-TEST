@@ -660,41 +660,60 @@ function initializeRangeJumping() {
 }
 
 function initializeSqlSearchMacro() {
-  const inputEl  = document.getElementById('sql-macro-input');
   const outEl    = document.getElementById('sql-macro-output');
   const btnGen   = document.getElementById('sql-macro-generate');
   const btnClear = document.getElementById('sql-macro-clear');
   const btnCopy  = document.getElementById('sql-macro-copy');
   const results  = document.getElementById('sql-macro-results');
 
-  // New date UI elements
   const dateFrom = document.getElementById('sql-date-from');
   const dateTo   = document.getElementById('sql-date-to');
 
-  if (!inputEl || !outEl || !btnGen) return; // safety if tool not loaded
+  const criteriaList = document.getElementById('criteria-list');
+  const addRowBtn    = document.getElementById('add-criteria-row');
 
-  // ---- Limit calendars to last 12 months up to today ----
+  if (!criteriaList || !btnGen || !outEl) return;
+
+    const btnDateClear = document.getElementById('sql-date-clear');
+
+    btnDateClear?.addEventListener('click', () => {
+        if (dateFrom) dateFrom.value = '';
+        if (dateTo) dateTo.value = '';
+        // If the results panel is already visible, rebuild SQL without date filters
+        if (results && results.style.display === 'block') {
+            outEl.textContent = (typeof buildSql === 'function')
+                ? buildSql('', '')
+                : outEl.textContent;
+        }
+    });
+
+  // --- Field definitions ---
+  const FIELD_DEFS = [
+    { col: 'CONS_NO',     label: 'CONS_NO',     type: 'numeric' },
+    { col: 'CONTRACT_NO', label: 'CONTRACT_NO', type: 'numeric' },
+    { col: 'METRE_NO',    label: 'METRE_NO',    type: 'numeric' },
+    { col: 'CUSTOMER_ID', label: 'CUSTOMER_ID', type: 'numeric' },
+    { col: 'CUST_ID',     label: 'CUST_ID',     type: 'numeric' },
+    { col: 'CARRIER',     label: 'CARRIER',     type: 'text'    }, // special handling
+    { col: 'SHIP_REF',    label: 'SHIP_REF',    type: 'numeric' },
+    { col: 'CONS_REF',    label: 'CONS_REF',    type: 'numeric' },
+  ];
+
+  // --- Date bounds: last 12 months up to today ---
   (function setDateBounds() {
     if (!dateFrom || !dateTo) return;
-
     const today = new Date();
-    const maxStr = toInputDate(today); // yyyy-mm-dd
-
+    const maxStr = toInputDate(today);
     const min = new Date(today);
     min.setMonth(min.getMonth() - 12);
-    // clamp to 1st of month for a cleaner min (optional)
-    // min.setDate(1);
     const minStr = toInputDate(min);
-
     dateFrom.setAttribute('max', maxStr);
     dateTo.setAttribute('max', maxStr);
     dateFrom.setAttribute('min', minStr);
     dateTo.setAttribute('min', minStr);
   })();
 
-  // ---- Helpers ----
   function toInputDate(d) {
-    // returns yyyy-mm-dd for <input type="date">
     const yyyy = d.getFullYear();
     const mm   = String(d.getMonth() + 1).padStart(2, '0');
     const dd   = String(d.getDate()).padStart(2, '0');
@@ -702,7 +721,6 @@ function initializeSqlSearchMacro() {
   }
 
   function formatOracleDate(isoStr) {
-    // isoStr: yyyy-mm-dd -> DD-MON-YYYY (MON uppercase 3 letters)
     if (!isoStr) return '';
     const [y, m, d] = isoStr.split('-').map(s => parseInt(s, 10));
     const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
@@ -710,14 +728,87 @@ function initializeSqlSearchMacro() {
     return `${String(d).padStart(2, '0')}-${mon}-${y}`;
   }
 
-  // Keep only digits; drop everything else. Deduplicate while preserving order.
-  function parseConsignments(raw) {
-    const parts = raw.split(/[\s,;|\t\r\n]+/); // split on common delimiters/whitespace
+  // --- UI: create a criteria row ---
+  function addCriteriaRow(defaultField = 'CONS_NO') {
+    const row = document.createElement('div');
+    row.className = 'criteria-row';
+
+    const select = document.createElement('select');
+    select.className = 'form-select field-select';
+    FIELD_DEFS.forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f.col;
+      opt.textContent = f.label;
+      if (f.col === defaultField) opt.selected = true;
+      select.appendChild(opt);
+    });
+
+    const valueBox = document.createElement('div');
+    valueBox.className = 'value-box';
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'btn btn-outline remove-row';
+    removeBtn.type = 'button';
+    removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+
+    row.appendChild(select);
+    row.appendChild(valueBox);
+    row.appendChild(removeBtn);
+    criteriaList.appendChild(row);
+
+    function renderInput() {
+      const field = FIELD_DEFS.find(f => f.col === select.value);
+      valueBox.innerHTML = '';
+
+      if (field?.type === 'text' && field.col === 'CARRIER') {
+        // CARRIER: free text input; force UPPERCASE as user types/pastes
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = "e.g., DPD, HERMES";
+        input.className = 'criteria-input';
+        input.style.textTransform = 'uppercase';
+        input.addEventListener('input', () => {
+          // Keep caret position friendly while uppercasing
+          const pos = input.selectionStart;
+          input.value = input.value.toUpperCase();
+          input.setSelectionRange(pos, pos);
+        });
+        input.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const text = (e.clipboardData || window.clipboardData).getData('text');
+          document.execCommand('insertText', false, text.toUpperCase());
+        });
+        valueBox.appendChild(input);
+      } else {
+        // Numeric (textarea)
+        const ta = document.createElement('textarea');
+        ta.className = 'criteria-input';
+        ta.placeholder = 'Paste values (any format); we keep digits only';
+        valueBox.appendChild(ta);
+      }
+    }
+
+    renderInput();
+    select.addEventListener('change', renderInput);
+
+    removeBtn.addEventListener('click', () => {
+      if (criteriaList.children.length > 1) row.remove(); // keep at least one row
+    });
+
+    return row;
+  }
+
+  // Start with a default CONS_NO row
+  addCriteriaRow('CONS_NO');
+  addRowBtn?.addEventListener('click', () => addCriteriaRow('CONS_NO'));
+
+  // --- Parsing helpers ---
+  function parseNumericList(raw) {
+    const parts = String(raw || '').split(/[\s,;|\t\r\n]+/);
     const seen = new Set();
     const out = [];
-
     for (const p of parts) {
-      const digits = p.replace(/\D+/g, ''); // remove all non-digits
+      const digits = p.replace(/\D+/g, '');
       if (digits && !seen.has(digits)) {
         seen.add(digits);
         out.push(digits);
@@ -726,38 +817,80 @@ function initializeSqlSearchMacro() {
     return out;
   }
 
-  function buildSql(list, fromISO, toISO) {
-    if (!list.length) return '-- Paste consignment numbers and (optionally) choose dates, then click Generate';
+  function parseTextList(raw) {
+    // Split, trim, strip user quotes, uppercase, de-dupe (case-insensitive)
+    const parts = String(raw || '')
+      .split(/[\s,;|\t\r\n]+/)
+      .map(s => s.trim())
+      .filter(Boolean)
+      .map(s => s.replace(/^['"]|['"]$/g, ''))
+      .map(s => s.toUpperCase());
 
+    const seen = new Set();
+    const out = [];
+    for (const p of parts) {
+      if (!seen.has(p)) { seen.add(p); out.push(p); }
+    }
+    return out;
+  }
+
+  function escapeSqlString(value) {
+    return String(value).replace(/'/g, "''");
+  }
+
+  // --- Build SQL ---
+  function buildSql(fromISO, toISO) {
     const clauses = [];
-    const inList = '(' + list.map(v => `'${v}'`).join(',') + ')';
-    clauses.push(`cons_no IN ${inList}`);
+    const rows = Array.from(criteriaList.children);
 
-    // Add date filters if provided
-    if (fromISO) {
-      const d = formatOracleDate(fromISO);
-      clauses.push(`insert_date >= '${d}'`);
+    for (const row of rows) {
+      const fieldSel = row.querySelector('.field-select');
+      const valEl    = row.querySelector('.criteria-input');
+      if (!fieldSel || !valEl) continue;
+
+      const field = FIELD_DEFS.find(f => f.col === fieldSel.value);
+      if (!field) continue;
+
+      if (field.type === 'text' && field.col === 'CARRIER') {
+        // Support one or many: '=' for single, IN (...) for multiple
+        const list = parseTextList(valEl.value);       // already uppercased here
+        if (!list.length) continue;
+        const escaped = list.map(v => `'${escapeSqlString(v)}'`);
+        if (escaped.length === 1) {
+          clauses.push(`${field.col} = ${escaped[0]}`);
+        } else {
+          clauses.push(`${field.col} IN (${escaped.join(',')})`);
+        }
+      } else {
+        // numeric-only IN (...) for all other fields
+        const list = parseNumericList(valEl.value);
+        if (!list.length) continue;
+        const inList = '(' + list.map(v => `'${v}'`).join(',') + ')';
+        clauses.push(`${field.col} IN ${inList}`);
+      }
     }
-    if (toISO) {
-      const d = formatOracleDate(toISO);
-      clauses.push(`insert_date <= '${d}'`);
+
+    if (!clauses.length) {
+      return '-- Add at least one filter row and click Generate';
     }
+
+    if (fromISO) clauses.push(`insert_date >= '${formatOracleDate(fromISO)}'`);
+    if (toISO)   clauses.push(`insert_date <= '${formatOracleDate(toISO)}'`);
 
     return `SELECT *\nFROM shipments\nWHERE ${clauses.join('\n  AND ')}`;
   }
 
-  // ---- Events ----
+  // --- Events ---
   btnGen.addEventListener('click', () => {
-    const cons = parseConsignments(inputEl.value);
     const fromValue = dateFrom?.value || '';
     const toValue   = dateTo?.value   || '';
-
-    outEl.textContent = buildSql(cons, fromValue, toValue);
+    outEl.textContent = buildSql(fromValue, toValue);
     results.style.display = 'block';
   });
 
   btnClear.addEventListener('click', () => {
-    inputEl.value = '';
+    criteriaList.innerHTML = '';
+    addCriteriaRow('CONS_NO');
     if (dateFrom) dateFrom.value = '';
     if (dateTo)   dateTo.value   = '';
     outEl.textContent = '';
@@ -772,11 +905,13 @@ function initializeSqlSearchMacro() {
       btnCopy.textContent = 'Copied!';
       setTimeout(() => (btnCopy.textContent = 'Copy'), 1200);
     } catch {
-      // Fallback to your global helper
       window.copyToClipboard(text);
     }
   });
 }
+
+
+
 
 
 /* =========================
