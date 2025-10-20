@@ -1,477 +1,442 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GFS Tools</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GFS Tools</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body data-theme="dark">
-    <header class="header">
-        <nav class="navbar" role="navigation" aria-label="Main navigation">
-            <div class="nav-container">
-                <div class="nav-logo">
-                    <i class="fas fa-tools" aria-hidden="true"></i>
-                    <span>GFS Tools</span>
-                </div>
-                <div class="nav-controls">
-                    <button id="settings-toggle" class="settings-toggle" title="Open Settings" aria-label="Open settings">
-                        <i class="fas fa-cog" aria-hidden="true"></i>
-                    </button>
-                </div>
+  <header class="header">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <div class="nav-logo">
+          <i class="fas fa-tools" aria-hidden="true"></i>
+          <span>GFS Tools</span>
+        </div>
+        <div class="nav-controls">
+          <button id="settings-toggle" class="settings-toggle" title="Open Settings" aria-label="Open settings">
+            <i class="fas fa-cog" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="tools" class="tools-section">
+      <div class="container">
+        <div class="tools-grid">
+          <!-- Range Jumping -->
+          <div class="tool-card">
+            <div class="tool-icon" aria-hidden="true">
+              <i class="fas fa-arrow-up"></i>
             </div>
-        </nav>
-    </header>
-
-    <main>
-        <section id="tools" class="tools-section">
-            <div class="container">
-                <div class="tools-grid">
-                    <div class="tool-card">
-                        <div class="tool-icon" aria-hidden="true">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <h3>Range Jumping</h3>
-                        <p>Convert SQL inserts to update scripts with number jumping functionality.</p>
-                        <div class="tool-buttons">
-                            <button class="btn btn-outline open-tool" data-tool="range-jumping" aria-label="Open Range Jumping tool">Open</button>
-                        </div>
-                    </div>
-
-                    <div class="tool-card">
-                        <div class="tool-icon" aria-hidden="true">
-                            <i class="fas fa-cut"></i>
-                        </div>
-                        <h3>Range Splitting</h3>
-                        <p>Split number ranges by percentage for efficient distribution.</p>
-                        <div class="tool-buttons">
-                            <button class="btn btn-outline open-tool" data-tool="range-splitting" aria-label="Open Range Splitting tool">Open</button>
-                        </div>
-                    </div>
-
-                    <div class="tool-card">
-                        <div class="tool-icon" aria-hidden="true">
-                            <i class="fas fa-tag"></i>
-                        </div>
-                        <h3>Label Preview</h3>
-                        <p>Decode Base64 and preview labels either with PDF or Labelary API.</p>
-                        <div class="tool-buttons">
-                            <button class="btn btn-outline open-tool" data-tool="label-preview" aria-label="Open Label Preview tool">Open</button>
-                        </div>
-                    </div>
-
-                    <div class="tool-card">
-                        <div class="tool-icon" aria-hidden="true">
-                            <i class="fas fa-route"></i>
-                        </div>
-                        <h3>Route Mapping</h3>
-                        <p>Generate SQL inserts for carriers, services, and route details.</p>
-                        <div class="tool-buttons">
-                            <button class="btn btn-outline open-tool" data-tool="route-mapping" aria-label="Open Route Mapping tool">Open</button>
-                        </div>
-                    </div>
-                    <div class="tool-card">
-                        <div class="tool-icon" aria-hidden="true">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <h3>SQL Search Macro</h3>
-                        <p>Paste consignment numbers and instantly format them into a SQL search.</p>
-                        <div class="tool-buttons">
-                            <button class="btn btn-outline open-tool" data-tool="sql-search-macro"
-                                aria-label="Open SQL Search Macro tool">Open</button>
-                        </div>
-                    </div>
-                </div>
+            <h3>Range Jumping</h3>
+            <p>Convert SQL inserts to update scripts with number jumping functionality.</p>
+            <div class="tool-buttons">
+              <button class="btn btn-outline open-tool" data-tool="range-jumping" aria-label="Open Range Jumping tool">Open</button>
             </div>
-        </section>
-    </main>
+          </div>
 
-
-    <!-- Modals -->
-    <div id="tool-modal" class="modal">
-        <div class="modal-content">
-            <button class="close-modal-btn" id="close-tool-modal" title="Close Tool">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="modal-header">
-                <h2 id="modal-title">Tool</h2>
+          <!-- Range Splitting -->
+          <div class="tool-card">
+            <div class="tool-icon" aria-hidden="true">
+              <i class="fas fa-cut"></i>
             </div>
-            <div class="modal-body">
-                <!-- Range Splitting -->
-                <div id="range-splitting-content" class="tool-content" style="display: none;">
-                    <div class="input-section">
-                        <h3>Range Input</h3>
-                        <div class="range-inputs">
-                            <div class="input-group">
-                                <label for="start-range">Start Range:</label>
-                                <input type="number" id="start-range" placeholder="e.g., 1000" min="0">
-                            </div>
-                            <div class="input-group">
-                                <label for="end-range">End Range:</label>
-                                <input type="number" id="end-range" placeholder="e.g., 4000" min="0">
-                            </div>
-                        </div>
-                        <div class="range-info">
-                            <p><strong>Total Range:</strong> <span id="total-range">-</span></p>
-                            <p><strong>Available Numbers:</strong> <span id="available-numbers">-</span></p>
-                        </div>
-                    </div>
-
-                    <div class="split-section">
-                        <h3>Split Percentage</h3>
-                        <div class="percentage-control">
-                            <label for="split-percentage">Split at: <span id="percentage-display">50%</span></label>
-                            <input type="range" id="split-percentage" min="1" max="99" value="50">
-                        </div>
-                    </div>
-
-                    <div class="results-section">
-                        <h3>Split Results</h3>
-                        <div class="split-results">
-                            <div class="result-card">
-                                <h4>First Range</h4>
-                                <p class="range-display" id="first-range">-</p>
-                                <p class="range-count" id="first-count">-</p>
-                            </div>
-                            <div class="result-card">
-                                <h4>Second Range</h4>
-                                <p class="range-display" id="second-range">-</p>
-                                <p class="range-count" id="second-count">-</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="actions">
-                        <button class="btn btn-primary" id="calculate-split">Calculate Split</button>
-                        <button class="btn btn-secondary" id="copy-results">Copy Results</button>
-                        <button class="btn btn-outline" id="clear-inputs">Clear</button>
-                    </div>
-                </div>
-
-                <!-- Label Preview -->
-                <div id="label-preview-content" class="tool-content" style="display: none;">
-                    <div class="input-section">
-                        <h3>Base64 Label Data</h3>
-                        <div class="base64-input-group">
-                            <label for="base64-input">Paste your Base64 encoded label data:</label>
-                            <textarea id="base64-input" placeholder="Paste Base64 string here..." rows="8"></textarea>
-                            <div class="input-info">
-                                <p><strong>Data Length:</strong> <span id="data-length">0 characters</span></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="process-section">
-                        <h3>Process Label</h3>
-                        <div class="process-controls">
-                            <button class="btn btn-primary" id="process-label">Process Label</button>
-                            <button class="btn btn-outline" id="clear-label">Clear</button>
-                        </div>
-                        <div class="process-status" id="process-status" style="display: none;">
-                            <div class="status-step" id="step-decode">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <span>Decoding Base64...</span>
-                            </div>
-                            <div class="status-step" id="step-convert">
-                                <i class="fas fa-circle"></i>
-                                <span>Identifying Data Type...</span>
-                            </div>
-                            <div class="status-step" id="step-preview">
-                                <i class="fas fa-circle"></i>
-                                <span>Generating Label Preview...</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="results-section" id="label-results" style="display: none;">
-                        <h3>Label Preview</h3>
-                        <div class="preview-container" id="preview-container">
-                            <div class="preview-info">
-                                <p><strong>Data Type:</strong> <span id="data-type">-</span></p>
-                                <p><strong>Processed:</strong> <span id="processed-status">-</span></p>
-                            </div>
-                        </div>
-                        
-                        <div class="preview-actions">
-                            <div class="action-controls">
-                                <div class="filename-group">
-                                    <label for="filename-input">Filename:</label>
-                                    <input type="text" id="filename-input" class="filename-input" placeholder="Enter filename..." value="label">
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn btn-outline" id="copy-label-btn">
-                                        <i class="fas fa-copy"></i> Copy
-                                    </button>
-                                    <button class="btn btn-primary" id="download-label-btn">
-                                        <i class="fas fa-download"></i> Download
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="error-section" id="label-error" style="display: none;">
-                        <h3>Processing Error</h3>
-                        <div class="error-message">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <p id="error-text">An error occurred during processing.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Route Mapping -->
-                <div id="route-mapping-content" class="tool-content" style="display: none;">
-                    <div class="input-section">
-                        <h3>Route Configuration</h3>
-                        <div class="route-inputs">
-                            <div class="input-group">
-                                <label for="carrier-select">Carrier:</label>
-                                <select id="carrier-select" class="form-select">
-                                    <option value="">Select a carrier...</option>
-                                    <option value="DPD">DPD</option>
-                                    <option value="DPD Local">DPD Local</option>
-                                    <option value="DHL eCom">DHL eCom</option>
-                                    <option value="Evri">Evri</option>
-                                    <option value="UPS">UPS</option>
-                                    <option value="GFSI">GFSI</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <!-- Evri-specific fields (hidden by default) -->
-                        <div id="evri-fields" class="evri-specific-fields" style="display: none;">
-                            <h4>Evri Configuration</h4>
-                            <div class="evri-grid">
-                                <div class="input-group">
-                                    <label for="evri-account">Account Number (0-9):</label>
-                                    <input type="number" id="evri-account" class="form-input" min="0" max="9" placeholder="0-9">
-                                </div>
-                                
-                                <div class="input-group">
-                                    <label>Delivery Type:</label>
-                                    <div class="checkbox-group">
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" id="evri-iod" value="IOD">
-                                            <span>IOD</span>
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" id="evri-pod" value="POD">
-                                            <span>POD</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="input-group">
-                                    <label>Services:</label>
-                                    <div class="checkbox-group">
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" id="evri-next-day" value="ND">
-                                            <span>Next Day</span>
-                                        </label>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" id="evri-2-day" value="2D">
-                                            <span>2 Day</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="input-group">
-                                    <label for="evri-route-desc">Route Description:</label>
-                                    <input type="text" id="evri-route-desc" class="form-input" placeholder="e.g., Evri IOD">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        
-                    </div>
-
-                    <div class="actions">
-                        <button class="btn btn-primary" id="generate-sql">Generate SQL</button>
-                        <button class="btn btn-outline" id="clear-route">Clear</button>
-                    </div>
-
-                    <div class="results-section" id="route-results" style="display: none;">
-                        <h3>Generated SQL Script</h3>
-                        <div class="sql-output">
-                            <div class="sql-header">
-                                <span class="sql-label">INSERT Statement:</span>
-                                <button class="btn btn-secondary" id="copy-sql">Copy SQL</button>
-                            </div>
-                            <pre id="sql-script" class="sql-code"></pre>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Range Jumping -->
-                <div id="range-jumping-content" class="tool-content" style="display: none;">
-                    <div class="range-jump-options">
-                        <h3>Range Jump Tool</h3>
-                        <div class="option-tabs">
-                            <button class="option-tab active" data-option="local-ranges">Local Ranges</button>
-                            <button class="option-tab" data-option="coming-soon">Coming Soon</button>
-                        </div>
-                    </div>
-
-                    <!-- Local Ranges -->
-                    <div id="local-ranges-content" class="option-content active">
-
-                        <div class="input-section">
-                            <h4>Paste INSERT Script Results</h4>
-                            <div class="textarea-container">
-                                <textarea id="insert-script-input" placeholder="Paste your INSERT script results here..." rows="8"></textarea>
-                            </div>
-                            
-                            <div class="jump-section">
-                                <h4>Jump Amount</h4>
-                            <div class="jump-input-group">
-                                <div class="jump-input-row">
-                                    <label for="jump-amount">Enter the amount to jump by:</label>
-                                    <button class="btn btn-secondary copy-query-btn" id="copy-query">Query to get current ranges</button>
-                                </div>
-                                <input type="number" id="jump-amount" placeholder="e.g., 100" min="1" value="100">
-                            </div>
-                 
-                            
-                                <!-- Results box (hidden until generated) -->
-                                <div class="results-section" id="sql-macro-results" style="display: none; margin-top: 20px;">
-                                    <h3>Generated SQL Script</h3>
-                                    <div class="sql-output">
-                                        <div class="sql-header">
-                                            <span class="sql-label">Query:</span>
-                                            <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
-                                        </div>
-                                        <pre id="sql-macro-output" class="sql-code"></pre>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <!-- Hidden query element for copying -->
-                            <div id="range-query" style="display: none;">
-SELECT 
-    csc.contract_no,
-    csc.RANGE_ID,
-    sr.cons_start_no,
-    sr.cons_end_no,
-    sr.cons_cur_no,
-    csc.ITEM_RANGE_ID,
-    ir.START_NO,
-    ir.END_NO,
-    ir.CUR_NO
-FROM cust_site_contracts csc
-INNER JOIN SHIP_RANGES sr ON csc.RANGE_ID = sr.ID
-INNER JOIN ITEM_RANGES ir ON csc.ITEM_RANGE_ID = ir.ID
-WHERE NOT (sr.cons_cur_no = 1 AND sr.cons_end_no = 1);
-                            </div>
-                            </div>
-                        </div>
-
-                        <div class="actions">
-                            <button class="btn btn-primary" id="generate-update">Generate Update Script</button>
-                            <button class="btn btn-outline" id="clear-range-jump">Clear</button>
-                        </div>
-
-                        <div class="results-section" id="range-jump-results" style="display: none;">
-                            <h4>Generated Update Script</h4>
-                            <div class="update-script-output">
-                                <div class="script-header">
-                                    <span class="script-label">UPDATE Statements:</span>
-                                    <button class="btn btn-secondary" id="copy-update-script">Copy Script</button>
-                                </div>
-                                <pre id="update-script" class="script-code"></pre>
-                            </div>
-                        </div>
-                    </div>
-<!-- SQL Search Macro -->
-                            <div id="sql-search-macro-content" class="tool-content" style="display: none;">
-                                <div class="input-section">
-                                    <h3>Consignment Numbers</h3>
-                                    <div class="textarea-container">
-                                        <textarea id="sql-macro-input" placeholder="Paste consignment numbers..." rows="6"></textarea>
-                                    </div>
-                                </div>
-                            
-                                <div class="actions">
-                                    <button class="btn btn-primary" id="sql-macro-generate">Generate SQL</button>
-                                    <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
-                                </div>
-                            
-                                <div class="results-section" id="sql-macro-results" style="display: none; margin-top: 20px;">
-                                    <h3>Generated SQL Script</h3>
-                                    <div class="sql-output">
-                                        <div class="sql-header">
-                                            <span class="sql-label">Query:</span>
-                                            <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
-                                        </div>
-                                        <pre id="sql-macro-output" class="sql-code"></pre>
-                                    </div>
-                                </div>
-                            </div>
-
-                    <!-- Coming Soon Option -->
-                    <div id="coming-soon-content" class="option-content">
-                        <div class="wip-notice">
-                            <i class="fas fa-tools"></i>
-                            <h3>Coming Soon</h3>
-                            <p>Additional range jumping functionality will be available soon!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Default WIP Notice -->
-                <div class="wip-notice" id="default-wip">
-                    <i class="fas fa-tools"></i>
-                    <h3>Work In Progress</h3>
-                    <p>This tool is currently under development. Check back soon for the full functionality!</p>
-                </div>
+            <h3>Range Splitting</h3>
+            <p>Split number ranges by percentage for efficient distribution.</p>
+            <div class="tool-buttons">
+              <button class="btn btn-outline open-tool" data-tool="range-splitting" aria-label="Open Range Splitting tool">Open</button>
             </div>
+          </div>
+
+          <!-- Label Preview -->
+          <div class="tool-card">
+            <div class="tool-icon" aria-hidden="true">
+              <i class="fas fa-tag"></i>
+            </div>
+            <h3>Label Preview</h3>
+            <p>Decode Base64 and preview labels either with PDF or Labelary API.</p>
+            <div class="tool-buttons">
+              <button class="btn btn-outline open-tool" data-tool="label-preview" aria-label="Open Label Preview tool">Open</button>
+            </div>
+          </div>
+
+          <!-- Route Mapping -->
+          <div class="tool-card">
+            <div class="tool-icon" aria-hidden="true">
+              <i class="fas fa-route"></i>
+            </div>
+            <h3>Route Mapping</h3>
+            <p>Generate SQL inserts for carriers, services, and route details.</p>
+            <div class="tool-buttons">
+              <button class="btn btn-outline open-tool" data-tool="route-mapping" aria-label="Open Route Mapping tool">Open</button>
+            </div>
+          </div>
+
+          <!-- SQL Search Macro -->
+          <div class="tool-card">
+            <div class="tool-icon" aria-hidden="true">
+              <i class="fas fa-database"></i>
+            </div>
+            <h3>SQL Search Macro</h3>
+            <p>Paste consignment numbers and instantly format them into a SQL search.</p>
+            <div class="tool-buttons">
+              <button class="btn btn-outline open-tool" data-tool="sql-search-macro" aria-label="Open SQL Search Macro tool">Open</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Tools Modal -->
+  <div id="tool-modal" class="modal">
+    <div class="modal-content">
+      <button class="close-modal-btn" id="close-tool-modal" title="Close Tool">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="modal-header">
+        <h2 id="modal-title">Tool</h2>
+      </div>
+      <div class="modal-body">
+        <!-- Range Splitting -->
+        <div id="range-splitting-content" class="tool-content" style="display:none;">
+          <div class="input-section">
+            <h3>Range Input</h3>
+            <div class="range-inputs">
+              <div class="input-group">
+                <label for="start-range">Start Range:</label>
+                <input type="number" id="start-range" placeholder="e.g., 1000" min="0">
+              </div>
+              <div class="input-group">
+                <label for="end-range">End Range:</label>
+                <input type="number" id="end-range" placeholder="e.g., 4000" min="0">
+              </div>
+            </div>
+            <div class="range-info">
+              <p><strong>Total Range:</strong> <span id="total-range">-</span></p>
+              <p><strong>Available Numbers:</strong> <span id="available-numbers">-</span></p>
+            </div>
+          </div>
+
+          <div class="split-section">
+            <h3>Split Percentage</h3>
+            <div class="percentage-control">
+              <label for="split-percentage">Split at: <span id="percentage-display">50%</span></label>
+              <input type="range" id="split-percentage" min="1" max="99" value="50">
+            </div>
+          </div>
+
+          <div class="results-section">
+            <h3>Split Results</h3>
+            <div class="split-results">
+              <div class="result-card">
+                <h4>First Range</h4>
+                <p class="range-display" id="first-range">-</p>
+                <p class="range-count" id="first-count">-</p>
+              </div>
+              <div class="result-card">
+                <h4>Second Range</h4>
+                <p class="range-display" id="second-range">-</p>
+                <p class="range-count" id="second-count">-</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="calculate-split">Calculate Split</button>
+            <button class="btn btn-secondary" id="copy-results">Copy Results</button>
+            <button class="btn btn-outline" id="clear-inputs">Clear</button>
+          </div>
         </div>
 
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Settings</h2>
-                <button class="close-modal-btn" id="close-settings-modal" title="Close Settings">
-                    <i class="fas fa-times"></i>
-                </button>
+        <!-- Label Preview -->
+        <div id="label-preview-content" class="tool-content" style="display:none;">
+          <div class="input-section">
+            <h3>Base64 Label Data</h3>
+            <div class="base64-input-group">
+              <label for="base64-input">Paste your Base64 encoded label data:</label>
+              <textarea id="base64-input" placeholder="Paste Base64 string here..." rows="8"></textarea>
+              <div class="input-info">
+                <p><strong>Data Length:</strong> <span id="data-length">0 characters</span></p>
+              </div>
             </div>
-            <div class="modal-body">
-                <div class="settings-content">
-                    <!-- Theme Settings -->
-                    <div class="settings-section">
-                        <h3>Appearance</h3>
-                        <div class="setting-item">
-                            <label for="theme-select">Theme:</label>
-                            <select id="theme-select">
-                                <option value="dark">Dark Mode</option>
-                                <option value="light">Light Mode</option>
-                                <option value="auto">Auto (System)</option>
-                            </select>
-                        </div>
-                    </div>
+          </div>
 
-                    <!-- Tool Management -->
-                    <div class="settings-section">
-                        <h3>Tool Management</h3>
-                        <p class="settings-description">Drag tools to reorder them, or toggle to show/hide tools you don't use.</p>
-                        <div id="tool-order-list" class="tool-order-list">
-                            <!-- Tool cards will be populated here -->
-                        </div>
-                    </div>
+          <div class="process-section">
+            <h3>Process Label</h3>
+            <div class="process-controls">
+              <button class="btn btn-primary" id="process-label">Process Label</button>
+              <button class="btn btn-outline" id="clear-label">Clear</button>
+            </div>
+            <div class="process-status" id="process-status" style="display:none;">
+              <div class="status-step" id="step-decode">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Decoding Base64...</span>
+              </div>
+              <div class="status-step" id="step-convert">
+                <i class="fas fa-circle"></i>
+                <span>Identifying Data Type...</span>
+              </div>
+              <div class="status-step" id="step-preview">
+                <i class="fas fa-circle"></i>
+                <span>Generating Label Preview...</span>
+              </div>
+            </div>
+          </div>
 
-                    <!-- Reset Settings -->
-                    <div class="settings-section">
-                        <h3>Reset</h3>
-                        <button id="reset-settings" class="btn btn-outline">Reset to Defaults</button>
-                    </div>
+          <div class="results-section" id="label-results" style="display:none;">
+            <h3>Label Preview</h3>
+            <div class="preview-container" id="preview-container">
+              <div class="preview-info">
+                <p><strong>Data Type:</strong> <span id="data-type">-</span></p>
+                <p><strong>Processed:</strong> <span id="processed-status">-</span></p>
+              </div>
+            </div>
+
+            <div class="preview-actions">
+              <div class="action-controls">
+                <div class="filename-group">
+                  <label for="filename-input">Filename:</label>
+                  <input type="text" id="filename-input" class="filename-input" placeholder="Enter filename..." value="label">
                 </div>
+                <div class="action-buttons">
+                  <button class="btn btn-outline" id="copy-label-btn">
+                    <i class="fas fa-copy"></i> Copy
+                  </button>
+                  <button class="btn btn-primary" id="download-label-btn">
+                    <i class="fas fa-download"></i> Download
+                  </button>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div class="error-section" id="label-error" style="display:none;">
+            <h3>Processing Error</h3>
+            <div class="error-message">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p id="error-text">An error occurred during processing.</p>
+            </div>
+          </div>
         </div>
+
+        <!-- Route Mapping -->
+        <div id="route-mapping-content" class="tool-content" style="display:none;">
+          <div class="input-section">
+            <h3>Route Configuration</h3>
+            <div class="route-inputs">
+              <div class="input-group">
+                <label for="carrier-select">Carrier:</label>
+                <select id="carrier-select" class="form-select">
+                  <option value="">Select a carrier...</option>
+                  <option value="DPD">DPD</option>
+                  <option value="DPD Local">DPD Local</option>
+                  <option value="DHL eCom">DHL eCom</option>
+                  <option value="Evri">Evri</option>
+                  <option value="UPS">UPS</option>
+                  <option value="GFSI">GFSI</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Evri-specific fields -->
+            <div id="evri-fields" class="evri-specific-fields" style="display:none;">
+              <h4>Evri Configuration</h4>
+              <div class="evri-grid">
+                <div class="input-group">
+                  <label for="evri-account">Account Number (0-9):</label>
+                  <input type="number" id="evri-account" class="form-input" min="0" max="9" placeholder="0-9">
+                </div>
+
+                <div class="input-group">
+                  <label>Delivery Type:</label>
+                  <div class="checkbox-group">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="evri-iod" value="IOD"><span>IOD</span>
+                    </label>
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="evri-pod" value="POD"><span>POD</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="input-group">
+                  <label>Services:</label>
+                  <div class="checkbox-group">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="evri-next-day" value="ND"><span>Next Day</span>
+                    </label>
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="evri-2-day" value="2D"><span>2 Day</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="input-group">
+                  <label for="evri-route-desc">Route Description:</label>
+                  <input type="text" id="evri-route-desc" class="form-input" placeholder="e.g., Evri IOD">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="generate-sql">Generate SQL</button>
+            <button class="btn btn-outline" id="clear-route">Clear</button>
+          </div>
+
+          <div class="results-section" id="route-results" style="display:none;">
+            <h3>Generated SQL Script</h3>
+            <div class="sql-output">
+              <div class="sql-header">
+                <span class="sql-label">INSERT Statement:</span>
+                <button class="btn btn-secondary" id="copy-sql">Copy SQL</button>
+              </div>
+              <pre id="sql-script" class="sql-code"></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Range Jumping -->
+        <div id="range-jumping-content" class="tool-content" style="display:none;">
+          <div class="range-jump-options">
+            <h3>Range Jump Tool</h3>
+            <div class="option-tabs">
+              <button class="option-tab active" data-option="local-ranges">Local Ranges</button>
+              <button class="option-tab" data-option="coming-soon">Coming Soon</button>
+            </div>
+          </div>
+
+          <!-- Local Ranges -->
+          <div id="local-ranges-content" class="option-content active">
+            <div class="input-section">
+              <h4>Paste INSERT Script Results</h4>
+              <div class="textarea-container">
+                <textarea id="insert-script-input" placeholder="Paste your INSERT script results here..." rows="8"></textarea>
+              </div>
+
+              <div class="jump-section">
+                <h4>Jump Amount</h4>
+                <div class="jump-input-group">
+                  <div class="jump-input-row">
+                    <label for="jump-amount">Enter the amount to jump by:</label>
+                    <button class="btn btn-secondary copy-query-btn" id="copy-query">Query to get current ranges</button>
+                  </div>
+                  <input type="number" id="jump-amount" placeholder="e.g., 100" min="1" value="100">
+                </div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-primary" id="generate-update">Generate Update Script</button>
+              <button class="btn btn-outline" id="clear-range-jump">Clear</button>
+            </div>
+
+            <div class="results-section" id="range-jump-results" style="display:none;">
+              <h4>Generated Update Script</h4>
+              <div class="update-script-output">
+                <div class="script-header">
+                  <span class="script-label">UPDATE Statements:</span>
+                  <button class="btn btn-secondary" id="copy-update-script">Copy Script</button>
+                </div>
+                <pre id="update-script" class="script-code"></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coming Soon -->
+          <div id="coming-soon-content" class="option-content">
+            <div class="wip-notice">
+              <i class="fas fa-tools"></i>
+              <h3>Coming Soon</h3>
+              <p>Additional range jumping functionality will be available soon!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- SQL Search Macro (separate tool) -->
+        <div id="sql-search-macro-content" class="tool-content" style="display:none;">
+          <div class="input-section">
+            <h3>Consignment Numbers</h3>
+            <div class="textarea-container">
+              <textarea id="sql-macro-input" placeholder="Paste consignment numbers (newlines, spaces, or commas)..." rows="6"></textarea>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="sql-macro-generate">Generate SQL</button>
+            <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
+          </div>
+
+          <div class="results-section" id="sql-macro-results" style="display:none; margin-top:20px;">
+            <h3>Generated SQL Script</h3>
+            <div class="sql-output">
+              <div class="sql-header">
+                <span class="sql-label">Query:</span>
+                <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
+              </div>
+              <pre id="sql-macro-output" class="sql-code"></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Default WIP Notice -->
+        <div class="wip-notice" id="default-wip">
+          <i class="fas fa-tools"></i>
+          <h3>Work In Progress</h3>
+          <p>This tool is currently under development. Check back soon for the full functionality!</p>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script src="script.js"></script>
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="close-modal-btn" id="close-settings-modal" title="Close Settings">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-content">
+          <!-- Appearance -->
+          <div class="settings-section">
+            <h3>Appearance</h3>
+            <div class="setting-item">
+              <label for="theme-select">Theme:</label>
+              <select id="theme-select">
+                <option value="dark">Dark Mode</option>
+                <option value="light">Light Mode</option>
+                <option value="auto">Auto (System)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tool Management -->
+          <div class="settings-section">
+            <h3>Tool Management</h3>
+            <p class="settings-description">Drag tools to reorder them, or toggle to show/hide tools you don't use.</p>
+            <div id="tool-order-list" class="tool-order-list"><!-- populated by JS --></div>
+          </div>
+
+          <!-- Reset -->
+          <div class="settings-section">
+            <h3>Reset</h3>
+            <button id="reset-settings" class="btn btn-outline">Reset to Defaults</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App script -->
+  <script src="script.js"></script>
 </body>
 </html>
