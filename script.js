@@ -667,7 +667,48 @@ function initializeSqlSearchMacro() {
   const btnCopy  = document.getElementById('sql-macro-copy');
   const results  = document.getElementById('sql-macro-results');
 
-  if (!inputEl || !outEl || !btnGen) return; // safety
+  // New date UI elements
+  const dateFrom = document.getElementById('sql-date-from');
+  const dateTo   = document.getElementById('sql-date-to');
+
+  if (!inputEl || !outEl || !btnGen) return; // safety if tool not loaded
+
+  // ---- Limit calendars to last 12 months up to today ----
+  (function setDateBounds() {
+    if (!dateFrom || !dateTo) return;
+
+    const today = new Date();
+    const maxStr = toInputDate(today); // yyyy-mm-dd
+
+    const min = new Date(today);
+    min.setMonth(min.getMonth() - 12);
+    // clamp to 1st of month for a cleaner min (optional)
+    // min.setDate(1);
+    const minStr = toInputDate(min);
+
+    dateFrom.setAttribute('max', maxStr);
+    dateTo.setAttribute('max', maxStr);
+    dateFrom.setAttribute('min', minStr);
+    dateTo.setAttribute('min', minStr);
+  })();
+
+  // ---- Helpers ----
+  function toInputDate(d) {
+    // returns yyyy-mm-dd for <input type="date">
+    const yyyy = d.getFullYear();
+    const mm   = String(d.getMonth() + 1).padStart(2, '0');
+    const dd   = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function formatOracleDate(isoStr) {
+    // isoStr: yyyy-mm-dd -> DD-MON-YYYY (MON uppercase 3 letters)
+    if (!isoStr) return '';
+    const [y, m, d] = isoStr.split('-').map(s => parseInt(s, 10));
+    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const mon = months[(m - 1) || 0];
+    return `${String(d).padStart(2, '0')}-${mon}-${y}`;
+  }
 
   // Keep only digits; drop everything else. Deduplicate while preserving order.
   function parseConsignments(raw) {
@@ -685,21 +726,40 @@ function initializeSqlSearchMacro() {
     return out;
   }
 
-  const buildSql = (list) => {
-    if (!list.length) return '-- Paste consignment numbers and click Generate';
-    const inList = '(' + list.map(v => `'${v}'`).join(',') + ')';
-    // No trailing semicolon
-    return `SELECT *\nFROM shipments\nWHERE cons_no IN ${inList}`;
-  };
+  function buildSql(list, fromISO, toISO) {
+    if (!list.length) return '-- Paste consignment numbers and (optionally) choose dates, then click Generate';
 
+    const clauses = [];
+    const inList = '(' + list.map(v => `'${v}'`).join(',') + ')';
+    clauses.push(`cons_no IN ${inList}`);
+
+    // Add date filters if provided
+    if (fromISO) {
+      const d = formatOracleDate(fromISO);
+      clauses.push(`insert_date >= '${d}'`);
+    }
+    if (toISO) {
+      const d = formatOracleDate(toISO);
+      clauses.push(`insert_date <= '${d}'`);
+    }
+
+    return `SELECT *\nFROM shipments\nWHERE ${clauses.join('\n  AND ')}`;
+  }
+
+  // ---- Events ----
   btnGen.addEventListener('click', () => {
     const cons = parseConsignments(inputEl.value);
-    outEl.textContent = buildSql(cons);
+    const fromValue = dateFrom?.value || '';
+    const toValue   = dateTo?.value   || '';
+
+    outEl.textContent = buildSql(cons, fromValue, toValue);
     results.style.display = 'block';
   });
 
   btnClear.addEventListener('click', () => {
     inputEl.value = '';
+    if (dateFrom) dateFrom.value = '';
+    if (dateTo)   dateTo.value   = '';
     outEl.textContent = '';
     results.style.display = 'none';
   });
@@ -712,7 +772,7 @@ function initializeSqlSearchMacro() {
       btnCopy.textContent = 'Copied!';
       setTimeout(() => (btnCopy.textContent = 'Copy'), 1200);
     } catch {
-      // Fallback to the global helper you already have
+      // Fallback to your global helper
       window.copyToClipboard(text);
     }
   });

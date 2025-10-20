@@ -614,3 +614,27 @@ p { margin-bottom: 1rem; color: var(--text-secondary); }
 @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
 }
+
+/* --- SQL Search Macro: Date filter layout --- */
+.date-filter-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .date-filter-group {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Make inputs comfortable for 20-digit values (and wider on larger screens) */
+#sql-macro-input {
+  min-width: min(100%, 60ch);
+}
+
+/* Date inputs should not appear cramped */
+#sql-date-from,
+#sql-date-to {
+  min-width: 16ch; /* shows full yyyy-mm-dd without shrinking */
+}

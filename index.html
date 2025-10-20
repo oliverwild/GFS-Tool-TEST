@@ -358,32 +358,48 @@
             </div>
           </div>
         </div>
+<!-- SQL Search Macro -->
+<div id="sql-search-macro-content" class="tool-content" style="display: none;">
+    <div class="input-section">
+        <h3>Consignment Numbers</h3>
+        <div class="textarea-container">
+            <textarea id="sql-macro-input" placeholder="Paste consignment numbers..." rows="6"></textarea>
+        </div>
+    </div>
 
-        <!-- SQL Search Macro (separate tool) -->
-        <div id="sql-search-macro-content" class="tool-content" style="display:none;">
-          <div class="input-section">
-            <h3>Consignment Numbers</h3>
-            <div class="textarea-container">
-              <textarea id="sql-macro-input" placeholder="Paste consignment numbers (newlines, spaces, or commas)..." rows="6"></textarea>
+    <div class="input-section">
+        <h3>Date Filter (optional)</h3>
+        <p class="settings-description" style="margin-top:-.25rem;">Limit results by <code>insert_date</code>. Calendar
+            shows the last 12 months up to today.</p>
+        <div class="date-filter-group">
+            <div class="input-group">
+                <label for="sql-date-from">From date</label>
+                <input type="date" id="sql-date-from" class="form-input" />
             </div>
-          </div>
+            <div class="input-group">
+                <label for="sql-date-to">To date</label>
+                <input type="date" id="sql-date-to" class="form-input" />
+            </div>
+        </div>
+    </div>
 
-          <div class="actions">
-            <button class="btn btn-primary" id="sql-macro-generate">Generate SQL</button>
-            <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
-          </div>
+    <div class="actions">
+        <button class="btn btn-primary" id="sql-macro-generate">Generate SQL</button>
+        <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
+    </div>
 
-          <div class="results-section" id="sql-macro-results" style="display:none; margin-top:20px;">
-            <h3>Generated SQL Script</h3>
-            <div class="sql-output">
-              <div class="sql-header">
+    <div class="results-section" id="sql-macro-results" style="display: none; margin-top: 20px;">
+        <h3>Generated SQL Script</h3>
+        <div class="sql-output">
+            <div class="sql-header">
                 <span class="sql-label">Query:</span>
                 <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
-              </div>
-              <pre id="sql-macro-output" class="sql-code"></pre>
             </div>
-          </div>
+            <pre id="sql-macro-output" class="sql-code"></pre>
         </div>
+    </div>
+</div>
+
 
         <!-- Default WIP Notice -->
         <div class="wip-notice" id="default-wip">
