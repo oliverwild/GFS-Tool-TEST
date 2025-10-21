@@ -3,10 +3,10 @@
 ========================= */
 function initializeSettings(toolModal) {
   const settingsToggle = document.getElementById('settings-toggle');
-  const settingsModal  = document.getElementById('settings-modal');
-  const closeSettings  = document.getElementById('close-settings-modal');
-  const themeSelect    = document.getElementById('theme-select');
-  const resetBtn       = document.getElementById('reset-settings');
+  const settingsModal = document.getElementById('settings-modal');
+  const closeSettings = document.getElementById('close-settings-modal');
+  const themeSelect = document.getElementById('theme-select');
+  const resetBtn = document.getElementById('reset-settings');
 
   loadSettings();
 
@@ -46,14 +46,14 @@ function loadSettings() {
   const themeSelect = document.getElementById('theme-select');
   if (themeSelect) themeSelect.value = theme;
 
-  const toolOrder = settings.toolOrder || ['range-splitting','label-preview','range-jumping','route-mapping','sql-search-macro'];
+  const toolOrder = settings.toolOrder || ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping', 'sql-search-macro'];
   const toolVisibility = settings.toolVisibility || {
     'range-splitting': true,
-    'label-preview':   true,
-    'range-jumping':   true,
-    'route-mapping':   true,
-    'formatter':      true,
-    'sql-search-macro':true
+    'label-preview': true,
+    'range-jumping': true,
+    'route-mapping': true,
+    'formatter': true,
+    'sql-search-macro': true
   };
 
   applyToolOrder(toolOrder);
@@ -89,22 +89,23 @@ function resetSettings() {
 function populateToolOrderList() {
   const toolOrderList = document.getElementById('tool-order-list');
   const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
-  const toolOrder = settings.toolOrder || ['range-splitting','label-preview','range-jumping','route-mapping','formatter','sql-search-macro',];
+  const toolOrder = settings.toolOrder || ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping', 'formatter', 'sql-search-macro',];
   const toolVisibility = settings.toolVisibility || {
     'range-splitting': true,
-    'label-preview':   true,
-    'range-jumping':   true,
-    'route-mapping':   true,
-    'formatter':      true,
-    'sql-search-macro':true
+    'label-preview': true,
+    'range-jumping': true,
+    'route-mapping': true,
+    'formatter': true,
+    'sql-search-macro': true
   };
 
   const toolData = {
-    'range-splitting':  { name: 'Range Splitting', description: 'Split ranges into smaller segments', icon: 'fas fa-cut' },
-    'label-preview':    { name: 'Label Preview',   description: 'Preview and generate shipping labels', icon: 'fas fa-tag' },
-    'range-jumping':    { name: 'Range Jumping',   description: 'Generate UPDATE scripts for range numbers', icon: 'fas fa-arrow-right' },
-    'route-mapping':    { name: 'Route Mapping',   description: 'Generate SQL INSERT statements for carrier routes', icon: 'fas fa-route' },
-    'sql-search-macro': { name: 'SQL Search Macro',description: 'Build WHERE IN list from consignments', icon: 'fas fa-database' }
+    'range-splitting': { name: 'Range Splitting', description: 'Split ranges into smaller segments', icon: 'fas fa-cut' },
+    'label-preview': { name: 'Label Preview', description: 'Preview and generate shipping labels', icon: 'fas fa-tag' },
+    'range-jumping': { name: 'Range Jumping', description: 'Generate UPDATE scripts for range numbers', icon: 'fas fa-arrow-right' },
+    'route-mapping': { name: 'Route Mapping', description: 'Generate SQL INSERT statements for carrier routes', icon: 'fas fa-route' },
+    'sql-search-macro': { name: 'SQL Search Macro', description: 'Build WHERE IN list from consignments', icon: 'fas fa-database' },
+    'formatter': { name: 'XML & JSON Formatter', description: 'Pretty-print or minify JSON/XML', icon: 'fas fa-code' }
   };
 
   toolOrderList.innerHTML = '';
@@ -297,23 +298,23 @@ function populateSimpleToolList() {
   const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
   const toolOrder = (settings.toolOrder && settings.toolOrder.length)
     ? settings.toolOrder
-    : ['range-splitting','label-preview','range-jumping','route-mapping','sql-search-macro'];
+    : ['range-splitting', 'label-preview', 'range-jumping', 'route-mapping', 'sql-search-macro'];
   const toolVisibility = settings.toolVisibility || {
     'range-splitting': true,
-    'label-preview':   true,
-    'range-jumping':   true,
-    'route-mapping':   true,
-    'sql-search-macro':true
+    'label-preview': true,
+    'range-jumping': true,
+    'route-mapping': true,
+    'sql-search-macro': true
   };
 
-const toolData = {
-  'range-splitting':  { name: 'Range Splitting', description: 'Split ranges into smaller segments', icon: 'fas fa-cut' },
-  'label-preview':    { name: 'Label Preview',   description: 'Preview and generate shipping labels', icon: 'fas fa-tag' },
-  'range-jumping':    { name: 'Range Jumping',   description: 'Generate UPDATE scripts for range numbers', icon: 'fas fa-arrow-right' },
-  'route-mapping':    { name: 'Route Mapping',   description: 'Generate SQL INSERT statements for carrier routes', icon: 'fas fa-route' },
-  'sql-search-macro': { name: 'SQL Search Macro',description: 'Build WHERE IN list from consignments', icon: 'fas fa-database' },
-  'formatter':        { name: 'XML & JSON Formatter', description: 'Pretty-print or minify JSON/XML', icon: 'fas fa-code' }
-};
+  const toolData = {
+    'range-splitting': { name: 'Range Splitting', description: 'Split ranges into smaller segments', icon: 'fas fa-cut' },
+    'label-preview': { name: 'Label Preview', description: 'Preview and generate shipping labels', icon: 'fas fa-tag' },
+    'range-jumping': { name: 'Range Jumping', description: 'Generate UPDATE scripts for range numbers', icon: 'fas fa-arrow-right' },
+    'route-mapping': { name: 'Route Mapping', description: 'Generate SQL INSERT statements for carrier routes', icon: 'fas fa-route' },
+    'sql-search-macro': { name: 'SQL Search Macro', description: 'Build WHERE IN list from consignments', icon: 'fas fa-database' },
+    'formatter': { name: 'XML & JSON Formatter', description: 'Pretty-print or minify JSON/XML', icon: 'fas fa-code' }
+  };
 
 
   toolList.innerHTML = '';
@@ -546,8 +547,8 @@ function initializeRouteMapping() {
     const accountNumber = document.getElementById('evri-account').value;
     const isIOD = document.getElementById('evri-iod').checked;
     const isPOD = document.getElementById('evri-pod').checked;
-    const isND  = document.getElementById('evri-next-day').checked;
-    const is2D  = document.getElementById('evri-2-day').checked;
+    const isND = document.getElementById('evri-next-day').checked;
+    const is2D = document.getElementById('evri-2-day').checked;
     const routeDesc = document.getElementById('evri-route-desc').value || 'Evri';
 
     if (!accountNumber || accountNumber < 0 || accountNumber > 9) { alert('Enter a valid account number (0-9).'); return; }
@@ -632,7 +633,7 @@ function initializeRangeJumping() {
 
       const gen = (vals) => {
         if (vals.length >= 9) {
-          const rangeId   = vals[1];
+          const rangeId = vals[1];
           const consCurNo = vals[4];
           const itemRangeId = vals[5];
           const curNo = vals[8];
@@ -675,23 +676,55 @@ function initializeRangeJumping() {
 
 function initializeFormatter() {
   const input = document.getElementById('format-input');
-  const out   = document.getElementById('format-output');
-  const len   = document.getElementById('format-len');
-  const mode  = document.getElementById('format-mode');
-  const indentEl = document.getElementById('format-indent');
+  const out = document.getElementById('format-output');
+  const len = document.getElementById('format-len');
+  const mode      = document.getElementById('format-mode');
+  const indentSel = document.getElementById('indent-select');   // NEW
+  const trimSel   = document.getElementById('format-trim');     // NEW
+
 
   const btnPretty = document.getElementById('format-pretty');
   const btnMinify = document.getElementById('format-minify');
-  const btnClear  = document.getElementById('format-clear');
-  const btnCopy   = document.getElementById('format-copy');
-  const btnCopy2  = document.getElementById('format-copy-2');
+  const btnClear = document.getElementById('format-clear');
+  const btnCopy = document.getElementById('format-copy');
+  const btnCopy2 = document.getElementById('format-copy-2');
 
   const statusBox = document.getElementById('format-status');
-  const errBox    = document.getElementById('format-error');
-  const errText   = document.getElementById('format-error-text');
-  const results   = document.getElementById('format-results');
+  const errBox = document.getElementById('format-error');
+  const errText = document.getElementById('format-error-text');
+  const results = document.getElementById('format-results');
 
-  const getIndent = () => Math.max(0, Math.min(8, parseInt(indentEl.value || '3', 10) || 0));
+    async function copyTextFallback(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+
+  async function copyOutputToClipboard(btn) {
+    const text = (out?.textContent || '').trim();
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      await copyTextFallback(text);
+    }
+    if (btn) {
+      const old = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => (btn.textContent = old), 1000);
+    }
+  }
+  
+ const getIndent = () => {
+  const v = parseInt((indentSel?.value ?? '3'), 10);
+  return Math.max(0, Math.min(8, isNaN(v) ? 3 : v));
+};
 
   const showError = (msg) => {
     errText.textContent = msg;
@@ -719,37 +752,94 @@ function initializeFormatter() {
     return pretty ? JSON.stringify(obj, null, getIndent()) : JSON.stringify(obj);
   }
 
-  // Lightweight XML pretty-printer (DOM-safe; tolerates insignificant whitespace)
-  function formatXML(raw, pretty = true) {
-    // Basic parse to validate
-    const parser = new DOMParser();
-    const dom = parser.parseFromString(raw, 'application/xml');
-    const parseErr = dom.getElementsByTagName('parsererror')[0];
-    if (parseErr) {
-      // Extract readable error text
-      const msg = parseErr.textContent.replace(/\s+/g, ' ').trim();
-      throw new Error(msg || 'Invalid XML');
-    }
-    // Serialize without formatting first
-    let xml = new XMLSerializer().serializeToString(dom);
-    if (!pretty) return xml.replace(/>\s+</g, '><').trim();
-
-    // Pretty print by indentation on tag boundaries
-    xml = xml
-      .replace(/>\s+</g, '><')      // collapse in-between whitespace
-      .replace(/</g, '\n<')         // line break before tags
-      .trim();
-
-    const lines = xml.split('\n');
-    const step = ' '.repeat(getIndent());
-    let pad = 0;
-    return lines.map((line) => {
-      if (/^<\/[^>]+>/.test(line)) pad = Math.max(0, pad - 1);
-      const outLine = step.repeat(pad) + line;
-      if (/^<[^\/?!][^>]*[^\/]>$/.test(line)) pad += 1; // open tag that isn't self-closing
-      return outLine;
-    }).join('\n').trim();
+function formatXML(raw, pretty = true) {
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(raw, 'application/xml');
+  const parseErr = dom.getElementsByTagName('parsererror')[0];
+  if (parseErr) {
+    const msg = parseErr.textContent.replace(/\s+/g, ' ').trim();
+    throw new Error(msg || 'Invalid XML');
   }
+
+  // Minified (also removes whitespace between text and closing tag)
+  const min = new XMLSerializer().serializeToString(dom)
+    .replace(/>\s+</g, '><')
+    .replace(/(\S)\s+<\/(?!\?)/g, '$1</')
+    .trim();
+  if (!pretty) return min;
+
+  const IND = ' '.repeat(getIndent());
+
+  const escText = (s) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  const renderAttrs = (el) =>
+    Array.from(el.attributes).map(a =>
+      ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`).join('');
+
+  // true if element has exactly one non-empty text node (no line breaks)
+  const isInlineTextElem = (el) => {
+    const children = Array.from(el.childNodes);
+    if (children.length !== 1 || children[0].nodeType !== 3) return false; // TEXT_NODE
+    const t = children[0].nodeValue ?? '';
+    if (!t.trim()) return false;
+    return !/\r|\n/.test(t); // no line breaks in the text
+  };
+
+  const walk = (node, depth) => {
+    switch (node.nodeType) {
+      case 1: { // ELEMENT_NODE
+        const el = node;
+        const name = el.nodeName;
+        const attrs = renderAttrs(el);
+
+        // <Tag/> (no children & no text)
+        if (el.childNodes.length === 0) {
+          return `${IND.repeat(depth)}<${name}${attrs}/>`;
+        }
+
+        // <Tag>text</Tag> inline
+        if (isInlineTextElem(el)) {
+          const text = escText(el.textContent.trim());
+          return `${IND.repeat(depth)}<${name}${attrs}>${text}</${name}>`;
+        }
+
+        // Block-style with children
+        const open = `${IND.repeat(depth)}<${name}${attrs}>`;
+        const inner = Array.from(el.childNodes)
+          .map(ch => walk(ch, depth + 1))
+          .filter(Boolean)
+          .join('\n');
+        const close = `${IND.repeat(depth)}</${name}>`;
+        return inner ? `${open}\n${inner}\n${close}` : `${open}${close}`;
+      }
+      case 3: { // TEXT_NODE
+        const t = node.nodeValue ?? '';
+        if (!t.trim()) return ''; // ignore pure whitespace
+        // If we ever hit text here (inside a complex element), trim ends and show on its own line
+        return `${IND.repeat(depth)}${escText(t.trim())}`;
+      }
+      case 4: { // CDATA_SECTION_NODE
+        return `${IND.repeat(depth)}<![CDATA[${node.nodeValue || ''}]]>`;
+      }
+      case 7: { // PROCESSING_INSTRUCTION_NODE
+        return `${IND.repeat(depth)}<?${node.nodeName} ${node.nodeValue || ''}?>`;
+      }
+      case 8: { // COMMENT_NODE
+        return `${IND.repeat(depth)}<!--${node.nodeValue || ''}-->`;
+      }
+      case 9: { // DOCUMENT_NODE
+        return Array.from(node.childNodes).map(ch => walk(ch, depth)).filter(Boolean).join('\n');
+      }
+      default:
+        return '';
+    }
+  };
+
+  return walk(dom, 0).trim();
+}
+
+
 
   function run(pretty) {
     clearError();
@@ -773,6 +863,23 @@ function initializeFormatter() {
     }
   }
 
+   input.addEventListener('input', () => { len.textContent = String(input.value.length); });
+  btnPretty.addEventListener('click', () => run(true));
+  btnMinify.addEventListener('click', () => run(false));
+  btnClear.addEventListener('click', () => { input.value = ''; len.textContent = '0'; setOutput(''); clearError(); });
+
+  if (btnCopy2) {
+    btnCopy2.addEventListener('click', () => copyOutputToClipboard(btnCopy2));
+  }
+  // (Optional: if btnCopy exists, guard it too)
+  if (btnCopy) {
+    btnCopy.addEventListener('click', async () => {
+      const t = input.value;
+      if (!t.trim()) return;
+      try { await navigator.clipboard.writeText(t); } catch { await copyTextFallback(t); }
+      const old = btnCopy.textContent; btnCopy.textContent = 'Copied!'; setTimeout(() => (btnCopy.textContent = old), 1000);
+    });
+  }
   // Events
   input.addEventListener('input', () => { len.textContent = String(input.value.length); });
   btnPretty.addEventListener('click', () => run(true));
@@ -799,7 +906,7 @@ function initializeFormatter() {
 
 
 function initializeSqlSearchMacro() {
-  const outEl    = document.getElementById('sql-macro-output');
+  const outEl = document.getElementById('sql-macro-output');
   const btnGen = document.getElementById('sql-macro-generate');
   const btnClear = document.getElementById('sql-macro-clear');
   const btnCopy = document.getElementById('sql-macro-copy');
@@ -814,7 +921,7 @@ function initializeSqlSearchMacro() {
   if (!criteriaList || !btnGen || !outEl) return;
 
   if (initializeSqlSearchMacro._wired) return;
-      initializeSqlSearchMacro._wired = true;
+  initializeSqlSearchMacro._wired = true;
 
   const btnDateClear = document.getElementById('sql-date-clear');
   btnDateClear?.addEventListener('click', () => {
@@ -830,14 +937,14 @@ function initializeSqlSearchMacro() {
 
   // --- Field definitions ---
   const FIELD_DEFS = [
-    { col: 'CONS_NO',     label: 'CONS_NO',     type: 'text' },
+    { col: 'CONS_NO', label: 'CONS_NO', type: 'text' },
     { col: 'CONTRACT_NO', label: 'CONTRACT_NO', type: 'numeric' },
-    { col: 'METRE_NO',    label: 'METRE_NO',    type: 'numeric' },
+    { col: 'METRE_NO', label: 'METRE_NO', type: 'numeric' },
     { col: 'CUSTOMER_ID', label: 'CUSTOMER_ID', type: 'numeric' },
-    { col: 'CUST_ID',     label: 'CUST_ID',     type: 'numeric' },
-    { col: 'CARRIER',     label: 'CARRIER',     type: 'text'    }, // special handling
-    { col: 'SHIP_REF',    label: 'SHIP_REF',    type: 'text' },
-    { col: 'CONS_REF',    label: 'CONS_REF',    type: 'text' },
+    { col: 'CUST_ID', label: 'CUST_ID', type: 'numeric' },
+    { col: 'CARRIER', label: 'CARRIER', type: 'text' }, // special handling
+    { col: 'SHIP_REF', label: 'SHIP_REF', type: 'text' },
+    { col: 'CONS_REF', label: 'CONS_REF', type: 'text' },
   ];
 
   // --- Date bounds: last 12 months up to today ---
@@ -856,15 +963,15 @@ function initializeSqlSearchMacro() {
 
   function toInputDate(d) {
     const yyyy = d.getFullYear();
-    const mm   = String(d.getMonth() + 1).padStart(2, '0');
-    const dd   = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   }
 
   function formatOracleDate(isoStr) {
     if (!isoStr) return '';
     const [y, m, d] = isoStr.split('-').map(s => parseInt(s, 10));
-    const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     const mon = months[(m - 1) || 0];
     return `${String(d).padStart(2, '0')}-${mon}-${y}`;
   }
@@ -948,27 +1055,27 @@ function initializeSqlSearchMacro() {
 
     return row;
   }
-// Start with a default CONS_NO row (only if none exist)
-if (!criteriaList.querySelector('.criteria-row')) {
-  addCriteriaRow('CONS_NO');
-}
+  // Start with a default CONS_NO row (only if none exist)
+  if (!criteriaList.querySelector('.criteria-row')) {
+    addCriteriaRow('CONS_NO');
+  }
 
-// Bind the "Add Filter" button only once
-if (addRowBtn && !addRowBtn.dataset.bound) {
-  addRowBtn.dataset.bound = '1';
-  addRowBtn.addEventListener('click', () => addCriteriaRow('CONS_NO'));
-}
+  // Bind the "Add Filter" button only once
+  if (addRowBtn && !addRowBtn.dataset.bound) {
+    addRowBtn.dataset.bound = '1';
+    addRowBtn.addEventListener('click', () => addCriteriaRow('CONS_NO'));
+  }
 
-// Start with a default CONS_NO row (only if none exist)
-if (!criteriaList.querySelector('.criteria-row')) {
-  addCriteriaRow('CONS_NO');
-}
+  // Start with a default CONS_NO row (only if none exist)
+  if (!criteriaList.querySelector('.criteria-row')) {
+    addCriteriaRow('CONS_NO');
+  }
 
-// Bind the "Add Filter" button only once
-if (addRowBtn && !addRowBtn.dataset.bound) {
-  addRowBtn.dataset.bound = '1';
-  addRowBtn.addEventListener('click', () => addCriteriaRow('CONS_NO'));
-}
+  // Bind the "Add Filter" button only once
+  if (addRowBtn && !addRowBtn.dataset.bound) {
+    addRowBtn.dataset.bound = '1';
+    addRowBtn.addEventListener('click', () => addCriteriaRow('CONS_NO'));
+  }
 
 
   // --- Parsing helpers ---
@@ -1009,52 +1116,52 @@ if (addRowBtn && !addRowBtn.dataset.bound) {
 
   // --- Build SQL ---
   function buildSql(fromISO, toISO) {
-  const clauses = [];
-  const rows = Array.from(criteriaList.children);
+    const clauses = [];
+    const rows = Array.from(criteriaList.children);
 
-  for (const row of rows) {
-    const fieldSel = row.querySelector('.field-select');
-    const valEl    = row.querySelector('.criteria-input');
-    if (!fieldSel || !valEl) continue;
+    for (const row of rows) {
+      const fieldSel = row.querySelector('.field-select');
+      const valEl = row.querySelector('.criteria-input');
+      if (!fieldSel || !valEl) continue;
 
-    const field = FIELD_DEFS.find(f => f.col === fieldSel.value);
-    if (!field) continue;
+      const field = FIELD_DEFS.find(f => f.col === fieldSel.value);
+      if (!field) continue;
 
-    if (field.type === 'text') {
-      // Any text field (CARRIER, CONS_NO, CONS_REF, SHIP_REF)
-      const list = parseTextList(valEl.value); // allows letters & numbers; uppercased + de-duped
-      if (!list.length) continue;
-      const escaped = list.map(v => `'${escapeSqlString(v)}'`);
-      clauses.push(
-        escaped.length === 1
-          ? `${field.col} = ${escaped[0]}`
-          : `${field.col} IN (${escaped.join(',')})`
-      );
-    } else {
-      // Numeric fields: keep digits-only and build IN (...)
-      const list = parseNumericList(valEl.value);
-      if (!list.length) continue;
-      const inList = '(' + list.map(v => `'${v}'`).join(',') + ')';
-      clauses.push(`${field.col} IN ${inList}`);
+      if (field.type === 'text') {
+        // Any text field (CARRIER, CONS_NO, CONS_REF, SHIP_REF)
+        const list = parseTextList(valEl.value); // allows letters & numbers; uppercased + de-duped
+        if (!list.length) continue;
+        const escaped = list.map(v => `'${escapeSqlString(v)}'`);
+        clauses.push(
+          escaped.length === 1
+            ? `${field.col} = ${escaped[0]}`
+            : `${field.col} IN (${escaped.join(',')})`
+        );
+      } else {
+        // Numeric fields: keep digits-only and build IN (...)
+        const list = parseNumericList(valEl.value);
+        if (!list.length) continue;
+        const inList = '(' + list.map(v => `'${v}'`).join(',') + ')';
+        clauses.push(`${field.col} IN ${inList}`);
+      }
     }
+
+    if (!clauses.length) {
+      return '-- Add at least one filter row and click Generate';
+    }
+
+    // Date filters (optional) — leave exactly as-is per your requirement
+    if (fromISO) clauses.push(`insert_date >= '${formatOracleDate(fromISO)}'`);
+    if (toISO) clauses.push(`insert_date <= '${formatOracleDate(toISO)}'`);
+
+    return `SELECT *\nFROM shipments\nWHERE ${clauses.join('\n  AND ')}`;
   }
-
-  if (!clauses.length) {
-    return '-- Add at least one filter row and click Generate';
-  }
-
-  // Date filters (optional) — leave exactly as-is per your requirement
-  if (fromISO) clauses.push(`insert_date >= '${formatOracleDate(fromISO)}'`);
-  if (toISO)   clauses.push(`insert_date <= '${formatOracleDate(toISO)}'`);
-
-  return `SELECT *\nFROM shipments\nWHERE ${clauses.join('\n  AND ')}`;
-}
 
 
   // --- Events ---
   btnGen.addEventListener('click', () => {
     const fromValue = dateFrom?.value || '';
-    const toValue   = dateTo?.value   || '';
+    const toValue = dateTo?.value || '';
     outEl.textContent = buildSql(fromValue, toValue);
     results.style.display = 'block';
   });
@@ -1063,7 +1170,7 @@ if (addRowBtn && !addRowBtn.dataset.bound) {
     criteriaList.innerHTML = '';
     addCriteriaRow('CONS_NO');
     if (dateFrom) dateFrom.value = '';
-    if (dateTo)   dateTo.value   = '';
+    if (dateTo) dateTo.value = '';
     outEl.textContent = '';
     results.style.display = 'none';
   });
