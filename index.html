@@ -61,10 +61,11 @@
             <h3>Label Preview</h3>
             <p>Decode Base64 and preview labels either with PDF or Labelary API.</p>
             <div class="tool-buttons">
-              <button class="btn btn-outline open-tool" data-tool="label-preview" aria-label="Open Label Preview tool">Open</button>
+              <button class="btn btn-outline open-tool" data-tool="label-preview"
+                aria-label="Open Label Preview tool">Open</button>
             </div>
           </div>
-
+          
           <!-- Route Mapping -->
           <div class="tool-card">
             <div class="tool-icon" aria-hidden="true">
@@ -73,10 +74,22 @@
             <h3>Route Mapping</h3>
             <p>Generate SQL inserts for carriers, services, and route details.</p>
             <div class="tool-buttons">
-              <button class="btn btn-outline open-tool" data-tool="route-mapping" aria-label="Open Route Mapping tool">Open</button>
+              <button class="btn btn-outline open-tool" data-tool="route-mapping"
+                aria-label="Open Route Mapping tool">Open</button>
             </div>
           </div>
-
+          <!-- XML & JSON Formatter -->
+          <div class="tool-card">
+            <div class="tool-icon" aria-hidden="true">
+              <i class="fas fa-code"></i>
+            </div>
+            <h3>XML & JSON Formatter</h3>
+            <p>Paste raw JSON or XML and get pretty-printed output.</p>
+            <div class="tool-buttons">
+              <button class="btn btn-outline open-tool" data-tool="formatter" aria-label="Open Formatter tool">Open</button>
+            </div>
+          </div>
+          
           <!-- SQL Search Macro -->
           <div class="tool-card">
             <div class="tool-icon" aria-hidden="true">
@@ -85,13 +98,14 @@
             <h3>SQL Search Macro</h3>
             <p>Paste consignment numbers and instantly format them into a SQL search.</p>
             <div class="tool-buttons">
-              <button class="btn btn-outline open-tool" data-tool="sql-search-macro" aria-label="Open SQL Search Macro tool">Open</button>
+              <button class="btn btn-outline open-tool" data-tool="sql-search-macro"
+                aria-label="Open SQL Search Macro tool">Open</button>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-  </main>
+          </div>
+          </div>
+          </section>
+          </main>
 
   <!-- Tools Modal -->
   <div id="tool-modal" class="modal">
@@ -358,6 +372,61 @@
             </div>
           </div>
         </div>
+
+       <!-- XML & JSON Formatter -->
+<div id="formatter-content" class="tool-content" style="display:none;">
+  <div class="input-section">
+    <h3>Input</h3>
+    <div class="base64-input-group">
+      <label for="format-input">Paste JSON or XML:</label>
+      <!-- Mode toolbar (moved above input) -->
+<div class="formatter-toolbar">
+  <label for="format-mode" class="sr-only">Format mode</label>
+  <select id="format-mode" class="form-select">
+    <option value="auto">Auto-detect</option>
+    <option value="json">JSON</option>
+    <option value="xml">XML</option>
+  </select>
+</div>
+
+      <textarea id="format-input" placeholder="Paste JSON or XML here..." rows="10"></textarea>
+      <div class="input-info">
+        <p><strong>Chars:</strong> <span id="format-len">0</span></p>
+      </div>
+    </div>
+  </div>
+
+<div class="process-section">
+  <h3>Options</h3>
+  <div class="process-controls">
+    <!-- Indent control with clear label -->
+    <div class="indent-control" title="Number of spaces per indent">
+      <label for="format-indent">Indent (spaces)</label>
+      <input
+        type="number"
+        id="format-indent"
+        class="form-input"
+        min="0"
+        max="8"
+        value="3"
+        style="max-width:120px"
+      >
+    </div>
+
+    <button class="btn btn-primary" id="format-pretty" title="Pretty-print using the chosen indent">Format</button>
+    <button class="btn btn-secondary" id="format-minify" title="Minify: remove whitespace/indentation">Minify</button>
+    <button class="btn btn-outline" id="format-clear">Clear</button>
+    <button class="btn btn-outline" id="format-copy">Copy</button>
+  </div>
+
+  <div class="process-status" id="format-status" style="display:none;">
+    <div class="status-step error" id="format-error">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span id="format-error-text">Error</span>
+    </div>
+  </div>
+</div>
+
 <!-- SQL Search Macro -->
 <div id="sql-search-macro-content" class="tool-content" style="display: none;">
   <div class="input-section">

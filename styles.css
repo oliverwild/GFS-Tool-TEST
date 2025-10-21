@@ -648,3 +648,59 @@ p { margin-bottom: 1rem; color: var(--text-secondary); }
 @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
 }
+
+/* =========================
+   Tools – Formatter overrides
+   (place near bottom or at file end so it overrides)
+========================= */
+#formatter-content .formatter-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+#formatter-content #format-mode {
+  font: inherit;
+  line-height: 1.2;
+  padding: 0.5rem 0.75rem;
+  min-height: calc(1em + 0.75rem);
+  min-width: max(10ch, 140px);
+  width: auto;
+  box-sizing: border-box;
+}
+
+#formatter-content #format-mode.form-select {
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color, #444);
+  background: var(--surface-2, #1e1e1e);
+  color: var(--text, #eee);
+}
+
+#formatter-content .base64-input-group label + textarea,
+#formatter-content .formatter-toolbar + textarea {
+  margin-top: 0.25rem;
+}
+
+/* If your theme sets a fixed height on .form-select, uncap it here */
+#formatter-content #format-mode.form-select {
+  height: auto;
+}
+/* Tools – Formatter: indent control layout */
+#formatter-content .indent-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 0.75rem;
+}
+
+#formatter-content .indent-control label {
+  font: inherit;
+  line-height: 1.2;
+  opacity: 0.9;
+}
+
+#formatter-content #format-indent {
+  min-width: 6ch;      /* keeps it from looking tiny */
+}
+

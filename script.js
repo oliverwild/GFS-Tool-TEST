@@ -52,6 +52,7 @@ function loadSettings() {
     'label-preview':   true,
     'range-jumping':   true,
     'route-mapping':   true,
+    'formatter':      true,
     'sql-search-macro':true
   };
 
@@ -88,12 +89,13 @@ function resetSettings() {
 function populateToolOrderList() {
   const toolOrderList = document.getElementById('tool-order-list');
   const settings = JSON.parse(localStorage.getItem('gfs-settings') || '{}');
-  const toolOrder = settings.toolOrder || ['range-splitting','label-preview','range-jumping','route-mapping','sql-search-macro'];
+  const toolOrder = settings.toolOrder || ['range-splitting','label-preview','range-jumping','route-mapping','formatter','sql-search-macro',];
   const toolVisibility = settings.toolVisibility || {
     'range-splitting': true,
     'label-preview':   true,
     'range-jumping':   true,
     'route-mapping':   true,
+    'formatter':      true,
     'sql-search-macro':true
   };
 
@@ -304,13 +306,15 @@ function populateSimpleToolList() {
     'sql-search-macro':true
   };
 
-  const toolData = {
-    'range-splitting':  { name: 'Range Splitting', description: 'Split ranges into smaller segments' },
-    'label-preview':    { name: 'Label Preview',   description: 'Preview and generate shipping labels' },
-    'range-jumping':    { name: 'Range Jumping',   description: 'Generate UPDATE scripts for range numbers' },
-    'route-mapping':    { name: 'Route Mapping',   description: 'Generate SQL INSERT statements for carrier routes' },
-    'sql-search-macro': { name: 'SQL Search Macro',description: 'Build WHERE IN list from consignments' }
-  };
+const toolData = {
+  'range-splitting':  { name: 'Range Splitting', description: 'Split ranges into smaller segments', icon: 'fas fa-cut' },
+  'label-preview':    { name: 'Label Preview',   description: 'Preview and generate shipping labels', icon: 'fas fa-tag' },
+  'range-jumping':    { name: 'Range Jumping',   description: 'Generate UPDATE scripts for range numbers', icon: 'fas fa-arrow-right' },
+  'route-mapping':    { name: 'Route Mapping',   description: 'Generate SQL INSERT statements for carrier routes', icon: 'fas fa-route' },
+  'sql-search-macro': { name: 'SQL Search Macro',description: 'Build WHERE IN list from consignments', icon: 'fas fa-database' },
+  'formatter':        { name: 'XML & JSON Formatter', description: 'Pretty-print or minify JSON/XML', icon: 'fas fa-code' }
+};
+
 
   toolList.innerHTML = '';
   toolOrder.forEach((toolId) => {
@@ -669,6 +673,131 @@ function initializeRangeJumping() {
   });
 }
 
+function initializeFormatter() {
+  const input = document.getElementById('format-input');
+  const out   = document.getElementById('format-output');
+  const len   = document.getElementById('format-len');
+  const mode  = document.getElementById('format-mode');
+  const indentEl = document.getElementById('format-indent');
+
+  const btnPretty = document.getElementById('format-pretty');
+  const btnMinify = document.getElementById('format-minify');
+  const btnClear  = document.getElementById('format-clear');
+  const btnCopy   = document.getElementById('format-copy');
+  const btnCopy2  = document.getElementById('format-copy-2');
+
+  const statusBox = document.getElementById('format-status');
+  const errBox    = document.getElementById('format-error');
+  const errText   = document.getElementById('format-error-text');
+  const results   = document.getElementById('format-results');
+
+  const getIndent = () => Math.max(0, Math.min(8, parseInt(indentEl.value || '3', 10) || 0));
+
+  const showError = (msg) => {
+    errText.textContent = msg;
+    statusBox.style.display = 'block';
+    errBox.classList.add('error');
+  };
+  const clearError = () => { statusBox.style.display = 'none'; };
+
+  const setOutput = (text) => {
+    out.textContent = text;
+    results.style.display = text.trim() ? 'block' : 'none';
+  };
+
+  const detectMode = (txt) => {
+    const s = txt.trim();
+    if (!s) return 'auto';
+    if (mode.value !== 'auto') return mode.value;
+    if (s.startsWith('{') || s.startsWith('[')) return 'json';
+    if (s.startsWith('<') || /<\/[A-Za-z]/.test(s)) return 'xml';
+    return 'json'; // try JSON first, then fall back
+  };
+
+  function formatJSON(raw, pretty = true) {
+    const obj = JSON.parse(raw);
+    return pretty ? JSON.stringify(obj, null, getIndent()) : JSON.stringify(obj);
+  }
+
+  // Lightweight XML pretty-printer (DOM-safe; tolerates insignificant whitespace)
+  function formatXML(raw, pretty = true) {
+    // Basic parse to validate
+    const parser = new DOMParser();
+    const dom = parser.parseFromString(raw, 'application/xml');
+    const parseErr = dom.getElementsByTagName('parsererror')[0];
+    if (parseErr) {
+      // Extract readable error text
+      const msg = parseErr.textContent.replace(/\s+/g, ' ').trim();
+      throw new Error(msg || 'Invalid XML');
+    }
+    // Serialize without formatting first
+    let xml = new XMLSerializer().serializeToString(dom);
+    if (!pretty) return xml.replace(/>\s+</g, '><').trim();
+
+    // Pretty print by indentation on tag boundaries
+    xml = xml
+      .replace(/>\s+</g, '><')      // collapse in-between whitespace
+      .replace(/</g, '\n<')         // line break before tags
+      .trim();
+
+    const lines = xml.split('\n');
+    const step = ' '.repeat(getIndent());
+    let pad = 0;
+    return lines.map((line) => {
+      if (/^<\/[^>]+>/.test(line)) pad = Math.max(0, pad - 1);
+      const outLine = step.repeat(pad) + line;
+      if (/^<[^\/?!][^>]*[^\/]>$/.test(line)) pad += 1; // open tag that isn't self-closing
+      return outLine;
+    }).join('\n').trim();
+  }
+
+  function run(pretty) {
+    clearError();
+    try {
+      const txt = input.value;
+      const which = detectMode(txt);
+      let result = '';
+      if (which === 'json') {
+        result = formatJSON(txt, pretty);
+      } else if (which === 'xml') {
+        result = formatXML(txt, pretty);
+      } else {
+        // auto -> try JSON then XML
+        try { result = formatJSON(txt, pretty); }
+        catch (e1) { result = formatXML(txt, pretty); }
+      }
+      setOutput(result);
+    } catch (err) {
+      setOutput('');
+      showError(err.message || String(err));
+    }
+  }
+
+  // Events
+  input.addEventListener('input', () => { len.textContent = String(input.value.length); });
+  btnPretty.addEventListener('click', () => run(true));
+  btnMinify.addEventListener('click', () => run(false));
+  btnClear.addEventListener('click', () => { input.value = ''; len.textContent = '0'; setOutput(''); clearError(); });
+  btnCopy.addEventListener('click', async () => {
+    if (!input.value.trim()) return;
+    await navigator.clipboard.writeText(input.value);
+    btnCopy.textContent = 'Copied!'; setTimeout(() => (btnCopy.textContent = 'Copy'), 1000);
+  });
+  btnCopy2.addEventListener('click', async () => {
+    const t = out.textContent || '';
+    if (!t.trim()) return;
+    await navigator.clipboard.writeText(t);
+    btnCopy2.textContent = 'Copied!'; setTimeout(() => (btnCopy2.textContent = 'Copy'), 1000);
+  });
+
+  // Initial UI state
+  len.textContent = String(input.value.length || 0);
+  setOutput('');
+  clearError();
+}
+
+
+
 function initializeSqlSearchMacro() {
   const outEl    = document.getElementById('sql-macro-output');
   const btnGen = document.getElementById('sql-macro-generate');
@@ -1007,6 +1136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (toolType === 'label-preview') show('label-preview-content', initializeLabelPreview);
     else if (toolType === 'range-jumping') show('range-jumping-content', initializeRangeJumping);
     else if (toolType === 'route-mapping') show('route-mapping-content', initializeRouteMapping);
+    else if (toolType === 'formatter') show('formatter-content', initializeFormatter);
     else if (toolType === 'sql-search-macro') show('sql-search-macro-content', initializeSqlSearchMacro);
   }
 });
