@@ -678,9 +678,9 @@ function initializeFormatter() {
   const input = document.getElementById('format-input');
   const out = document.getElementById('format-output');
   const len = document.getElementById('format-len');
-  const mode      = document.getElementById('format-mode');
+  const mode = document.getElementById('format-mode');
   const indentSel = document.getElementById('indent-select');   // NEW
-  const trimSel   = document.getElementById('format-trim');     // NEW
+  const trimSel = document.getElementById('format-trim');     // NEW
 
 
   const btnPretty = document.getElementById('format-pretty');
@@ -694,7 +694,7 @@ function initializeFormatter() {
   const errText = document.getElementById('format-error-text');
   const results = document.getElementById('format-results');
 
-    async function copyTextFallback(text) {
+  async function copyTextFallback(text) {
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.setAttribute('readonly', '');
@@ -720,11 +720,11 @@ function initializeFormatter() {
       setTimeout(() => (btn.textContent = old), 1000);
     }
   }
-  
- const getIndent = () => {
-  const v = parseInt((indentSel?.value ?? '3'), 10);
-  return Math.max(0, Math.min(8, isNaN(v) ? 3 : v));
-};
+
+  const getIndent = () => {
+    const v = parseInt((indentSel?.value ?? '3'), 10);
+    return Math.max(0, Math.min(8, isNaN(v) ? 3 : v));
+  };
 
   const showError = (msg) => {
     errText.textContent = msg;
@@ -739,13 +739,13 @@ function initializeFormatter() {
   };
 
   const detectMode = (txt) => {
-  const s = txt.trim();
-  if (!s) return 'auto';
-  if (mode && mode.value && mode.value !== 'auto') return mode.value;  // ← guard
-  if (s.startsWith('{') || s.startsWith('[')) return 'json';
-  if (s.startsWith('<') || /<\/[A-Za-z]/.test(s)) return 'xml';
-  return 'json';
-};
+    const s = txt.trim();
+    if (!s) return 'auto';
+    if (mode && mode.value && mode.value !== 'auto') return mode.value;  // ← guard
+    if (s.startsWith('{') || s.startsWith('[')) return 'json';
+    if (s.startsWith('<') || /<\/[A-Za-z]/.test(s)) return 'xml';
+    return 'json';
+  };
 
 
 
@@ -754,92 +754,92 @@ function initializeFormatter() {
     return pretty ? JSON.stringify(obj, null, getIndent()) : JSON.stringify(obj);
   }
 
-function formatXML(raw, pretty = true) {
-  const parser = new DOMParser();
-  const dom = parser.parseFromString(raw, 'application/xml');
-  const parseErr = dom.getElementsByTagName('parsererror')[0];
-  if (parseErr) {
-    const msg = parseErr.textContent.replace(/\s+/g, ' ').trim();
-    throw new Error(msg || 'Invalid XML');
-  }
-
-  // Minified (also removes whitespace between text and closing tag)
-  const min = new XMLSerializer().serializeToString(dom)
-    .replace(/>\s+</g, '><')
-    .replace(/(\S)\s+<\/(?!\?)/g, '$1</')
-    .trim();
-  if (!pretty) return min;
-
-  const IND = ' '.repeat(getIndent());
-
-  const escText = (s) =>
-    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-  const renderAttrs = (el) =>
-    Array.from(el.attributes).map(a =>
-      ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`).join('');
-
-  // true if element has exactly one non-empty text node (no line breaks)
-  const isInlineTextElem = (el) => {
-    const children = Array.from(el.childNodes);
-    if (children.length !== 1 || children[0].nodeType !== 3) return false; // TEXT_NODE
-    const t = children[0].nodeValue ?? '';
-    if (!t.trim()) return false;
-    return !/\r|\n/.test(t); // no line breaks in the text
-  };
-
-  const walk = (node, depth) => {
-    switch (node.nodeType) {
-      case 1: { // ELEMENT_NODE
-        const el = node;
-        const name = el.nodeName;
-        const attrs = renderAttrs(el);
-
-        // <Tag/> (no children & no text)
-        if (el.childNodes.length === 0) {
-          return `${IND.repeat(depth)}<${name}${attrs}/>`;
-        }
-
-        // <Tag>text</Tag> inline
-        if (isInlineTextElem(el)) {
-          const text = escText(el.textContent.trim());
-          return `${IND.repeat(depth)}<${name}${attrs}>${text}</${name}>`;
-        }
-
-        // Block-style with children
-        const open = `${IND.repeat(depth)}<${name}${attrs}>`;
-        const inner = Array.from(el.childNodes)
-          .map(ch => walk(ch, depth + 1))
-          .filter(Boolean)
-          .join('\n');
-        const close = `${IND.repeat(depth)}</${name}>`;
-        return inner ? `${open}\n${inner}\n${close}` : `${open}${close}`;
-      }
-      case 3: { // TEXT_NODE
-        const t = node.nodeValue ?? '';
-        if (!t.trim()) return ''; // ignore pure whitespace
-        // If we ever hit text here (inside a complex element), trim ends and show on its own line
-        return `${IND.repeat(depth)}${escText(t.trim())}`;
-      }
-      case 4: { // CDATA_SECTION_NODE
-        return `${IND.repeat(depth)}<![CDATA[${node.nodeValue || ''}]]>`;
-      }
-      case 7: { // PROCESSING_INSTRUCTION_NODE
-        return `${IND.repeat(depth)}<?${node.nodeName} ${node.nodeValue || ''}?>`;
-      }
-      case 8: { // COMMENT_NODE
-        return `${IND.repeat(depth)}<!--${node.nodeValue || ''}-->`;
-      }
-      case 9: { // DOCUMENT_NODE
-        return Array.from(node.childNodes).map(ch => walk(ch, depth)).filter(Boolean).join('\n');
-      }
-      default:
-        return '';
+  function formatXML(raw, pretty = true) {
+    const parser = new DOMParser();
+    const dom = parser.parseFromString(raw, 'application/xml');
+    const parseErr = dom.getElementsByTagName('parsererror')[0];
+    if (parseErr) {
+      const msg = parseErr.textContent.replace(/\s+/g, ' ').trim();
+      throw new Error(msg || 'Invalid XML');
     }
-  };
 
-  return walk(dom, 0).trim();
-}
+    // Minified (also removes whitespace between text and closing tag)
+    const min = new XMLSerializer().serializeToString(dom)
+      .replace(/>\s+</g, '><')
+      .replace(/(\S)\s+<\/(?!\?)/g, '$1</')
+      .trim();
+    if (!pretty) return min;
+
+    const IND = ' '.repeat(getIndent());
+
+    const escText = (s) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    const renderAttrs = (el) =>
+      Array.from(el.attributes).map(a =>
+        ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`).join('');
+
+    // true if element has exactly one non-empty text node (no line breaks)
+    const isInlineTextElem = (el) => {
+      const children = Array.from(el.childNodes);
+      if (children.length !== 1 || children[0].nodeType !== 3) return false; // TEXT_NODE
+      const t = children[0].nodeValue ?? '';
+      if (!t.trim()) return false;
+      return !/\r|\n/.test(t); // no line breaks in the text
+    };
+
+    const walk = (node, depth) => {
+      switch (node.nodeType) {
+        case 1: { // ELEMENT_NODE
+          const el = node;
+          const name = el.nodeName;
+          const attrs = renderAttrs(el);
+
+          // <Tag/> (no children & no text)
+          if (el.childNodes.length === 0) {
+            return `${IND.repeat(depth)}<${name}${attrs}/>`;
+          }
+
+          // <Tag>text</Tag> inline
+          if (isInlineTextElem(el)) {
+            const text = escText(el.textContent.trim());
+            return `${IND.repeat(depth)}<${name}${attrs}>${text}</${name}>`;
+          }
+
+          // Block-style with children
+          const open = `${IND.repeat(depth)}<${name}${attrs}>`;
+          const inner = Array.from(el.childNodes)
+            .map(ch => walk(ch, depth + 1))
+            .filter(Boolean)
+            .join('\n');
+          const close = `${IND.repeat(depth)}</${name}>`;
+          return inner ? `${open}\n${inner}\n${close}` : `${open}${close}`;
+        }
+        case 3: { // TEXT_NODE
+          const t = node.nodeValue ?? '';
+          if (!t.trim()) return ''; // ignore pure whitespace
+          // If we ever hit text here (inside a complex element), trim ends and show on its own line
+          return `${IND.repeat(depth)}${escText(t.trim())}`;
+        }
+        case 4: { // CDATA_SECTION_NODE
+          return `${IND.repeat(depth)}<![CDATA[${node.nodeValue || ''}]]>`;
+        }
+        case 7: { // PROCESSING_INSTRUCTION_NODE
+          return `${IND.repeat(depth)}<?${node.nodeName} ${node.nodeValue || ''}?>`;
+        }
+        case 8: { // COMMENT_NODE
+          return `${IND.repeat(depth)}<!--${node.nodeValue || ''}-->`;
+        }
+        case 9: { // DOCUMENT_NODE
+          return Array.from(node.childNodes).map(ch => walk(ch, depth)).filter(Boolean).join('\n');
+        }
+        default:
+          return '';
+      }
+    };
+
+    return walk(dom, 0).trim();
+  }
 
 
 
@@ -865,7 +865,7 @@ function formatXML(raw, pretty = true) {
     }
   }
 
-   input.addEventListener('input', () => { len.textContent = String(input.value.length); });
+  input.addEventListener('input', () => { len.textContent = String(input.value.length); });
   btnPretty.addEventListener('click', () => run(true));
   btnMinify.addEventListener('click', () => run(false));
   btnClear.addEventListener('click', () => { input.value = ''; len.textContent = '0'; setOutput(''); clearError(); });

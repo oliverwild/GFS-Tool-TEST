@@ -381,181 +381,182 @@
           </div>
         </div>
 
-<!-- XML & JSON Formatter -->
-<div id="formatter-content" class="tool-content" style="display:none;">
-  <div class="input-section">
-    <h3>Input</h3>
-    <div class="base64-input-group">
-      <label for="format-input">Paste JSON or XML:</label>
+        <!-- XML & JSON Formatter -->
+        <div id="formatter-content" class="tool-content" style="display:none;">
+          <div class="input-section">
+            <h3>Input</h3>
+            <div class="base64-input-group">
+              <label for="format-input">Paste JSON or XML:</label>
 
-      <!-- Toolbar: Text mode (trimming) + Indentation -->
-      <div class="formatter-toolbar">
-        <div class="toolbar-group">
-          <label for="format-trim">Text mode</label>
-          <select id="format-trim" class="form-select" title="How to trim the input before formatting">
-            <option value="ends" selected>Trim (left and right trimming)</option>
-            <option value="none">No trimming</option>
-            <option value="lines">Trim each line</option>
-          </select>
-        </div>
+              <!-- Toolbar: Text mode (trimming) + Indentation -->
+              <div class="formatter-toolbar">
+                <div class="toolbar-group">
+                  <label for="format-trim">Text mode</label>
+                  <select id="format-trim" class="form-select" title="How to trim the input before formatting">
+                    <option value="ends" selected>Trim (left and right trimming)</option>
+                    <option value="none">No trimming</option>
+                    <option value="lines">Trim each line</option>
+                  </select>
+                </div>
 
-        <div class="toolbar-group">
-          <label for="indent-select">Indentation level</label>
-          <select id="indent-select" class="form-select" title="Spaces per indent level">
-            <option value="2">2 spaces per indent level</option>
-            <option value="3" selected>3 spaces per indent level</option>
-            <option value="4">4 spaces per indent level</option>
-            <option value="6">6 spaces per indent level</option>
-          </select>
-        </div>
+                <div class="toolbar-group">
+                  <label for="indent-select">Indentation level</label>
+                  <select id="indent-select" class="form-select" title="Spaces per indent level">
+                    <option value="2">2 spaces per indent level</option>
+                    <option value="3" selected>3 spaces per indent level</option>
+                    <option value="4">4 spaces per indent level</option>
+                    <option value="6">6 spaces per indent level</option>
+                  </select>
+                </div>
 
-        <!-- Keep mode hidden: default Auto -->
-        <select id="format-mode" class="form-select" style="display:none">
-          <option value="auto" selected>Auto</option>
-          <option value="json">JSON</option>
-          <option value="xml">XML</option>
-        </select>
-      </div>
-
-      <textarea id="format-input" placeholder="Paste JSON or XML here..." rows="10"></textarea>
-      <div class="input-info">
-        <p><strong>Chars:</strong> <span id="format-len">0</span></p>
-      </div>
-    </div>
-  </div>
-
-  <div class="process-section">
-    <h3>Actions</h3>
-    <div class="process-controls">
-      <button type="button" class="btn btn-primary" id="format-pretty"
-              title="Format using the chosen text mode and indentation">Format</button>
-      <button type="button" class="btn btn-secondary" id="format-minify"
-              title="Minify: remove indentation/extra whitespace">Minify</button>
-      <button type="button" class="btn btn-outline" id="format-clear">Clear</button>
-    </div>
-
-    <div class="process-status" id="format-status" style="display:none;">
-      <div class="status-step error" id="format-error">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span id="format-error-text">Error</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 1C — Results with dynamic title and Copy only -->
-  <div class="results-section" id="format-results" style="display:none;">
-    <h3 id="format-title" class="format-title">-Formatted-</h3>
-    <div class="sql-output">
-      <div class="sql-header">
-        <span class="sql-label">Result:</span>
-        <button class="btn btn-secondary" id="format-copy-2">Copy</button>
-      </div>
-      <pre id="format-output" class="sql-code"></pre>
-    </div>
-  </div>
-</div>
-
-<!-- SQL Search Macro (now a sibling, not inside formatter) -->
-<div id="sql-search-macro-content" class="tool-content" style="display:none;">
-  <div class="input-section">
-    <h3>Filters</h3>
-    <div id="criteria-list" class="criteria-list"></div>
-    <div class="criteria-actions">
-      <button class="btn btn-secondary" id="add-criteria-row">
-        <i class="fas fa-plus"></i>&nbsp;Add Filter
-      </button>
-    </div>
-  </div>
-
-  <div class="input-section">
-    <h3>Date Filter (optional)</h3>
-    <p class="settings-description" style="margin-top:-.25rem;">
-      Limit results by <code>insert_date</code>. Calendar shows the last 12 months up to today.
-    </p>
-    <div class="date-filter-group">
-      <div class="input-group">
-        <label for="sql-date-from">From date</label>
-        <input type="date" id="sql-date-from" class="form-input" />
-      </div>
-      <div class="input-group">
-        <label for="sql-date-to">To date</label>
-        <input type="date" id="sql-date-to" class="form-input" />
-      </div>
-      <div class="actions" style="justify-content:flex-start; gap:.5rem; margin-top:.75rem;">
-        <button class="btn btn-outline" id="sql-date-clear" type="button">Clear Dates</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="actions">
-    <button class="btn btn-primary" id="sql-macro-generate">Generate SQL</button>
-    <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
-  </div>
-
-  <div class="results-section" id="sql-macro-results" style="display:none; margin-top:20px;">
-    <h3>Generated SQL Script</h3>
-    <div class="sql-output">
-      <div class="sql-header">
-        <span class="sql-label">Query:</span>
-        <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
-      </div>
-      <pre id="sql-macro-output" class="sql-code"></pre>
-    </div>
-  </div>
-</div><!-- /#sql-search-macro-content -->
-
-<!-- Default WIP Notice -->
-<div class="wip-notice" id="default-wip">
-  <i class="fas fa-tools"></i>
-  <h3>Work In Progress</h3>
-  <p>This tool is currently under development. Check back soon for the full functionality!</p>
-</div>
-
-
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>Settings</h2>
-          <button class="close-modal-btn" id="close-settings-modal" title="Close Settings">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="settings-content">
-            <!-- Appearance -->
-            <div class="settings-section">
-              <h3>Appearance</h3>
-              <div class="setting-item">
-                <label for="theme-select">Theme:</label>
-                <select id="theme-select">
-                  <option value="dark">Dark Mode</option>
-                  <option value="light">Light Mode</option>
-                  <option value="auto">Auto (System)</option>
+                <!-- Keep mode hidden: default Auto -->
+                <select id="format-mode" class="form-select" style="display:none">
+                  <option value="auto" selected>Auto</option>
+                  <option value="json">JSON</option>
+                  <option value="xml">XML</option>
                 </select>
               </div>
+
+              <textarea id="format-input" placeholder="Paste JSON or XML here..." rows="10"></textarea>
+              <div class="input-info">
+                <p><strong>Chars:</strong> <span id="format-len">0</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="process-section">
+            <h3>Actions</h3>
+            <div class="process-controls">
+              <button type="button" class="btn btn-primary" id="format-pretty"
+                title="Format using the chosen text mode and indentation">Format</button>
+              <button type="button" class="btn btn-secondary" id="format-minify"
+                title="Minify: remove indentation/extra whitespace">Minify</button>
+              <button type="button" class="btn btn-outline" id="format-clear">Clear</button>
             </div>
 
-            <!-- Tool Management -->
-            <div class="settings-section">
-              <h3>Tool Management</h3>
-              <p class="settings-description">Drag tools to reorder them, or toggle to show/hide tools you don't use.
-              </p>
-              <div id="tool-order-list" class="tool-order-list"><!-- populated by JS --></div>
+            <div class="process-status" id="format-status" style="display:none;">
+              <div class="status-step error" id="format-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="format-error-text">Error</span>
+              </div>
             </div>
+          </div>
 
-            <!-- Reset -->
-            <div class="settings-section">
-              <h3>Reset</h3>
-              <button id="reset-settings" class="btn btn-outline">Reset to Defaults</button>
+          <!-- 1C — Results with dynamic title and Copy only -->
+          <div class="results-section" id="format-results" style="display:none;">
+            <h3 id="format-title" class="format-title">-Formatted-</h3>
+            <div class="sql-output">
+              <div class="sql-header">
+                <span class="sql-label">Result:</span>
+                <button class="btn btn-secondary" id="format-copy-2">Copy</button>
+              </div>
+              <pre id="format-output" class="sql-code"></pre>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- App script -->
-    <script src="script.js"></script>
+        <!-- SQL Search Macro (now a sibling, not inside formatter) -->
+        <div id="sql-search-macro-content" class="tool-content" style="display:none;">
+          <div class="input-section">
+            <h3>Filters</h3>
+            <div id="criteria-list" class="criteria-list"></div>
+            <div class="criteria-actions">
+              <button class="btn btn-secondary" id="add-criteria-row">
+                <i class="fas fa-plus"></i>&nbsp;Add Filter
+              </button>
+            </div>
+          </div>
+
+          <div class="input-section">
+            <h3>Date Filter (optional)</h3>
+            <p class="settings-description" style="margin-top:-.25rem;">
+              Limit results by <code>insert_date</code>. Calendar shows the last 12 months up to today.
+            </p>
+            <div class="date-filter-group">
+              <div class="input-group">
+                <label for="sql-date-from">From date</label>
+                <input type="date" id="sql-date-from" class="form-input" />
+              </div>
+              <div class="input-group">
+                <label for="sql-date-to">To date</label>
+                <input type="date" id="sql-date-to" class="form-input" />
+              </div>
+              <div class="actions" style="justify-content:flex-start; gap:.5rem; margin-top:.75rem;">
+                <button class="btn btn-outline" id="sql-date-clear" type="button">Clear Dates</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="sql-macro-generate">Generate SQL</button>
+            <button class="btn btn-outline" id="sql-macro-clear">Clear</button>
+          </div>
+
+          <div class="results-section" id="sql-macro-results" style="display:none; margin-top:20px;">
+            <h3>Generated SQL Script</h3>
+            <div class="sql-output">
+              <div class="sql-header">
+                <span class="sql-label">Query:</span>
+                <button class="btn btn-secondary" id="sql-macro-copy">Copy</button>
+              </div>
+              <pre id="sql-macro-output" class="sql-code"></pre>
+            </div>
+          </div>
+        </div><!-- /#sql-search-macro-content -->
+
+        <!-- Default WIP Notice -->
+        <div class="wip-notice" id="default-wip">
+          <i class="fas fa-tools"></i>
+          <h3>Work In Progress</h3>
+          <p>This tool is currently under development. Check back soon for the full functionality!</p>
+        </div>
+
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>Settings</h2>
+              <button class="close-modal-btn" id="close-settings-modal" title="Close Settings">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="settings-content">
+                <!-- Appearance -->
+                <div class="settings-section">
+                  <h3>Appearance</h3>
+                  <div class="setting-item">
+                    <label for="theme-select">Theme:</label>
+                    <select id="theme-select">
+                      <option value="dark">Dark Mode</option>
+                      <option value="light">Light Mode</option>
+                      <option value="auto">Auto (System)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Tool Management -->
+                <div class="settings-section">
+                  <h3>Tool Management</h3>
+                  <p class="settings-description">Drag tools to reorder them, or toggle to show/hide tools you don't
+                    use.
+                  </p>
+                  <div id="tool-order-list" class="tool-order-list"><!-- populated by JS --></div>
+                </div>
+
+                <!-- Reset -->
+                <div class="settings-section">
+                  <h3>Reset</h3>
+                  <button id="reset-settings" class="btn btn-outline">Reset to Defaults</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- App script -->
+        <script src="script.js"></script>
 </body>
 
 </html>
