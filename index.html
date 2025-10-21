@@ -380,19 +380,23 @@
       Example input: <code>ABC123, 123-456, #789</code> → <code>('123','456','789')</code>
     </div>
   </div>
-
-  <div class="input-section">
+<div class="input-section">
     <h3>Date Filter (optional)</h3>
-    <p class="settings-description" style="margin-top:-.25rem;">Limit results by <code>insert_date</code>. Calendar shows the last 12 months up to today.</p>
+    <p class="settings-description" style="margin-top:-.25rem;">Limit results by <code>insert_date</code>. Calendar
+        shows the last 12 months up to today.</p>
     <div class="date-filter-group">
-      <div class="input-group">
-        <label for="sql-date-from">From date</label>
-        <input type="date" id="sql-date-from" class="form-input" />
-      </div>
-      <div class="input-group">
-        <label for="sql-date-to">To date</label>
-        <input type="date" id="sql-date-to" class="form-input" />
-      </div>
+        <div class="input-group">
+            <label for="sql-date-from">From date</label>
+            <input type="date" id="sql-date-from" class="form-input" />
+        </div>
+        <div class="input-group">
+            <label for="sql-date-to">To date</label>
+            <input type="date" id="sql-date-to" class="form-input" />
+        </div>
+        <div class="actions" style="justify-content:flex-start; gap:.5rem; margin-top:.75rem;">
+            <button class="btn btn-outline" id="sql-date-clear" type="button">Clear Dates</button>
+        </div>
+
     </div>
   </div>
 

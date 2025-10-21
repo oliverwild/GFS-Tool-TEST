@@ -593,7 +593,17 @@ function initializeRangeJumping() {
   const output = document.getElementById('update-script');
   const copyBtn = document.getElementById('copy-update-script');
 
-  copyQueryBtn.addEventListener('click', () => copyToClipboard(document.getElementById('range-query').textContent));
+  // Provide a sensible default query text to copy
+  const RANGE_QUERY_TEXT = [
+    '-- Query to get current ranges',
+    'SELECT',
+    '  sr.id AS ship_range_id, sr.cons_cur_no,',
+    '  ir.id AS item_range_id, ir.cur_no',
+    'FROM ship_ranges sr',
+    'LEFT JOIN item_ranges ir ON ir.ship_range_id = sr.id;'
+  ].join('\n');
+
+  copyQueryBtn.addEventListener('click', () => copyToClipboard(RANGE_QUERY_TEXT));
 
   generateUpdateBtn.addEventListener('click', () => {
     const insertScript = insertScriptInput.value.trim();
@@ -661,42 +671,44 @@ function initializeRangeJumping() {
 
 function initializeSqlSearchMacro() {
   const outEl    = document.getElementById('sql-macro-output');
-  const btnGen   = document.getElementById('sql-macro-generate');
+  const btnGen = document.getElementById('sql-macro-generate');
   const btnClear = document.getElementById('sql-macro-clear');
-  const btnCopy  = document.getElementById('sql-macro-copy');
-  const results  = document.getElementById('sql-macro-results');
+  const btnCopy = document.getElementById('sql-macro-copy');
+  const results = document.getElementById('sql-macro-results');
 
   const dateFrom = document.getElementById('sql-date-from');
-  const dateTo   = document.getElementById('sql-date-to');
+  const dateTo = document.getElementById('sql-date-to');
 
   const criteriaList = document.getElementById('criteria-list');
-  const addRowBtn    = document.getElementById('add-criteria-row');
+  const addRowBtn = document.getElementById('add-criteria-row');
 
   if (!criteriaList || !btnGen || !outEl) return;
 
-    const btnDateClear = document.getElementById('sql-date-clear');
+  if (initializeSqlSearchMacro._wired) return;
+      initializeSqlSearchMacro._wired = true;
 
-    btnDateClear?.addEventListener('click', () => {
-        if (dateFrom) dateFrom.value = '';
-        if (dateTo) dateTo.value = '';
-        // If the results panel is already visible, rebuild SQL without date filters
-        if (results && results.style.display === 'block') {
-            outEl.textContent = (typeof buildSql === 'function')
-                ? buildSql('', '')
-                : outEl.textContent;
-        }
-    });
+  const btnDateClear = document.getElementById('sql-date-clear');
+  btnDateClear?.addEventListener('click', () => {
+    if (dateFrom) dateFrom.value = '';
+    if (dateTo) dateTo.value = '';
+    // If the results panel is already visible, rebuild SQL without date filters
+    if (results && results.style.display === 'block') {
+      outEl.textContent = (typeof buildSql === 'function')
+        ? buildSql('', '')
+        : outEl.textContent;
+    }
+  });
 
   // --- Field definitions ---
   const FIELD_DEFS = [
-    { col: 'CONS_NO',     label: 'CONS_NO',     type: 'numeric' },
+    { col: 'CONS_NO',     label: 'CONS_NO',     type: 'text' },
     { col: 'CONTRACT_NO', label: 'CONTRACT_NO', type: 'numeric' },
     { col: 'METRE_NO',    label: 'METRE_NO',    type: 'numeric' },
     { col: 'CUSTOMER_ID', label: 'CUSTOMER_ID', type: 'numeric' },
     { col: 'CUST_ID',     label: 'CUST_ID',     type: 'numeric' },
     { col: 'CARRIER',     label: 'CARRIER',     type: 'text'    }, // special handling
-    { col: 'SHIP_REF',    label: 'SHIP_REF',    type: 'numeric' },
-    { col: 'CONS_REF',    label: 'CONS_REF',    type: 'numeric' },
+    { col: 'SHIP_REF',    label: 'SHIP_REF',    type: 'text' },
+    { col: 'CONS_REF',    label: 'CONS_REF',    type: 'text' },
   ];
 
   // --- Date bounds: last 12 months up to today ---
@@ -760,32 +772,42 @@ function initializeSqlSearchMacro() {
       const field = FIELD_DEFS.find(f => f.col === select.value);
       valueBox.innerHTML = '';
 
+      // --- Create the right input box based on field type ---
       if (field?.type === 'text' && field.col === 'CARRIER') {
-        // CARRIER: free text input; force UPPERCASE as user types/pastes
+        // CARRIER: single-line input; force uppercase
         const input = document.createElement('input');
         input.type = 'text';
-        input.placeholder = "e.g., DPD, HERMES";
         input.className = 'criteria-input';
+        input.placeholder = 'e.g., DPD, HERMES';
         input.style.textTransform = 'uppercase';
         input.addEventListener('input', () => {
-          // Keep caret position friendly while uppercasing
           const pos = input.selectionStart;
           input.value = input.value.toUpperCase();
           input.setSelectionRange(pos, pos);
         });
-        input.addEventListener('paste', (e) => {
-          e.preventDefault();
-          const text = (e.clipboardData || window.clipboardData).getData('text');
-          document.execCommand('insertText', false, text.toUpperCase());
-        });
         valueBox.appendChild(input);
+
+      } else if (['CONS_NO', 'SHIP_REF', 'CONS_REF'].includes(field.col)) {
+        // These fields: allow letters/numbers; multi-line; uppercase
+        const ta = document.createElement('textarea');
+        ta.className = 'criteria-input';
+        ta.placeholder = 'One or many values (comma/space/newline separated). Letters allowed.';
+        ta.style.textTransform = 'uppercase';
+        ta.addEventListener('input', () => {
+          const start = ta.selectionStart, end = ta.selectionEnd;
+          ta.value = ta.value.toUpperCase();
+          ta.setSelectionRange(start, end);
+        });
+        valueBox.appendChild(ta);
+
       } else {
-        // Numeric (textarea)
+        // Numeric-type fallback (existing behavior)
         const ta = document.createElement('textarea');
         ta.className = 'criteria-input';
         ta.placeholder = 'Paste values (any format); we keep digits only';
         valueBox.appendChild(ta);
       }
+
     }
 
     renderInput();
@@ -797,10 +819,28 @@ function initializeSqlSearchMacro() {
 
     return row;
   }
-
-  // Start with a default CONS_NO row
+// Start with a default CONS_NO row (only if none exist)
+if (!criteriaList.querySelector('.criteria-row')) {
   addCriteriaRow('CONS_NO');
-  addRowBtn?.addEventListener('click', () => addCriteriaRow('CONS_NO'));
+}
+
+// Bind the "Add Filter" button only once
+if (addRowBtn && !addRowBtn.dataset.bound) {
+  addRowBtn.dataset.bound = '1';
+  addRowBtn.addEventListener('click', () => addCriteriaRow('CONS_NO'));
+}
+
+// Start with a default CONS_NO row (only if none exist)
+if (!criteriaList.querySelector('.criteria-row')) {
+  addCriteriaRow('CONS_NO');
+}
+
+// Bind the "Add Filter" button only once
+if (addRowBtn && !addRowBtn.dataset.bound) {
+  addRowBtn.dataset.bound = '1';
+  addRowBtn.addEventListener('click', () => addCriteriaRow('CONS_NO'));
+}
+
 
   // --- Parsing helpers ---
   function parseNumericList(raw) {
@@ -840,45 +880,47 @@ function initializeSqlSearchMacro() {
 
   // --- Build SQL ---
   function buildSql(fromISO, toISO) {
-    const clauses = [];
-    const rows = Array.from(criteriaList.children);
+  const clauses = [];
+  const rows = Array.from(criteriaList.children);
 
-    for (const row of rows) {
-      const fieldSel = row.querySelector('.field-select');
-      const valEl    = row.querySelector('.criteria-input');
-      if (!fieldSel || !valEl) continue;
+  for (const row of rows) {
+    const fieldSel = row.querySelector('.field-select');
+    const valEl    = row.querySelector('.criteria-input');
+    if (!fieldSel || !valEl) continue;
 
-      const field = FIELD_DEFS.find(f => f.col === fieldSel.value);
-      if (!field) continue;
+    const field = FIELD_DEFS.find(f => f.col === fieldSel.value);
+    if (!field) continue;
 
-      if (field.type === 'text' && field.col === 'CARRIER') {
-        // Support one or many: '=' for single, IN (...) for multiple
-        const list = parseTextList(valEl.value);       // already uppercased here
-        if (!list.length) continue;
-        const escaped = list.map(v => `'${escapeSqlString(v)}'`);
-        if (escaped.length === 1) {
-          clauses.push(`${field.col} = ${escaped[0]}`);
-        } else {
-          clauses.push(`${field.col} IN (${escaped.join(',')})`);
-        }
-      } else {
-        // numeric-only IN (...) for all other fields
-        const list = parseNumericList(valEl.value);
-        if (!list.length) continue;
-        const inList = '(' + list.map(v => `'${v}'`).join(',') + ')';
-        clauses.push(`${field.col} IN ${inList}`);
-      }
+    if (field.type === 'text') {
+      // Any text field (CARRIER, CONS_NO, CONS_REF, SHIP_REF)
+      const list = parseTextList(valEl.value); // allows letters & numbers; uppercased + de-duped
+      if (!list.length) continue;
+      const escaped = list.map(v => `'${escapeSqlString(v)}'`);
+      clauses.push(
+        escaped.length === 1
+          ? `${field.col} = ${escaped[0]}`
+          : `${field.col} IN (${escaped.join(',')})`
+      );
+    } else {
+      // Numeric fields: keep digits-only and build IN (...)
+      const list = parseNumericList(valEl.value);
+      if (!list.length) continue;
+      const inList = '(' + list.map(v => `'${v}'`).join(',') + ')';
+      clauses.push(`${field.col} IN ${inList}`);
     }
-
-    if (!clauses.length) {
-      return '-- Add at least one filter row and click Generate';
-    }
-
-    if (fromISO) clauses.push(`insert_date >= '${formatOracleDate(fromISO)}'`);
-    if (toISO)   clauses.push(`insert_date <= '${formatOracleDate(toISO)}'`);
-
-    return `SELECT *\nFROM shipments\nWHERE ${clauses.join('\n  AND ')}`;
   }
+
+  if (!clauses.length) {
+    return '-- Add at least one filter row and click Generate';
+  }
+
+  // Date filters (optional) — leave exactly as-is per your requirement
+  if (fromISO) clauses.push(`insert_date >= '${formatOracleDate(fromISO)}'`);
+  if (toISO)   clauses.push(`insert_date <= '${formatOracleDate(toISO)}'`);
+
+  return `SELECT *\nFROM shipments\nWHERE ${clauses.join('\n  AND ')}`;
+}
+
 
   // --- Events ---
   btnGen.addEventListener('click', () => {
@@ -909,10 +951,6 @@ function initializeSqlSearchMacro() {
     }
   });
 }
-
-
-
-
 
 /* =========================
    App Bootstrap
