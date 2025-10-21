@@ -739,13 +739,15 @@ function initializeFormatter() {
   };
 
   const detectMode = (txt) => {
-    const s = txt.trim();
-    if (!s) return 'auto';
-    if (mode.value !== 'auto') return mode.value;
-    if (s.startsWith('{') || s.startsWith('[')) return 'json';
-    if (s.startsWith('<') || /<\/[A-Za-z]/.test(s)) return 'xml';
-    return 'json'; // try JSON first, then fall back
-  };
+  const s = txt.trim();
+  if (!s) return 'auto';
+  if (mode && mode.value && mode.value !== 'auto') return mode.value;  // ← guard
+  if (s.startsWith('{') || s.startsWith('[')) return 'json';
+  if (s.startsWith('<') || /<\/[A-Za-z]/.test(s)) return 'xml';
+  return 'json';
+};
+
+
 
   function formatJSON(raw, pretty = true) {
     const obj = JSON.parse(raw);
